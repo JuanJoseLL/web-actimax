@@ -41,6 +41,7 @@ import { useIsMac } from "@/lib/useIsMac";
 
 /** Datos mínimos de un producto para buscarlo desde la paleta. */
 export interface PaletteProduct {
+  variantId: string | null;
   handle: string;
   title: string;
   type: ProductType | null;

@@ -41,6 +41,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const paletteProducts: PaletteProduct[] = (await getAllProducts()).map((p) => ({
+    variantId: p.variantId,
     handle: p.handle,
     title: p.title,
     type: p.type,

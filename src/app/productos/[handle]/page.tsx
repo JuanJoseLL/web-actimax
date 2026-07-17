@@ -132,6 +132,7 @@ export default async function ProductPage({
           <div className="mt-8">
             <BuyBox
               product={{
+                variantId: product.variantId,
                 handle: product.handle,
                 title: product.title,
                 price: product.price,
@@ -140,7 +141,7 @@ export default async function ProductPage({
               inStock={product.inStock}
             />
             <p className="mt-3 font-mono text-[11px] uppercase tracking-wide text-tinta/50">
-              Envíos a toda Colombia · Pago seguro: tarjeta · PSE · Nequi
+              Envíos a toda Colombia · Checkout seguro con Shopify
             </p>
           </div>
         </div>

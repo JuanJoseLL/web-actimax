@@ -11,6 +11,7 @@ export default async function CompararPacksPage() {
   const packs: ComparablePack[] = (await getAllProducts())
     .filter((product) => product.type === "kits")
     .map((product) => ({
+      variantId: product.variantId,
       handle: product.handle,
       title: product.title,
       price: product.price,

@@ -11,6 +11,7 @@ import {
 
 /** Datos mínimos de un producto para mostrarlo en el carrito. */
 export interface CartLine {
+  variantId: string | null;
   handle: string;
   title: string;
   price: number;
@@ -36,7 +37,7 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-const STORAGE_KEY = "actimax-demo-cart-v2";
+const STORAGE_KEY = "actimax-cart-v3";
 const CHANGE_EVENT = "actimax-cart-change";
 let fallbackCart = "[]";
 
@@ -65,6 +66,7 @@ function isCartItem(value: unknown): value is CartItem {
   if (typeof value !== "object" || value === null) return false;
   const item = value as Record<string, unknown>;
   return (
+    (item.variantId === null || typeof item.variantId === "string") &&
     typeof item.handle === "string" &&
     typeof item.title === "string" &&
     typeof item.price === "number" &&

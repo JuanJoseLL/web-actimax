@@ -36,6 +36,7 @@ const PRODUCTS_QUERY = /* GraphQL */ `
         }
         variants(first: 1) {
           nodes {
+            id
             price {
               amount
             }
@@ -59,6 +60,7 @@ interface ShopifyProductNode {
   images: { nodes: Array<{ url: string }> };
   variants: {
     nodes: Array<{
+      id: string;
       price: { amount: string };
       compareAtPrice: { amount: string } | null;
     }>;
@@ -92,6 +94,7 @@ function mapShopifyProduct(node: ShopifyProductNode): Product {
 
   return {
     id: node.id,
+    variantId: variant?.id ?? null,
     handle: node.handle,
     title: node.title,
     type,
@@ -156,6 +159,7 @@ function localProducts(): Product[] {
   return (localCatalog as LocalProduct[]).map((p) => ({
     ...p,
     id: String(p.id),
+    variantId: null,
     type: isProductType(p.type) ? p.type : null,
     momentos: p.momentos.filter(isMomento),
   }));

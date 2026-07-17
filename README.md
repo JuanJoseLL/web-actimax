@@ -23,11 +23,16 @@ Abre <http://localhost:3000>.
 - Las categorías: tipo (geles/bebidas/barras/kits), momento de uso
   (antes/durante/después) y deporte.
 
+**Integrado con Shopify:**
+
+- El catálogo lee productos publicados mediante la Storefront API y conserva
+  un respaldo local si Shopify no está disponible.
+- El carrito se conserva en el navegador. "Finalizar compra" crea un carrito
+  en Shopify y abre su checkout seguro; Shopify calcula el total definitivo,
+  envío, impuestos y pago.
+
 **Simulado (solo para el demo):**
 
-- El carrito funciona (agrega, cambia cantidades, persiste), pero el botón
-  "Finalizar compra" no cobra: muestra una nota de que el pago se conecta al
-  lanzar (Wompi / Mercado Pago → tarjeta, PSE, Nequi).
 - Las 3 entradas del blog son artículos de muestra (`src/data/blog.ts`).
 - El enlace de WhatsApp de mayoristas apunta a un número de relleno.
 
@@ -36,13 +41,48 @@ Abre <http://localhost:3000>.
 El plan es que la tienda real corra sobre **Shopify** (la administra una
 persona no técnica) con este front en Next.js:
 
-- Toda la lectura de productos pasa por `src/lib/catalog.ts`. Hoy lee el JSON
-  local; al conectar Shopify, ese módulo pasa a llamar a la Storefront API
-  **sin tocar el resto del sitio**.
-- El carrito local (`src/components/cart/`) se reemplaza por el carrito de
-  Shopify y su checkout hosteado.
+- Toda la lectura de productos pasa por `src/lib/catalog.ts`, que usa Shopify
+  cuando están configuradas las credenciales y el JSON local como respaldo.
+- El carrito visual vive en `src/components/cart/`; al finalizar, la ruta
+  `src/app/api/checkout/route.ts` crea el carrito de Shopify y devuelve su
+  `checkoutUrl` hosteado.
 - El blog saldrá del blog nativo de Shopify (mismo panel de administración que
   los productos).
+
+## Configurar Shopify y pagos de prueba
+
+Configura estas variables en `.env.local` y también en el proveedor de
+despliegue:
+
+```bash
+SHOPIFY_STORE_DOMAIN=tu-tienda.myshopify.com
+SHOPIFY_STOREFRONT_TOKEN=tu_token_storefront
+```
+
+Los productos deben estar activos y publicados en el canal asociado a la
+Storefront API. Esta interfaz vende la primera variante de cada producto.
+
+Para recorrer el pago sin cobrar en una tienda de desarrollo:
+
+1. Ve a **Shopify Admin → Configuración → Pagos**.
+2. Agrega y activa **(for testing) Bogus Gateway**. Si hay otro proveedor de
+   tarjeta activo, desactívalo primero cuando Shopify lo solicite.
+3. Ve a **Tienda online → Preferencias → Protección con contraseña**, define
+   la contraseña de la tienda y guárdala. No es la contraseña de tu cuenta de
+   administrador: Shopify no permite desactivar esta pantalla en una tienda de
+   desarrollo.
+4. Desde esta web, agrega un producto y pulsa **Finalizar compra**. La primera
+   vez, Shopify solicita la contraseña y después abre la portada de su tema;
+   es una limitación de las tiendas de desarrollo. Vuelve a esta web y pulsa
+   **Finalizar compra** otra vez: la contraseña ya queda autorizada en ese
+   navegador y ahora debe abrir el checkout.
+5. En el checkout usa `Bogus Gateway` como nombre, `1` como número de tarjeta
+   para aprobar (`2` simula rechazo y `3` un error), cualquier CVV de tres
+   dígitos y una fecha futura.
+
+Bogus Gateway solo valida el flujo. Para producción se reemplaza en Shopify
+por un proveedor disponible en Colombia, como Wompi o Mercado Pago, sin mover
+datos de tarjeta por esta aplicación.
 
 ## Estructura
 

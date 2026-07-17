@@ -56,6 +56,7 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
           <AddToCartButton
             product={{
+              variantId: product.variantId,
               handle: product.handle,
               title: product.title,
               price: product.price,

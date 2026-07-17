@@ -9,6 +9,7 @@ export type Momento = "antes" | "durante" | "despues";
 
 export interface Product {
   id: string;
+  variantId: string | null;
   handle: string;
   title: string;
   type: ProductType | null;

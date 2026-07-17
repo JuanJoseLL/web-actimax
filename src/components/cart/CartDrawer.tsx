@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FlagIcon, InfoIcon, Trash2Icon } from "lucide-react";
+import { FlagIcon, LoaderCircleIcon, TriangleAlertIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { useCart } from "@/components/cart/CartProvider";
@@ -55,11 +55,55 @@ function EnvioGratisMeta({ subtotal }: { subtotal: number }) {
 
 export function CartDrawer() {
   const { items, subtotal, isOpen, close, setQty, remove } = useCart();
-  const [checkoutNote, setCheckoutNote] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const handleClose = () => {
-    setCheckoutNote(false);
+    setCheckoutError(null);
     close();
+  };
+
+  const handleCheckout = async () => {
+    setCheckoutError(null);
+
+    if (items.some((item) => item.variantId === null)) {
+      setCheckoutError(
+        "Uno o más productos vienen del catálogo de respaldo. Recarga la página para volver a conectarte con Shopify.",
+      );
+      return;
+    }
+
+    setIsCheckingOut(true);
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lines: items.map((item) => ({
+            merchandiseId: item.variantId,
+            quantity: item.qty,
+          })),
+        }),
+      });
+      const result: unknown = await response.json();
+      const checkoutUrl =
+        typeof result === "object" && result !== null && "checkoutUrl" in result
+          ? (result as { checkoutUrl?: unknown }).checkoutUrl
+          : undefined;
+      if (!response.ok || typeof checkoutUrl !== "string") {
+        const message =
+          typeof result === "object" && result !== null && "error" in result
+            ? (result as { error?: unknown }).error
+            : undefined;
+        throw new Error(typeof message === "string" ? message : "No se pudo iniciar el pago.");
+      }
+      window.location.assign(checkoutUrl);
+    } catch (error) {
+      setCheckoutError(
+        error instanceof Error ? error.message : "No se pudo iniciar el pago. Inténtalo de nuevo.",
+      );
+      setIsCheckingOut(false);
+    }
   };
 
   return (
@@ -173,17 +217,17 @@ export function CartDrawer() {
                 variant="raceSun"
                 size="lg"
                 className="mt-2 w-full py-3.5"
-                onClick={() => setCheckoutNote(true)}
+                onClick={handleCheckout}
+                disabled={isCheckingOut}
               >
-                Finalizar compra
+                {isCheckingOut ? <LoaderCircleIcon className="animate-spin" /> : null}
+                {isCheckingOut ? "Abriendo pago seguro..." : "Finalizar compra"}
               </Button>
-              {checkoutNote ? (
-                <Alert className="mt-1 bg-muted">
-                  <InfoIcon />
-                  <AlertTitle>Demo de checkout</AlertTitle>
-                  <AlertDescription>
-                    En la versión final este botón llevará al pago seguro con tarjeta, PSE y Nequi.
-                  </AlertDescription>
+              {checkoutError !== null ? (
+                <Alert variant="destructive" className="mt-1">
+                  <TriangleAlertIcon />
+                  <AlertTitle>No se pudo iniciar el pago</AlertTitle>
+                  <AlertDescription>{checkoutError}</AlertDescription>
                 </Alert>
               ) : null}
             </SheetFooter>

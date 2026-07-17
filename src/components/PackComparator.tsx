@@ -27,6 +27,7 @@ const SPORT_LABELS: Record<string, string> = {
 };
 
 export interface ComparablePack {
+  variantId: string | null;
   handle: string;
   title: string;
   price: number;
@@ -122,7 +123,7 @@ function PackSummary({ pack }: { pack: ComparablePack }) {
             <Link href={`/productos/${pack.handle}`}>Ver detalle</Link>
           </Button>
           <AddToCartButton
-            product={{ handle: pack.handle, title: pack.title, price: pack.price, image: pack.image }}
+            product={{ variantId: pack.variantId, handle: pack.handle, title: pack.title, price: pack.price, image: pack.image }}
             disabled={!pack.inStock}
           />
         </div>
