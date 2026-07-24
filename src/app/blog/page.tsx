@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { BlogListing } from "@/components/blog/BlogListing";
-import { getAllBlogPosts } from "@/lib/blog";
+import { BLOG_CACHE_LIFE, getBlogPostsPage } from "@/lib/blog";
 
 export const metadata: Metadata = {
   title: "Blog de nutrición deportiva y actividad física | Actimax",
@@ -13,7 +13,8 @@ export const metadata: Metadata = {
 export default async function BlogPage() {
   "use cache";
   cacheTag("blog");
-  cacheLife({ stale: 60, revalidate: 60, expire: 86400 });
+  cacheLife(BLOG_CACHE_LIFE);
 
-  return <BlogListing posts={await getAllBlogPosts()} />;
+  const { posts, totalPages } = await getBlogPostsPage(1);
+  return <BlogListing posts={posts} pagination={{ page: 1, totalPages }} />;
 }

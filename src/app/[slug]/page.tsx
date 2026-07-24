@@ -3,6 +3,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { BlogArticle } from "@/components/blog/BlogArticle";
 import {
+  BLOG_CACHE_LIFE,
   getAllBlogPosts,
   getBlogPost,
   getRootBlogPostSlugs,
@@ -20,7 +21,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   "use cache";
   cacheTag("blog");
-  cacheLife({ stale: 60, revalidate: 60, expire: 86400 });
+  cacheLife(BLOG_CACHE_LIFE);
 
   const post = await getBlogPost((await params).slug);
   if (post === undefined || !isRootBlogPost(post)) return {};
@@ -46,7 +47,7 @@ export default async function LegacyRootBlogPost({
 }) {
   "use cache";
   cacheTag("blog");
-  cacheLife({ stale: 60, revalidate: 60, expire: 86400 });
+  cacheLife(BLOG_CACHE_LIFE);
 
   const { slug } = await params;
   const post = await getBlogPost(slug);

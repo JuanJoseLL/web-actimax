@@ -15,7 +15,7 @@ interface ShopifyArticleNode {
   handle: string;
   title: string;
   excerpt: string | null;
-  content: string;
+  content?: string;
   contentHtml?: string;
   publishedAt: string;
   tags: string[];
@@ -44,12 +44,17 @@ interface BlogPathData {
 const pathData = blogPaths as BlogPathData;
 const pathsBySlug = new Map(pathData.posts.map((post) => [post.slug, post.sourcePath]));
 
+export const POSTS_PER_PAGE = 12;
+
+// Con el webhook de Shopify (/api/revalidar) la caché se invalida al publicar,
+// así que la revalidación periódica puede ser espaciada.
+export const BLOG_CACHE_LIFE = { stale: 300, revalidate: 300, expire: 604800 } as const;
+
 const ARTICLE_FIELDS = /* GraphQL */ `
   id
   handle
   title
   excerpt
-  content(truncateAt: 100000)
   publishedAt
   tags
   authorV2 { name }
@@ -57,10 +62,15 @@ const ARTICLE_FIELDS = /* GraphQL */ `
   seo { title description }
 `;
 
+// El listado solo necesita texto para el resumen y el tiempo de lectura;
+// truncar evita descargar el cuerpo completo de todos los artículos.
 const ARTICLES_QUERY = /* GraphQL */ `
   query BlogArticles {
     articles(first: 250, sortKey: PUBLISHED_AT, reverse: true) {
-      nodes { ${ARTICLE_FIELDS} }
+      nodes {
+        ${ARTICLE_FIELDS}
+        content(truncateAt: 12000)
+      }
     }
   }
 `;
@@ -76,6 +86,10 @@ const ARTICLE_QUERY = /* GraphQL */ `
   }
 `;
 
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]+>/g, " ");
+}
+
 function readingMinutes(content: string): number {
   const words = content.trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.ceil(words / 220));
@@ -86,7 +100,8 @@ function postPath(slug: string): string {
 }
 
 function mapArticle(node: ShopifyArticleNode): BlogPost {
-  const excerpt = node.excerpt?.trim() || node.content.slice(0, 280).trim();
+  const plainText = node.contentHtml !== undefined ? stripHtml(node.contentHtml) : (node.content ?? "");
+  const excerpt = node.excerpt?.trim() || plainText.replace(/\s+/g, " ").slice(0, 280).trim();
 
   return {
     id: node.id,
@@ -97,7 +112,7 @@ function mapArticle(node: ShopifyArticleNode): BlogPost {
     tags: node.tags,
     excerpt,
     date: node.publishedAt,
-    minutes: readingMinutes(node.content),
+    minutes: readingMinutes(plainText),
     author: node.authorV2?.name ?? "Actimax",
     image: node.image,
     seoTitle: node.seo?.title ?? null,
@@ -132,7 +147,7 @@ async function fetchWordPressFallback(slug: string): Promise<BlogPost | undefine
       tags: source.categories,
       excerpt: source.excerpt,
       date: source.publishedAt,
-      minutes: readingMinutes(post.content.rendered.replace(/<[^>]+>/g, " ")),
+      minutes: readingMinutes(stripHtml(post.content.rendered)),
       author: "Actimax",
       image:
         source.featuredImage === null
@@ -185,7 +200,7 @@ async function storefrontQuery<T>(query: string, variables?: Record<string, stri
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
   "use cache";
   cacheTag("blog");
-  cacheLife({ stale: 60, revalidate: 60, expire: 86400 });
+  cacheLife(BLOG_CACHE_LIFE);
 
   const data = await storefrontQuery<{ articles: { nodes: ShopifyArticleNode[] } }>(ARTICLES_QUERY);
   const nodes = data?.articles.nodes;
@@ -199,7 +214,7 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
 export async function getBlogPost(slug: string): Promise<BlogPost | undefined> {
   "use cache";
   cacheTag("blog", `blog:${slug}`);
-  cacheLife({ stale: 60, revalidate: 60, expire: 86400 });
+  cacheLife(BLOG_CACHE_LIFE);
 
   const data = await storefrontQuery<{
     blog: { articleByHandle: ShopifyArticleNode | null } | null;
@@ -209,6 +224,18 @@ export async function getBlogPost(slug: string): Promise<BlogPost | undefined> {
 
   cacheLife({ stale: 10, revalidate: 10, expire: 60 });
   return fallbackPosts.find((post) => post.slug === slug) ?? fetchWordPressFallback(slug);
+}
+
+export async function getBlogPostsPage(page: number): Promise<{
+  posts: BlogPost[];
+  totalPages: number;
+}> {
+  const all = await getAllBlogPosts();
+  const totalPages = Math.max(1, Math.ceil(all.length / POSTS_PER_PAGE));
+  return {
+    posts: all.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE),
+    totalPages,
+  };
 }
 
 export function getBlogCategories(): BlogCategory[] {

@@ -24,6 +24,7 @@ const NAV = [
   { label: "Por reto", href: "/#retos" },
   { label: "El método", href: "/#metodo" },
   { label: "Historias", href: "/#historias" },
+  { label: "Blog", href: "/blog" },
   { label: "Club", href: "/#club" },
 ];
 

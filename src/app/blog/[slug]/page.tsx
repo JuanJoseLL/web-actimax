@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { BlogArticle } from "@/components/blog/BlogArticle";
 import { BlogListing } from "@/components/blog/BlogListing";
 import {
+  BLOG_CACHE_LIFE,
   getAllBlogPosts,
   getBlogCategories,
   getBlogCategory,
@@ -26,7 +27,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   "use cache";
   cacheTag("blog");
-  cacheLife({ stale: 60, revalidate: 60, expire: 86400 });
+  cacheLife(BLOG_CACHE_LIFE);
 
   const { slug } = await params;
   const category = getBlogCategory(slug);
@@ -63,7 +64,7 @@ export default async function BlogPostPage({
 }) {
   "use cache";
   cacheTag("blog");
-  cacheLife({ stale: 60, revalidate: 60, expire: 86400 });
+  cacheLife(BLOG_CACHE_LIFE);
 
   const { slug } = await params;
   const category = getBlogCategory(slug);

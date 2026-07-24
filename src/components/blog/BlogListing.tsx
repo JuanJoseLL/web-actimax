@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BlogPagination } from "@/components/blog/BlogPagination";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatPostDate, type BlogPost } from "@/lib/blog";
 
@@ -8,13 +9,18 @@ export function BlogListing({
   eyebrow = "Blog · Contra el muro",
   title = "Consejos del equipo",
   description = "Guías prácticas de nutrición deportiva escritas para que rindas más y te recuperes mejor. Sin humo, con ciencia.",
+  pagination,
 }: {
   posts: BlogPost[];
   eyebrow?: string;
   title?: string;
   description?: string;
+  pagination?: { page: number; totalPages: number };
 }) {
-  const [first, ...rest] = posts;
+  // El destacado "Más reciente" solo tiene sentido en la primera página.
+  const showHero = pagination === undefined || pagination.page === 1;
+  const first = showHero ? posts[0] : undefined;
+  const rest = showHero ? posts.slice(1) : posts;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
@@ -57,11 +63,11 @@ export function BlogListing({
             </Link>
           </CardContent>
         </Card>
-      ) : (
+      ) : posts.length === 0 ? (
         <p className="mt-12 rounded-md border border-dashed p-8 text-sm text-muted-foreground">
           No hay artículos publicados en esta categoría.
         </p>
-      )}
+      ) : null}
 
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         {rest.map((post) => (
@@ -98,6 +104,10 @@ export function BlogListing({
           </Card>
         ))}
       </div>
+
+      {pagination !== undefined ? (
+        <BlogPagination page={pagination.page} totalPages={pagination.totalPages} />
+      ) : null}
     </div>
   );
 }
