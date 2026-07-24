@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { CompassIcon, RouteIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -73,7 +73,9 @@ function getRecommendation(sport: Sport, distance: Distance) {
 export function FuelFinder({ tone = "dark" }: { tone?: "dark" | "light" }) {
   const [sport, setSport] = useState<Sport>("running");
   const [distance, setDistance] = useState<Distance>("21k");
-  const recommendation = useMemo(() => getRecommendation(sport, distance), [sport, distance]);
+  const recommendation = getRecommendation(sport, distance);
+  const planDistance =
+    sport === "running" ? distance.replace("k", "") : sport === "ciclismo" ? "100" : "113";
 
   return (
     <Sheet>
@@ -97,7 +99,7 @@ export function FuelFinder({ tone = "dark" }: { tone?: "dark" | "light" }) {
             Tu próximo reto empieza aquí
           </SheetTitle>
           <SheetDescription>
-            Elige tu disciplina y distancia. Te sugerimos un punto de partida para tu estrategia.
+            Elige tu disciplina y un reto base. Después ajustaremos tiempo, clima y tolerancia para construir tu plan.
           </SheetDescription>
         </SheetHeader>
 
@@ -153,7 +155,9 @@ export function FuelFinder({ tone = "dark" }: { tone?: "dark" | "light" }) {
           <Separator />
           <CardFooter className="bg-transparent px-5 py-4">
             <Button asChild variant="race" className="w-full">
-              <Link href={`/productos/${recommendation.handle}`}>Ver mi recomendación</Link>
+              <Link href={`/mi-plan/?deporte=${sport}&distancia=${planDistance}`}>
+                Armar mi plan completo
+              </Link>
             </Button>
           </CardFooter>
         </Card>

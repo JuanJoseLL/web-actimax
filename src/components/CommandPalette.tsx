@@ -79,6 +79,7 @@ function normalize(text: string): string {
 }
 
 const RUTAS = [
+  { label: "Crear mi Plan Actimax", href: "/mi-plan", icon: RouteIcon },
   { label: "Geles energéticos", href: "/productos?tipo=geles", icon: ZapIcon },
   {
     label: "Bebidas deportivas",

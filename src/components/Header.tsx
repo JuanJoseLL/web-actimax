@@ -21,7 +21,7 @@ import {
 
 const NAV = [
   { label: "Comprar", href: "/productos" },
-  { label: "Por reto", href: "/#retos" },
+  { label: "Mi plan", href: "/mi-plan/" },
   { label: "El método", href: "/#metodo" },
   { label: "Historias", href: "/#historias" },
   { label: "Blog", href: "/blog" },
@@ -94,7 +94,7 @@ export function Header() {
             variant="raceSun"
             className="hidden h-9 px-4 lg:inline-flex"
           >
-            <Link href="/#retos">
+            <Link href="/mi-plan/">
               Mi próximo reto
               <ArrowRightIcon data-icon="inline-end" />
             </Link>
