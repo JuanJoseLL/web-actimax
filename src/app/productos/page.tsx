@@ -13,11 +13,13 @@ import {
   isMomento,
   isProductType,
 } from "@/lib/catalog";
+import { itemListJsonLd, jsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Productos — Actimax",
+  title: "Geles energéticos, bebidas y barras — Catálogo Actimax",
   description:
-    "Catálogo de nutrición deportiva: geles energéticos, bebidas, barras de proteína y Energy Packs por distancia.",
+    "Catálogo de nutrición deportiva colombiana: geles energéticos con y sin cafeína, bebidas de hidratación y recuperación, barras de proteína y Energy Packs por distancia. Envíos a toda Colombia.",
+  alternates: { canonical: "/productos/" },
 };
 
 interface Filters {
@@ -123,6 +125,12 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(itemListJsonLd("Catálogo Actimax de nutrición deportiva", products)),
+        }}
+      />
       <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-azul">
         Catálogo
       </p>

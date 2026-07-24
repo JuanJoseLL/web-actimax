@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { getAllProducts } from "@/lib/catalog";
+import { SITE_URL, jsonLd, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 const archivo = Archivo({
@@ -29,10 +30,29 @@ const chivoMono = Chivo_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://actimax.com.co"),
-  title: "Actimax — El combustible de tu próxima meta",
+  metadataBase: new URL(SITE_URL),
+  title: "Actimax — Geles energéticos y nutrición deportiva de Colombia",
   description:
-    "Nutrición deportiva colombiana para antes, durante y después. Encuentra el Energy Pack de tu próxima carrera y llega con un plan a la meta.",
+    "El combustible de tu próxima meta: geles energéticos con y sin cafeína, bebidas deportivas, barras de proteína y Energy Packs por distancia. Nutrición deportiva hecha en Colombia, con envíos a todo el país.",
+  keywords: [
+    "geles deportivos",
+    "geles energéticos",
+    "gel energético Colombia",
+    "nutrición deportiva",
+    "bebidas deportivas",
+    "Energy Pack",
+    "running",
+    "ciclismo",
+    "maratón",
+  ],
+  openGraph: {
+    type: "website",
+    locale: "es_CO",
+    siteName: "Actimax",
+    title: "Actimax — Geles energéticos y nutrición deportiva de Colombia",
+    description:
+      "Geles energéticos, bebidas deportivas, barras de proteína y Energy Packs por distancia. Hecho en Colombia, con envíos a todo el país.",
+  },
   icons: { icon: "/favicon-192.png" },
 };
 
@@ -58,6 +78,14 @@ export default async function RootLayout({
       className={cn("h-full", "antialiased", archivo.variable, barlowCondensed.variable, chivoMono.variable, "font-sans")}
     >
       <body className="flex min-h-full flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLd(organizationJsonLd()) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLd(webSiteJsonLd()) }}
+        />
         <CartProvider>
           <Header />
           <main className="flex-1">{children}</main>

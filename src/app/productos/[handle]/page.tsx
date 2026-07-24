@@ -16,6 +16,7 @@ import {
   typeLabel,
 } from "@/lib/catalog";
 import { formatCOP } from "@/lib/format";
+import { SITE_URL, breadcrumbJsonLd, jsonLd, productJsonLd, productUrl } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const products = await getAllProducts();
@@ -33,6 +34,13 @@ export async function generateMetadata({
   return {
     title: `${product.title} — Actimax`,
     description: product.excerpt,
+    alternates: { canonical: `/productos/${product.handle}/` },
+    openGraph: {
+      title: `${product.title} — Actimax`,
+      description: product.excerpt,
+      images:
+        product.images.length > 0 ? [{ url: product.images[0], alt: product.title }] : [],
+    },
   };
 }
 
@@ -61,6 +69,22 @@ export default async function ProductPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(productJsonLd(product)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(
+            breadcrumbJsonLd([
+              { name: "Inicio", url: `${SITE_URL}/` },
+              { name: typeLabel(product.type), url: `${SITE_URL}/productos/` },
+              { name: product.title, url: productUrl(product.handle) },
+            ]),
+          ),
+        }}
+      />
       <nav aria-label="Ruta" className="mb-6 font-mono text-[11px] text-tinta/50">
         <Link href="/" className="hover:text-azul hover:underline">
           Inicio
