@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "blog:prepare": "node --env-file-if-exists=.env.local scripts/migrate-wordpress-blog.mjs prepare",
+    "blog:import": "node --env-file-if-exists=.env.local scripts/migrate-wordpress-blog.mjs import",
+    "blog:verify": "node --env-file-if-exists=.env.local scripts/migrate-wordpress-blog.mjs verify"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

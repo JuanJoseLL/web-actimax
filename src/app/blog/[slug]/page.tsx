@@ -1,13 +1,22 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { formatPostDate, getPost, posts } from "@/data/blog";
+import { BlogArticle } from "@/components/blog/BlogArticle";
+import { BlogListing } from "@/components/blog/BlogListing";
+import {
+  getAllBlogPosts,
+  getBlogCategories,
+  getBlogCategory,
+  getBlogPost,
+  isRootBlogPost,
+} from "@/lib/blog";
 
-export function generateStaticParams() {
-  return posts.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const posts = (await getAllBlogPosts()).filter((post) => !isRootBlogPost(post));
+  return [
+    ...posts.map((post) => ({ slug: post.slug })),
+    ...getBlogCategories().map((category) => ({ slug: category.slug })),
+  ];
 }
 
 export async function generateMetadata({
@@ -15,10 +24,36 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
+  "use cache";
+  cacheTag("blog");
+  cacheLife({ stale: 60, revalidate: 60, expire: 86400 });
+
   const { slug } = await params;
-  const post = getPost(slug);
-  if (post === undefined) return { title: "Entrada no encontrada — Actimax" };
-  return { title: `${post.title} — Blog Actimax`, description: post.excerpt };
+  const category = getBlogCategory(slug);
+  if (category !== undefined) {
+    return {
+      title: `${category.name} | Blog Actimax`,
+      description: `Artículos de ${category.name.toLocaleLowerCase("es-CO")} para deportistas.`,
+      alternates: { canonical: category.path },
+    };
+  }
+
+  const post = await getBlogPost(slug);
+  if (post !== undefined && !isRootBlogPost(post)) {
+    return {
+      title: post.seoTitle ?? `${post.title} | Actimax`,
+      description: post.seoDescription ?? post.excerpt,
+      alternates: { canonical: post.path },
+      openGraph: {
+        type: "article",
+        title: post.seoTitle ?? post.title,
+        description: post.seoDescription ?? post.excerpt,
+        publishedTime: post.date,
+        images: post.image !== null ? [{ url: post.image.url, alt: post.image.altText ?? post.title }] : [],
+      },
+    };
+  }
+  return { title: "Entrada no encontrada | Actimax" };
 }
 
 export default async function BlogPostPage({
@@ -26,60 +61,32 @@ export default async function BlogPostPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  "use cache";
+  cacheTag("blog");
+  cacheLife({ stale: 60, revalidate: 60, expire: 86400 });
+
   const { slug } = await params;
-  const post = getPost(slug);
-  if (post === undefined) notFound();
+  const category = getBlogCategory(slug);
+  if (category !== undefined) {
+    const posts = (await getAllBlogPosts()).filter((candidate) => candidate.tags.includes(category.name));
+    return (
+      <BlogListing
+        posts={posts}
+        eyebrow="Blog · Categoría"
+        title={category.name}
+        description={`Estrategias, guías y consejos de ${category.name.toLocaleLowerCase("es-CO")} para tu próxima meta.`}
+      />
+    );
+  }
 
-  const others = posts.filter((p) => p.slug !== post.slug);
+  const post = await getBlogPost(slug);
+  if (post !== undefined && !isRootBlogPost(post)) {
+    const related = (await getAllBlogPosts())
+      .filter((candidate) => candidate.slug !== post.slug)
+      .filter((candidate) => candidate.tags.some((tag) => post.tags.includes(tag)))
+      .slice(0, 3);
+    return <BlogArticle post={post} related={related} />;
+  }
 
-  return (
-    <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 md:py-16">
-      <nav aria-label="Ruta" className="mb-8 font-mono text-[11px] text-tinta/50">
-        <Link href="/blog" className="hover:text-azul hover:underline">
-          ← Volver al blog
-        </Link>
-      </nav>
-
-      <p className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-azul">
-        {post.category}
-      </p>
-      <h1 className="mt-3 font-display text-5xl font-extrabold uppercase italic leading-[0.95] sm:text-6xl">
-        {post.title}
-      </h1>
-      <p className="mt-4 font-mono text-[11px] text-tinta/50">
-        {formatPostDate(post.date)} · {post.minutes} min de lectura
-      </p>
-
-      <Separator className="mt-10" />
-      <div className="prose-actimax pt-8 text-[15px] text-foreground/85" dangerouslySetInnerHTML={{ __html: post.bodyHtml }} />
-
-      <Card className="mt-12 bg-muted py-0 text-center">
-        <CardContent className="p-8">
-          <p className="font-display text-2xl font-bold uppercase italic">¿Listo para tu próximo reto?</p>
-          <Button asChild variant="race" size="lg" className="mt-5">
-            <Link href="/productos?tipo=kits">Ver Energy Packs</Link>
-          </Button>
-        </CardContent>
-      </Card>
-
-      {others.length > 0 ? (
-        <aside className="mt-14">
-          <Separator className="mb-8" />
-          <h2 className="font-display text-2xl font-bold uppercase italic">Sigue leyendo</h2>
-          <ul className="mt-4 flex flex-col gap-3">
-            {others.map((p) => (
-              <li key={p.slug}>
-                <Link
-                  href={`/blog/${p.slug}`}
-                  className="font-semibold text-azul underline-offset-4 hover:underline"
-                >
-                  {p.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </aside>
-      ) : null}
-    </article>
-  );
+  notFound();
 }

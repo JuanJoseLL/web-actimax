@@ -1,24 +1,23 @@
-export interface BlogPost {
-  slug: string;
-  title: string;
-  category: string;
-  excerpt: string;
-  date: string;
-  minutes: number;
-  bodyHtml: string;
-}
+import type { BlogPost } from "@/lib/blog-types";
 
 // Artículos de muestra para el demo. En la versión final se escriben y
 // publican desde el panel de administración, igual que los productos.
-export const posts: BlogPost[] = [
+export const fallbackPosts: BlogPost[] = [
   {
+    id: "demo-cuantos-geles-llevar-maraton",
     slug: "cuantos-geles-llevar-maraton",
+    path: "/blog/cuantos-geles-llevar-maraton/",
     title: "¿Cuántos geles llevar a tu primera maratón?",
     category: "Running",
+    tags: ["Running"],
     excerpt:
       "La regla de los 40 minutos, cómo probarlos en tus fondos y por qué nunca debes estrenar nutrición el día de la carrera.",
     date: "2026-06-28",
     minutes: 4,
+    author: "Actimax",
+    image: null,
+    seoTitle: null,
+    seoDescription: null,
     bodyHtml: `
       <p>Si vas a correr 42K, tu cuerpo va a necesitar combustible externo mucho antes de lo que crees. Las reservas de glucógeno alcanzan para 90 minutos de esfuerzo, aproximadamente: de ahí en adelante, lo que no repongas lo vas a pagar en los últimos kilómetros.</p>
       <p><b>La regla general:</b> un gel cada 40–45 minutos de carrera, empezando desde el minuto 45. Para una maratón de 4 horas, eso significa entre 4 y 5 geles.</p>
@@ -31,13 +30,20 @@ export const posts: BlogPost[] = [
     `,
   },
   {
+    id: "demo-hidratacion-clima-caliente",
     slug: "hidratacion-clima-caliente",
+    path: "/blog/hidratacion-clima-caliente/",
     title: "Hidratación en clima caliente: lo que cambia cuando entrenas en tierra caliente",
     category: "Hidratación",
+    tags: ["Hidratación"],
     excerpt:
       "Entrenar en Medellín no es lo mismo que competir en Cartagena. Cómo ajustar tu plan de hidratación cuando sube la temperatura.",
     date: "2026-06-14",
     minutes: 5,
+    author: "Actimax",
+    image: null,
+    seoTitle: null,
+    seoDescription: null,
     bodyHtml: `
       <p>En clima caliente puedes perder entre 1 y 2 litros de líquido por hora de ejercicio, y con ellos se van los electrolitos que hacen que tus músculos funcionen. Reponer solo con agua diluye el sodio que te queda: por eso los calambres aparecen justo cuando más agua pura tomas.</p>
       <p><b>Ajustes clave para competir en tierra caliente:</b></p>
@@ -51,13 +57,20 @@ export const posts: BlogPost[] = [
     `,
   },
   {
+    id: "demo-ventana-recuperacion-30-minutos",
     slug: "ventana-recuperacion-30-minutos",
+    path: "/blog/ventana-recuperacion-30-minutos/",
     title: "La ventana de los 30 minutos: por qué la recuperación empieza en la meta",
     category: "Recuperación",
+    tags: ["Recuperación"],
     excerpt:
       "Lo que consumes en la primera media hora después del esfuerzo define cómo amaneces mañana. La ciencia detrás de la recuperación.",
     date: "2026-05-30",
     minutes: 3,
+    author: "Actimax",
+    image: null,
+    seoTitle: null,
+    seoDescription: null,
     bodyHtml: `
       <p>Después de un esfuerzo largo, tus músculos quedan con las reservas vacías y microrroturas que hay que reparar. En los primeros 30 minutos tras la meta, el cuerpo absorbe nutrientes hasta tres veces más rápido de lo normal: esa es la famosa <b>ventana de recuperación</b>.</p>
       <p><b>Qué necesita tu cuerpo en esa ventana:</b></p>
@@ -70,15 +83,3 @@ export const posts: BlogPost[] = [
     `,
   },
 ];
-
-export function getPost(slug: string): BlogPost | undefined {
-  return posts.find((p) => p.slug === slug);
-}
-
-export function formatPostDate(iso: string): string {
-  return new Date(`${iso}T12:00:00-05:00`).toLocaleDateString("es-CO", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}

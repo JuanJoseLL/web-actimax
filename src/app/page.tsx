@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { cacheLife, cacheTag } from "next/cache";
 import {
   ArrowRightIcon,
   CheckCircle2Icon,
@@ -11,11 +12,16 @@ import { FuelFinder } from "@/components/FuelFinder";
 import { ProductCard } from "@/components/ProductCard";
 import { Ticker } from "@/components/Ticker";
 import { Button } from "@/components/ui/button";
-import { formatPostDate, posts } from "@/data/blog";
+import { formatPostDate, getAllBlogPosts } from "@/lib/blog";
 import { getAllProducts, getProducts } from "@/lib/catalog";
 import { formatCOP } from "@/lib/format";
 
-export default function Home() {
+export default async function Home() {
+  "use cache";
+  cacheTag("blog", "catalog");
+  cacheLife({ stale: 60, revalidate: 60, expire: 86400 });
+
+  const posts = (await getAllBlogPosts()).slice(0, 3);
   return (
     <>
       <Hero />
@@ -25,7 +31,7 @@ export default function Home() {
       <RitualSection />
       <BestSellersSection />
       <ClubSection />
-      <JournalSection />
+      <JournalSection posts={posts} />
       <TeamSection />
     </>
   );
@@ -522,7 +528,7 @@ function ClubSection() {
   );
 }
 
-function JournalSection() {
+function JournalSection({ posts }: { posts: Awaited<ReturnType<typeof getAllBlogPosts>> }) {
   return (
     <section id="historias" className="scroll-mt-24 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-28 lg:px-8">
@@ -544,7 +550,7 @@ function JournalSection() {
         <div className="mt-12 grid gap-px overflow-hidden border border-tinta/10 bg-tinta/10 md:grid-cols-3">
           {posts.map((post, index) => (
             <article key={post.slug} className="reveal group bg-white">
-              <Link href={`/blog/${post.slug}`} className="flex min-h-[360px] flex-col p-6 sm:p-8">
+              <Link href={post.path} className="flex min-h-[360px] flex-col p-6 sm:p-8">
                 <div className="flex items-center justify-between font-mono text-[10px] font-bold uppercase tracking-[0.17em]">
                   <span className="text-azul">{post.category}</span>
                   <span className="text-tinta/30">N.{String(index + 1).padStart(2, "0")}</span>

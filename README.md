@@ -31,9 +31,10 @@ Abre <http://localhost:3000>.
   en Shopify y abre su checkout seguro; Shopify calcula el total definitivo,
   envío, impuestos y pago.
 
-**Simulado (solo para el demo):**
+**Simulado (solo como respaldo):**
 
-- Las 3 entradas del blog son artículos de muestra (`src/data/blog.ts`).
+- Las 3 entradas de `src/data/blog.ts` se muestran únicamente mientras Shopify
+  no tenga artículos publicados o no esté disponible.
 - El enlace de WhatsApp de mayoristas apunta a un número de relleno.
 
 ## Arquitectura pensada para migrar a Shopify
@@ -47,7 +48,8 @@ persona no técnica) con este front en Next.js:
   `src/app/api/checkout/route.ts` crea el carrito de Shopify y devuelve su
   `checkoutUrl` hosteado.
 - El blog saldrá del blog nativo de Shopify (mismo panel de administración que
-  los productos).
+  los productos). El storefront conserva las URL históricas de WordPress y lee
+  los artículos publicados mediante Storefront API.
 
 ## Configurar Shopify y pagos de prueba
 
@@ -57,6 +59,7 @@ despliegue:
 ```bash
 SHOPIFY_STORE_DOMAIN=tu-tienda.myshopify.com
 SHOPIFY_STOREFRONT_TOKEN=tu_token_storefront
+SHOPIFY_BLOG_HANDLE=blog
 ```
 
 Los productos deben estar activos y publicados en el canal asociado a la
@@ -91,10 +94,14 @@ src/
   app/                 páginas (home, /productos, /productos/[handle], /blog)
   components/          Header, Footer, ProductCard, carrito, galería, etc.
   data/catalog.json    catálogo extraído de WooCommerce
-  data/blog.ts         entradas de muestra
+  data/blog.ts         respaldo local si Shopify no está disponible
+  lib/blog.ts          lectura del blog nativo de Shopify
   lib/catalog.ts       capa de datos (punto único de conexión futura a Shopify)
 public/products/       fotos reales de producto
 ```
+
+La migración de los 79 artículos de WordPress, sus imágenes y sus URL está
+documentada en [`shopify-import/README.md`](shopify-import/README.md).
 
 ## Identidad visual
 

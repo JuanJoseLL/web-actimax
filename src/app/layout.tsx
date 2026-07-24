@@ -29,6 +29,7 @@ const chivoMono = Chivo_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://actimax.com.co"),
   title: "Actimax — El combustible de tu próxima meta",
   description:
     "Nutrición deportiva colombiana para antes, durante y después. Encuentra el Energy Pack de tu próxima carrera y llega con un plan a la meta.",

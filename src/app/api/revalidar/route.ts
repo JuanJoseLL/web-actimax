@@ -9,5 +9,6 @@ import { NextResponse } from "next/server";
  */
 export function GET() {
   revalidateTag("catalog", "max");
+  revalidateTag("blog", "max");
   return NextResponse.json({ revalidado: true, fecha: new Date().toISOString() });
 }
