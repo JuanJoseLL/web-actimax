@@ -92,7 +92,7 @@ function PackSummary({ pack }: { pack: ComparablePack }) {
       <CardContent className="grid gap-5 px-5 py-5">
         <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-muted">
           {pack.image !== null ? (
-            <Image src={pack.image} alt="" fill sizes="(min-width: 768px) 45vw, 100vw" className="object-contain p-4 mix-blend-multiply" />
+            <Image src={pack.image} alt="" fill sizes="(min-width: 1152px) 496px, (min-width: 768px) 45vw, 100vw" className="object-contain p-4 mix-blend-multiply" />
           ) : null}
         </div>
         <dl className="grid gap-4 text-sm">

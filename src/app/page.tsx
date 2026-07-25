@@ -107,7 +107,7 @@ function Hero() {
             alt="Atleta Actimax preparándose con un gel energético en la pista"
             fill
             priority
-            sizes="(min-width: 1024px) 48vw, 100vw"
+            sizes="(min-width: 1440px) 684px, (min-width: 1024px) 48vw, 100vw"
             className="hero-athlete object-cover"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,20,60,0.05)_35%,rgba(0,20,60,0.92)_100%)]" />
@@ -217,7 +217,7 @@ async function ChallengeSection() {
                         src={product.images[0]}
                         alt={product.title}
                         fill
-                        sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 100vw"
+                        sizes="(min-width: 1280px) 292px, (min-width: 768px) 50vw, 100vw"
                         className="relative z-10 object-contain p-7 transition-transform duration-500 group-hover:scale-105 group-hover:-rotate-1"
                       />
                     ) : null}
@@ -270,7 +270,7 @@ function StorySection() {
               src="/products/energy-pack-gran-fondo-1.webp"
               alt="Ciclista Actimax alimentándose durante una ruta"
               fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
+              sizes="(min-width: 1440px) 640px, (min-width: 1024px) 50vw, 100vw"
               className="object-cover"
             />
           </div>
@@ -279,7 +279,7 @@ function StorySection() {
               src="/products/energy-pack-gran-fondo-0.webp"
               alt="Productos incluidos en el Energy Pack Gran Fondo"
               fill
-              sizes="(min-width: 1024px) 30vw, 60vw"
+              sizes="(min-width: 1440px) 379px, (min-width: 1024px) 30vw, 60vw"
               className="object-contain p-5"
             />
           </div>
@@ -393,7 +393,7 @@ async function RitualSection() {
                       src={product.images[0]}
                       alt={product.title}
                       fill
-                      sizes="(min-width: 1024px) 33vw, 100vw"
+                      sizes="(min-width: 1280px) 341px, (min-width: 1024px) 33vw, 100vw"
                       className="object-contain p-8 mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : null}

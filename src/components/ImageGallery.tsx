@@ -17,7 +17,7 @@ export function ImageGallery({ images, alt }: { images: string[]; alt: string })
             alt={alt}
             fill
             priority
-            sizes="(min-width: 1024px) 50vw, 100vw"
+            sizes="(min-width: 1280px) 580px, (min-width: 1024px) 50vw, 100vw"
             className="object-contain p-8 mix-blend-multiply"
           />
         ) : null}

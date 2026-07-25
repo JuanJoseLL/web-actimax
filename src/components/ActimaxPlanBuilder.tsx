@@ -706,7 +706,7 @@ export function ActimaxPlanBuilder({
                           src={recommendedPack.image}
                           alt={recommendedPack.title}
                           fill
-                          sizes="(min-width: 768px) 32vw, 100vw"
+                          sizes="(min-width: 1280px) 289px, (min-width: 768px) 32vw, 100vw"
                           className="relative z-10 object-contain p-7 mix-blend-multiply"
                         />
                       ) : null}

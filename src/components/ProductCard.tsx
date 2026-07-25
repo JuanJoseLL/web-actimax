@@ -19,7 +19,10 @@ export function ProductCard({ product }: { product: Product }) {
               src={product.images[0]}
               alt={product.title}
               fill
-              sizes="(min-width: 1024px) 25vw, 50vw"
+              /* El primer tramo es el ancho real de la tarjeta: la grilla se
+                 topa en max-w-7xl, así que arriba de 1280px "25vw" pide una
+                 imagen mucho más grande que el hueco donde se pinta. */
+              sizes="(min-width: 1280px) 292px, (min-width: 1024px) 25vw, 50vw"
               className="object-contain p-4 mix-blend-multiply transition-transform duration-300 group-hover:scale-[1.04] sm:p-6"
             />
           ) : null}

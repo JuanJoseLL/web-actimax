@@ -55,7 +55,7 @@ export function BlogListing({
                     alt={first.image.altText ?? first.title}
                     fill
                     priority
-                    sizes="(min-width: 768px) 38vw, 100vw"
+                    sizes="(min-width: 1280px) 517px, (min-width: 768px) 38vw, 100vw"
                     className="object-cover transition duration-700 group-hover:scale-[1.03]"
                   />
                 </div>
@@ -80,7 +80,7 @@ export function BlogListing({
                       src={post.image.url}
                       alt={post.image.altText ?? post.title}
                       fill
-                      sizes="(min-width: 768px) 20vw, 100vw"
+                      sizes="(min-width: 1280px) 251px, (min-width: 768px) 20vw, 100vw"
                       className="object-cover transition duration-500 group-hover:scale-[1.03]"
                     />
                   </div>
