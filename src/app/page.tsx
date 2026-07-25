@@ -5,6 +5,7 @@ import {
   ArrowRightIcon,
   CheckCircle2Icon,
   ChevronRightIcon,
+  PackageIcon,
   SparklesIcon,
   UsersRoundIcon,
 } from "lucide-react";
@@ -196,14 +197,25 @@ async function ChallengeSection() {
         <div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {CHALLENGES.map((challenge, index) => {
             const product = byHandle.get(challenge.handle);
-            if (product === undefined) return null;
+            /* Un handle renombrado en Shopify no puede borrar el reto: la
+               tarjeta sigue en pie con su distancia y lleva al catálogo. */
+            if (product === undefined) {
+              console.warn(`El reto "${challenge.handle}" no está en el catálogo.`);
+            }
 
             return (
               <article
                 key={challenge.handle}
                 className="challenge-card reveal group relative overflow-hidden bg-white"
               >
-                <Link href={`/productos/${challenge.handle}`} className="block h-full">
+                <Link
+                  href={
+                    product === undefined
+                      ? "/productos?tipo=kits"
+                      : `/productos/${challenge.handle}`
+                  }
+                  className="block h-full"
+                >
                   <div className="flex items-center justify-between border-b border-tinta/10 px-5 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-tinta/45">
                     <span>Reto {String(index + 1).padStart(2, "0")}</span>
                     <span className="text-azul">Energy Pack</span>
@@ -212,7 +224,7 @@ async function ChallengeSection() {
                     <span className="absolute -left-2 top-1 z-0 font-display text-[8rem] font-extrabold italic leading-none text-white sm:text-[9rem]">
                       {challenge.distance}
                     </span>
-                    {product.images[0] !== undefined ? (
+                    {product?.images[0] !== undefined ? (
                       <Image
                         src={product.images[0]}
                         alt={product.title}
@@ -221,7 +233,7 @@ async function ChallengeSection() {
                         className="relative z-10 object-contain p-7 transition-transform duration-500 group-hover:scale-105 group-hover:-rotate-1"
                       />
                     ) : null}
-                    {product.onSale ? (
+                    {product?.onSale === true ? (
                       <span className="absolute right-3 top-3 z-20 rounded-full bg-amarillo px-3 py-1 font-mono text-[9px] font-bold uppercase tracking-wider text-tinta">
                         Precio pack
                       </span>
@@ -236,17 +248,20 @@ async function ChallengeSection() {
                     </h3>
                     <div className="mt-5 flex items-end justify-between gap-4 border-t border-tinta/10 pt-4">
                       <div>
-                        {product.onSale ? (
+                        {product?.onSale === true ? (
                           <span className="block font-mono text-[10px] text-tinta/40 line-through">
                             {formatCOP(product.regularPrice)}
                           </span>
                         ) : null}
-                        <span className="font-mono text-lg font-bold tabular-nums">
-                          {formatCOP(product.price)}
-                        </span>
+                        {product !== undefined ? (
+                          <span className="font-mono text-lg font-bold tabular-nums">
+                            {formatCOP(product.price)}
+                          </span>
+                        ) : null}
                       </div>
                       <span className="flex items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-wider text-azul">
-                        Ver mi kit <ChevronRightIcon className="size-4" />
+                        {product === undefined ? "Ver Energy Packs" : "Ver mi kit"}
+                        <ChevronRightIcon className="size-4" />
                       </span>
                     </div>
                   </div>
@@ -387,7 +402,7 @@ async function RitualSection() {
                     {ritual.timing}
                   </span>
                 </div>
-                <div className="relative mt-8 aspect-[1.2] overflow-hidden rounded-full bg-niebla transition-colors duration-300 group-hover:bg-amarillo">
+                <div className="relative mt-8 grid aspect-[1.2] place-items-center overflow-hidden rounded-full bg-niebla transition-colors duration-300 group-hover:bg-amarillo">
                   {product?.images[0] !== undefined ? (
                     <Image
                       src={product.images[0]}
@@ -396,7 +411,11 @@ async function RitualSection() {
                       sizes="(min-width: 1280px) 341px, (min-width: 1024px) 33vw, 100vw"
                       className="object-contain p-8 mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
                     />
-                  ) : null}
+                  ) : (
+                    /* Sin producto el círculo quedaba vacío y la tarjeta se
+                       leía como rota, no como incompleta. */
+                    <PackageIcon aria-hidden className="size-10 text-tinta/25" />
+                  )}
                 </div>
                 <p className="mt-8 font-display text-5xl font-extrabold uppercase italic leading-none text-azul">
                   {ritual.moment}

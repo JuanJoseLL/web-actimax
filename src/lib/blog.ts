@@ -64,12 +64,18 @@ const ARTICLE_FIELDS = /* GraphQL */ `
 
 // El listado solo necesita texto para el resumen y el tiempo de lectura;
 // truncar evita descargar el cuerpo completo de todos los artículos.
+const READING_SAMPLE_CHARS = 12000;
+
 const ARTICLES_QUERY = /* GraphQL */ `
-  query BlogArticles {
-    articles(first: 250, sortKey: PUBLISHED_AT, reverse: true) {
+  query BlogArticles($after: String) {
+    articles(first: 250, after: $after, sortKey: PUBLISHED_AT, reverse: true) {
       nodes {
         ${ARTICLE_FIELDS}
-        content(truncateAt: 12000)
+        content(truncateAt: ${READING_SAMPLE_CHARS})
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
   }
@@ -86,12 +92,58 @@ const ARTICLE_QUERY = /* GraphQL */ `
   }
 `;
 
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]+>/g, " ");
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+  hellip: "…",
+  mdash: "—",
+  ndash: "–",
+  laquo: "«",
+  raquo: "»",
+  rsquo: "’",
+  lsquo: "‘",
+  rdquo: "”",
+  ldquo: "“",
+  deg: "°",
+};
+
+/** Un resumen es texto plano: las entidades tienen que llegar ya resueltas. */
+function decodeEntities(text: string): string {
+  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, code: string) => {
+    if (!code.startsWith("#")) {
+      return NAMED_ENTITIES[code.toLowerCase()] ?? match;
+    }
+    const isHex = code[1] === "x" || code[1] === "X";
+    const value = Number.parseInt(isHex ? code.slice(2) : code.slice(1), isHex ? 16 : 10);
+    /* Un código fuera de rango hace explotar fromCodePoint, y un resumen del
+       blog no es motivo para tumbar la página. */
+    if (!Number.isInteger(value) || value <= 0 || value > 0x10ffff) return match;
+    return String.fromCodePoint(value);
+  });
 }
 
+function stripHtml(html: string): string {
+  /* Lo que va dentro de <script> y <style> no es texto del artículo: sin
+     sacarlo, un artículo heredado con CSS embebido abre su resumen con
+     reglas de estilo. */
+  return decodeEntities(
+    html.replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " "),
+  );
+}
+
+/**
+ * El listado solo alcanza a ver los primeros caracteres de cada artículo,
+ * porque la consulta los trunca para no bajarse el blog entero. La página del
+ * artículo cuenta sobre esa misma ventana normalizada: si midiera el texto
+ * completo, un mismo artículo anunciaría dos tiempos de lectura distintos.
+ */
 function readingMinutes(content: string): number {
-  const words = content.trim().split(/\s+/).filter(Boolean).length;
+  const sample = content.replace(/\s+/g, " ").trim().slice(0, READING_SAMPLE_CHARS);
+  const words = sample.split(" ").filter(Boolean).length;
   return Math.max(1, Math.ceil(words / 220));
 }
 
@@ -202,9 +254,34 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
   cacheTag("blog");
   cacheLife(BLOG_CACHE_LIFE);
 
-  const data = await storefrontQuery<{ articles: { nodes: ShopifyArticleNode[] } }>(ARTICLES_QUERY);
-  const nodes = data?.articles.nodes;
-  if (nodes === undefined || nodes.length === 0) {
+  interface ArticlesPage {
+    articles: {
+      nodes: ShopifyArticleNode[];
+      pageInfo: { hasNextPage: boolean; endCursor: string | null };
+    };
+  }
+
+  const nodes: ShopifyArticleNode[] = [];
+  let after: string | undefined;
+  /* Shopify entrega 250 por página: sin recorrer el cursor, el artículo 251
+     desaparecía del listado sin que nadie se enterara. El tope de vueltas es
+     un seguro contra un cursor que se repita, no un límite pensado. */
+  for (let page = 0; page < 10; page += 1) {
+    const data = await storefrontQuery<ArticlesPage>(
+      ARTICLES_QUERY,
+      after === undefined ? undefined : { after },
+    );
+    /* Si falla una página posterior nos quedamos con lo que ya se leyó: medio
+       listado es mejor que ninguno, y el respaldo local solo entra si no
+       llegó nada. */
+    if (data === null) break;
+    nodes.push(...data.articles.nodes);
+    const { hasNextPage, endCursor } = data.articles.pageInfo;
+    if (!hasNextPage || endCursor === null) break;
+    after = endCursor;
+  }
+
+  if (nodes.length === 0) {
     cacheLife({ stale: 10, revalidate: 10, expire: 60 });
     return fallbackPosts;
   }
