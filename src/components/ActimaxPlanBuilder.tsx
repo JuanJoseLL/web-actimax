@@ -4,10 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   BikeIcon,
-  CheckCircle2Icon,
+  ChevronDownIcon,
   ClockIcon,
   CoffeeIcon,
   DropletsIcon,
+  FlagIcon,
   FootprintsIcon,
   PackageIcon,
   PrinterIcon,
@@ -41,6 +42,7 @@ import {
   type PlanClimate,
   type PlanInput,
   type PlanResult,
+  type PlanSegment,
   type PlanSport,
   type PlanStep,
 } from "@/lib/mi-plan";
@@ -112,6 +114,13 @@ function formatDuration(minutes: number): string {
   return remaining === 0 ? `${hours} h` : `${hours} h ${remaining} min`;
 }
 
+function formatRaceTime(minutes: number): string {
+  const hours = Math.floor(minutes / 60);
+  const remaining = minutes % 60;
+  if (hours === 0) return `${remaining} min`;
+  return remaining === 0 ? `${hours} h` : `${hours} h ${String(remaining).padStart(2, "0")}`;
+}
+
 function stepTime(step: PlanStep, durationMinutes: number): string {
   if (step.stage === "antes") return `${Math.abs(step.minute)} min antes`;
   if (step.stage === "despues") return `Meta +${step.minute - durationMinutes} min`;
@@ -138,64 +147,135 @@ function TargetCard({ icon, label, value, detail }: {
   );
 }
 
-function StageCard({ number, title, step, tone }: {
-  number: string;
-  title: string;
-  step: PlanStep;
-  tone: "blue" | "yellow" | "ink";
-}) {
-  const toneClass =
-    tone === "blue"
-      ? "bg-azul text-white"
-      : tone === "yellow"
-        ? "bg-amarillo text-tinta"
-        : "bg-tinta text-white";
-
-  return (
-    <article className="overflow-hidden border border-tinta/10 bg-white">
-      <div className={`${toneClass} flex items-center justify-between px-4 py-3`}>
-        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.16em]">{number}</span>
-        <CheckCircle2Icon className="size-4" />
-      </div>
-      <div className="p-4">
-        <p className="font-display text-2xl font-extrabold uppercase italic leading-none">{title}</p>
-        <p className="mt-3 text-sm font-semibold">{step.title}</p>
-        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{step.detail}</p>
-      </div>
-    </article>
-  );
-}
-
 function Timeline({ plan, durationMinutes }: { plan: PlanResult; durationMinutes: number }) {
+  const groups = plan.timeline.reduce<Array<{ id: string; steps: PlanStep[] }>>((result, step) => {
+    const id = `${step.stage}-${step.minute}`;
+    const previous = result.at(-1);
+    if (previous?.id === id) {
+      previous.steps.push(step);
+    } else {
+      result.push({ id, steps: [step] });
+    }
+    return result;
+  }, []);
+
   return (
     <ol className="relative ml-2 border-l border-tinta/15">
-      {plan.timeline.map((step) => (
-        <li key={step.id} className="relative pb-7 pl-7 last:pb-0">
+      {groups.map((group) => {
+        const first = group.steps[0];
+        const hasFuel = group.steps.some((step) => step.kind === "fuel");
+        const km = group.steps.find((step) => step.estimatedKm !== undefined)?.estimatedKm;
+        return (
+        <li key={group.id} className="relative pb-7 pl-7 last:pb-0">
           <span
             aria-hidden
             className={`absolute -left-[5px] top-1.5 size-2.5 rounded-full ring-4 ring-white ${
-              step.kind === "fuel"
+              hasFuel
                 ? "bg-amarillo"
-                : step.kind === "hydrate"
+                : first.kind === "hydrate"
                   ? "bg-azul-vivo"
                   : "bg-tinta"
             }`}
           />
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-azul">
-              {stepTime(step, durationMinutes)}
+              {stepTime(first, durationMinutes)}
             </span>
-            {step.estimatedKm !== undefined ? (
+            {km !== undefined ? (
               <Badge variant="outline" className="rounded-sm font-mono text-[9px]">
-                km {step.estimatedKm.toLocaleString("es-CO")}
+                km {km.toLocaleString("es-CO")}
               </Badge>
             ) : null}
           </div>
-          <p className="mt-1 font-semibold">{step.title}</p>
-          <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">{step.detail}</p>
+          <div className="mt-2 grid gap-3">
+            {group.steps.map((step) => (
+              <div key={step.id}>
+                <p className="font-semibold">{step.title}</p>
+                <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">{step.detail}</p>
+              </div>
+            ))}
+          </div>
         </li>
-      ))}
+        );
+      })}
     </ol>
+  );
+}
+
+function RoadbookSegment({
+  segment,
+  index,
+  durationMinutes,
+}: {
+  segment: PlanSegment;
+  index: number;
+  durationMinutes: number;
+}) {
+  const isFullHour = segment.endMinute - segment.startMinute === 60;
+  const label = isFullHour ? `Hora ${index + 1}` : `Tramo ${index + 1}`;
+  const rangeEnd = segment.endMinute === durationMinutes
+    ? "meta"
+    : formatRaceTime(segment.endMinute);
+  const kmRange =
+    segment.estimatedStartKm !== undefined && segment.estimatedEndKm !== undefined
+      ? `km ${segment.estimatedStartKm.toLocaleString("es-CO")}–${segment.estimatedEndKm.toLocaleString("es-CO")}`
+      : null;
+
+  return (
+    <article className="overflow-hidden border border-tinta/10 bg-white">
+      <div className="flex items-center justify-between gap-3 border-b border-tinta/10 bg-niebla/70 px-4 py-3">
+        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-azul">
+          {label}
+        </p>
+        <p className="font-mono text-[10px] uppercase tabular-nums text-tinta/45">
+          {formatRaceTime(segment.startMinute)}–{rangeEnd}
+          {kmRange !== null ? ` · ${kmRange}` : ""}
+        </p>
+      </div>
+      <div className="grid grid-cols-[5.5rem_1fr] divide-x divide-tinta/10">
+        <div className="p-4">
+          <DropletsIcon className="size-4 text-azul-vivo" />
+          <p className="mt-2 font-display text-2xl font-extrabold italic leading-none tabular-nums">
+            {segment.fluidMl}
+          </p>
+          <p className="mt-1 font-mono text-[9px] font-bold uppercase tracking-wider text-tinta/40">
+            ml líquidos
+          </p>
+        </div>
+        <div className="p-4">
+          {segment.fuelings.length > 0 ? (
+            <ul className="grid gap-2">
+              {segment.fuelings.map((fueling) => {
+                const hasCaffeine = fueling.title.includes("con cafeína");
+                const title = fueling.title
+                  .replace("Toma de ", "")
+                  .replace("Bebida deportiva", "Bebida Élite");
+                return (
+                  <li key={fueling.id} className="flex items-center gap-2.5">
+                    <span className={`grid size-7 shrink-0 place-items-center rounded-full ${hasCaffeine ? "bg-amarillo text-tinta" : "bg-azul/8 text-azul"}`}>
+                      {hasCaffeine ? <CoffeeIcon className="size-3.5" /> : <ZapIcon className="size-3.5" />}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block font-mono text-[9px] font-bold uppercase tracking-wider text-tinta/45">
+                        {formatRaceTime(fueling.minute)}
+                        {fueling.estimatedKm !== undefined ? ` · km ${fueling.estimatedKm.toLocaleString("es-CO")}` : ""}
+                      </span>
+                      <span className="block text-xs font-semibold capitalize">{title}</span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <div className="flex min-h-12 items-center">
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Sin toma adicional. Mantén los líquidos en pequeños sorbos.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </article>
   );
 }
 
@@ -530,35 +610,62 @@ export function ActimaxPlanBuilder({
                 </div>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3">
-                <StageCard number="01 · Salida" title="Antes" step={plan.before[0]} tone="blue" />
-                <StageCard
-                  number="02 · En ruta"
-                  title="Durante"
-                  step={{
-                    id: "during-summary",
-                    stage: "durante",
-                    minute: 0,
-                    title: `${plan.fuelings} momentos de combustible`,
-                    detail: `Apunta a ${plan.carbRangePerHour[0]}–${plan.carbRangePerHour[1]} g de carbohidratos y ${plan.fluidPerHourMl} ml de líquido por hora.`,
-                    kind: "fuel",
-                  }}
-                  tone="yellow"
-                />
-                <StageCard number="03 · Meta" title="Después" step={plan.after[0]} tone="ink" />
-              </div>
-
               <Card className="gap-0 py-0">
                 <CardHeader className="border-b border-border px-5 py-5 sm:px-6">
                   <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
                     03 · Cronograma
                   </p>
                   <CardTitle className="mt-2 font-display text-4xl font-extrabold uppercase italic leading-none">
-                    Qué hacer y cuándo
+                    Tu estrategia por tramos
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="px-5 py-6 sm:px-6">
-                  <Timeline plan={plan} durationMinutes={input.durationMinutes} />
+                <CardContent className="bg-[#f7f6f2] px-5 py-6 sm:px-6">
+                  <div className="bg-tinta px-4 py-4 text-white sm:flex sm:items-center sm:justify-between sm:gap-5">
+                    <div>
+                      <p className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-amarillo">
+                        Ritmo base
+                      </p>
+                      <p className="mt-1 text-xs text-white/55">Mantén esta pauta durante todo el recorrido.</p>
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 font-mono text-[10px] font-semibold uppercase tracking-wider sm:mt-0 sm:justify-end">
+                      <span className="flex items-center gap-1.5"><DropletsIcon className="size-3.5 text-amarillo" />{plan.fluidPerHourMl} ml/h en sorbos</span>
+                      <span className="flex items-center gap-1.5"><ZapIcon className="size-3.5 text-amarillo" />Combustible desde min 45</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 flex overflow-hidden border border-tinta/10 bg-white">
+                    <div className="grid w-16 shrink-0 place-items-center bg-azul text-white">
+                      <FlagIcon className="size-5" />
+                    </div>
+                    <div className="p-4">
+                      <p className="font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-azul">30 min antes · Salida</p>
+                      <p className="mt-1 text-sm font-semibold">{plan.before[0].title}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{plan.before[0].detail}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 grid gap-3 md:grid-cols-2">
+                    {plan.segments.map((segment, index) => (
+                      <RoadbookSegment
+                        key={segment.id}
+                        segment={segment}
+                        index={index}
+                        durationMinutes={input.durationMinutes}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="mt-3 flex overflow-hidden border border-tinta/10 bg-white">
+                    <div className="grid w-16 shrink-0 place-items-center bg-tinta text-amarillo">
+                      <FlagIcon className="size-5" />
+                    </div>
+                    <div className="p-4">
+                      <p className="font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-tinta/45">Meta +30 min · Recuperación</p>
+                      <p className="mt-1 text-sm font-semibold">{plan.after[0].title}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{plan.after[0].detail}</p>
+                    </div>
+                  </div>
+
                   {plan.warnings.length > 0 ? (
                     <aside className="mt-7 border-t border-tinta/10 pt-5">
                       <p className="font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-tinta/45">
@@ -576,6 +683,16 @@ export function ActimaxPlanBuilder({
                       </ul>
                     </aside>
                   ) : null}
+
+                  <details className="group mt-6 border-t border-tinta/10 pt-1">
+                    <summary className="flex list-none items-center justify-between gap-3 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-azul marker:content-none">
+                      Ver detalle minuto a minuto
+                      <ChevronDownIcon className="size-4 transition-transform group-open:rotate-180" />
+                    </summary>
+                    <div className="border-t border-tinta/10 bg-white px-3 py-6 sm:px-5">
+                      <Timeline plan={plan} durationMinutes={input.durationMinutes} />
+                    </div>
+                  </details>
                 </CardContent>
               </Card>
 

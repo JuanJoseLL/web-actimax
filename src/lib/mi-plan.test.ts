@@ -56,6 +56,31 @@ describe("createActimaxPlan", () => {
     expect(fuelMinutes.every((minute) => minute <= 230)).toBe(true);
   });
 
+  it("resume el recorrido en tramos horarios con combustible e hidratación", () => {
+    const result = plan({ durationMinutes: 360 });
+
+    expect(result.segments).toHaveLength(6);
+    expect(result.segments.map((segment) => segment.fluidMl)).toEqual([
+      500, 500, 500, 500, 500, 500,
+    ]);
+    expect(result.segments[0].fuelings.map((step) => step.minute)).toEqual([45]);
+    expect(result.segments[2].fuelings.map((step) => step.minute)).toEqual([125, 165]);
+    expect(result.segments.flatMap((segment) => segment.fuelings)).toHaveLength(result.fuelings);
+  });
+
+  it("ajusta el último tramo sin perder el total estimado de líquido", () => {
+    const result = plan({ durationMinutes: 130 });
+
+    expect(result.segments.map((segment) => [segment.startMinute, segment.endMinute])).toEqual([
+      [0, 60],
+      [60, 120],
+      [120, 130],
+    ]);
+    expect(result.segments.reduce((total, segment) => total + segment.fluidMl, 0)).toBe(
+      result.estimatedFluidMl,
+    );
+  });
+
   it("aumenta la hidratación orientativa con peso y calor", () => {
     const lightCool = plan({ weightKg: 55, climate: "fresco" });
     const heavyHot = plan({ weightKg: 90, climate: "calido" });

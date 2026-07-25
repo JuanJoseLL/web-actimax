@@ -24,6 +24,16 @@ export interface PlanStep {
   kind: "pre" | "hydrate" | "fuel" | "recovery";
 }
 
+export interface PlanSegment {
+  id: string;
+  startMinute: number;
+  endMinute: number;
+  fluidMl: number;
+  fuelings: PlanStep[];
+  estimatedStartKm?: number;
+  estimatedEndKm?: number;
+}
+
 export interface PlanResult {
   packHandle: string;
   carbRangePerHour: [number, number];
@@ -37,6 +47,7 @@ export interface PlanResult {
   during: PlanStep[];
   after: PlanStep[];
   timeline: PlanStep[];
+  segments: PlanSegment[];
   warnings: string[];
 }
 
@@ -256,6 +267,32 @@ export function createActimaxPlan(input: PlanInput): PlanResult {
 
   during.sort((a, b) => a.minute - b.minute || (a.kind === "hydrate" ? -1 : 1));
 
+  const segmentDuration = input.durationMinutes > 480 ? 120 : 60;
+  const segmentCount = Math.ceil(input.durationMinutes / segmentDuration);
+  let assignedFluidMl = 0;
+  const segments: PlanSegment[] = Array.from({ length: segmentCount }, (_, index) => {
+    const startMinute = index * segmentDuration;
+    const endMinute = Math.min((index + 1) * segmentDuration, input.durationMinutes);
+    const isLast = index === segmentCount - 1;
+    const fluidMl = isLast
+      ? Math.max(0, estimatedFluidMl - assignedFluidMl)
+      : roundTo(fluidPerHourMl * ((endMinute - startMinute) / 60), 25);
+    assignedFluidMl += fluidMl;
+
+    return {
+      id: `segment-${startMinute}-${endMinute}`,
+      startMinute,
+      endMinute,
+      fluidMl,
+      fuelings: during.filter(
+        (step) =>
+          step.kind === "fuel" && step.minute >= startMinute && step.minute < endMinute,
+      ),
+      estimatedStartKm: estimatedKm(input, startMinute),
+      estimatedEndKm: estimatedKm(input, endMinute),
+    };
+  });
+
   const after: PlanStep[] = [
     {
       id: "recovery-30",
@@ -314,6 +351,7 @@ export function createActimaxPlan(input: PlanInput): PlanResult {
     during,
     after,
     timeline: [...before, ...during, ...after],
+    segments,
     warnings,
   };
 }
