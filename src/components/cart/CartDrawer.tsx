@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FlagIcon, LoaderCircleIcon, TriangleAlertIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { useCart } from "@/components/cart/CartProvider";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -54,56 +53,22 @@ function EnvioGratisMeta({ subtotal }: { subtotal: number }) {
 }
 
 export function CartDrawer() {
-  const { items, subtotal, isOpen, close, setQty, remove } = useCart();
-  const [checkoutError, setCheckoutError] = useState<string | null>(null);
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const {
+    items,
+    subtotal,
+    isOpen,
+    close,
+    setQty,
+    remove,
+    checkout,
+    isCheckingOut,
+    checkoutError,
+    clearCheckoutError,
+  } = useCart();
 
   const handleClose = () => {
-    setCheckoutError(null);
+    clearCheckoutError();
     close();
-  };
-
-  const handleCheckout = async () => {
-    setCheckoutError(null);
-
-    if (items.some((item) => item.variantId === null)) {
-      setCheckoutError(
-        "Uno o más productos vienen del catálogo de respaldo. Recarga la página para volver a conectarte con Shopify.",
-      );
-      return;
-    }
-
-    setIsCheckingOut(true);
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lines: items.map((item) => ({
-            merchandiseId: item.variantId,
-            quantity: item.qty,
-          })),
-        }),
-      });
-      const result: unknown = await response.json();
-      const checkoutUrl =
-        typeof result === "object" && result !== null && "checkoutUrl" in result
-          ? (result as { checkoutUrl?: unknown }).checkoutUrl
-          : undefined;
-      if (!response.ok || typeof checkoutUrl !== "string") {
-        const message =
-          typeof result === "object" && result !== null && "error" in result
-            ? (result as { error?: unknown }).error
-            : undefined;
-        throw new Error(typeof message === "string" ? message : "No se pudo iniciar el pago.");
-      }
-      window.location.assign(checkoutUrl);
-    } catch (error) {
-      setCheckoutError(
-        error instanceof Error ? error.message : "No se pudo iniciar el pago. Inténtalo de nuevo.",
-      );
-      setIsCheckingOut(false);
-    }
   };
 
   return (
@@ -224,7 +189,7 @@ export function CartDrawer() {
                 variant="raceSun"
                 size="lg"
                 className="mt-2 w-full py-3.5"
-                onClick={handleCheckout}
+                onClick={() => void checkout()}
                 disabled={isCheckingOut}
               >
                 {isCheckingOut ? <LoaderCircleIcon className="animate-spin" /> : null}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CheckIcon, ShoppingBagIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useCart, type CartLine } from "@/components/cart/CartProvider";
@@ -16,11 +16,19 @@ interface Props {
 }
 
 export function AddToCartButton({ product, qty = 1, variant = "card", disabled = false }: Props) {
-  const { add, open } = useCart();
+  const { add, items, open } = useCart();
   const [added, setAdded] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  /* Salir de la grilla antes de que expire el "Listo" dejaba el timer vivo. */
+  useEffect(() => {
+    return () => {
+      if (timer.current !== null) clearTimeout(timer.current);
+    };
+  }, []);
+
   const handleClick = () => {
+    const total = (items.find((i) => i.handle === product.handle)?.qty ?? 0) + qty;
     add(product, qty);
     if (variant === "full") {
       open();
@@ -30,7 +38,11 @@ export function AddToCartButton({ product, qty = 1, variant = "card", disabled =
     if (timer.current !== null) clearTimeout(timer.current);
     timer.current = setTimeout(() => setAdded(false), 1400);
     toast.success(product.title, {
-      description: `${qty} × ${formatCOP(product.price)} · en tu carrito`,
+      /* Un toast por producto, compartido con la paleta: agregar de a uno
+         actualiza el aviso en vez de apilar cuatro iguales. Por eso muestra
+         el total de la línea y no lo que se acaba de sumar. */
+      id: `cart-${product.handle}`,
+      description: `${total} × ${formatCOP(product.price)} · en tu carrito`,
       action: { label: "Ver carrito", onClick: open },
     });
   };

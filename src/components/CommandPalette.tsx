@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   ArrowRightLeftIcon,
   CookieIcon,
+  CreditCardIcon,
   CupSodaIcon,
   MedalIcon,
   NewspaperIcon,
@@ -116,7 +117,14 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
   const [query, setQuery] = useState("");
   const [pending, setPending] = useState<PendingQty | null>(null);
   const router = useRouter();
-  const { add, items, open: openCart } = useCart();
+  const {
+    add,
+    items,
+    count,
+    subtotal,
+    open: openCart,
+    checkout,
+  } = useCart();
   const isMac = useIsMac();
   const mod = isMac ? "⌘" : "Ctrl";
 
@@ -175,8 +183,9 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
       add(product, quantity);
       setPending(null);
       toast.success(product.title, {
-        /* Un toast por producto: agregar de a uno no debe apilar avisos. */
-        id: `palette-${product.handle}`,
+        /* Un toast por producto, compartido con AddToCartButton: agregar de
+           a uno actualiza el aviso en vez de apilar cuatro iguales. */
+        id: `cart-${product.handle}`,
         description: `${total} × ${formatCOP(product.price)} · en tu carrito`,
         action: {
           label: "Ver carrito",
@@ -190,10 +199,27 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
     [add, items, openCart, setOpen],
   );
 
+  /** Cierra la paleta, muestra el carrito y arranca el pago desde ahí. */
+  const goToCheckout = useCallback(() => {
+    setOpen(false);
+    openCart();
+    void checkout();
+  }, [checkout, openCart, setOpen]);
+
   /** ⌘↵ agrega la cantidad preparada; ⌘↑ / ⌘↓ la suben y bajan. */
   const onCommandKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey) return;
+      if (!(e.metaKey || e.ctrlKey) || e.altKey) return;
+
+      if (e.shiftKey) {
+        /* ⌘⇧↵ paga. Con el carrito vacío no se secuestra la tecla: no hay
+           nada que cobrar y quien la apretó espera que no pase nada. */
+        if (e.key !== "Enter" || count === 0) return;
+        e.preventDefault();
+        goToCheckout();
+        return;
+      }
+
       if (e.key !== "Enter" && e.key !== "ArrowUp" && e.key !== "ArrowDown") {
         return;
       }
@@ -215,11 +241,23 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
           : { handle: product.handle, qty: Math.min(MAX_QTY, next) },
       );
     },
-    [addToCart, byHandle, qtyFor],
+    [addToCart, byHandle, count, goToCheckout, qtyFor],
   );
 
   const pendingProduct =
     pending !== null ? byHandle.get(pending.handle) : undefined;
+
+  /* Un "3" a secas se lee como "3 productos" y hace que el total parezca
+     equivocado. Con una sola línea se nombra el producto y su cantidad; con
+     varias se separan los productos de las unidades. */
+  const cartLabel = useMemo(() => {
+    const [first] = items;
+    if (items.length === 1 && first !== undefined) {
+      return first.qty === 1 ? first.title : `${first.title} ×${first.qty}`;
+    }
+    const productos = `${items.length} productos`;
+    return count === items.length ? productos : `${productos} · ${count} unidades`;
+  }, [count, items]);
 
   return (
     <CommandDialog
@@ -349,10 +387,39 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
                 <span>{label}</span>
               </CommandItem>
             ))}
-            <CommandItem value="Abrir carrito" onSelect={() => run(openCart)}>
+          </CommandGroup>
+
+          <CommandSeparator />
+
+          {/* forceMount: el carrito se busca escribiendo "carrito" o "pagar",
+              así que no puede desaparecer al filtrar. Puntúa 0, o sea que el
+              orden de cmdk la manda al fondo sola y nunca le roba la primera
+              selección. El acceso que siempre se ve es la fila de abajo. */}
+          <CommandGroup heading="Carrito" className={GROUP_STYLE} forceMount>
+            <CommandItem value="Ver carrito" onSelect={() => run(openCart)}>
               <ShoppingCartIcon className="text-muted-foreground" />
-              <span>Abrir carrito</span>
+              <span className="flex-1">Ver carrito</span>
+              {count > 0 ? (
+                <span className="font-mono text-xs tabular-nums text-muted-foreground">
+                  {formatCOP(subtotal)}
+                </span>
+              ) : (
+                <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Vacío
+                </span>
+              )}
             </CommandItem>
+            {count > 0 ? (
+              <CommandItem value="Finalizar compra" onSelect={goToCheckout}>
+                <CreditCardIcon className="text-muted-foreground" />
+                <span className="flex-1">Finalizar compra</span>
+                <span className="hidden items-center gap-1 sm:flex">
+                  <Kbd>{mod}</Kbd>
+                  <Kbd>⇧</Kbd>
+                  <Kbd>↵</Kbd>
+                </span>
+              </CommandItem>
+            ) : null}
           </CommandGroup>
         </CommandList>
       </Command>
@@ -374,7 +441,45 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
         </div>
       ) : null}
 
-      <div className="flex shrink-0 items-center justify-between border-t border-border px-3 py-2">
+      {/* El carrito vive fuera de la lista: ni el filtro ni el scroll lo pueden
+          esconder. Antes solo existía como un item al fondo de la lista y para
+          verlo había que bajar por todo el catálogo. */}
+      {count > 0 ? (
+        <div className="flex shrink-0 items-center gap-2 border-t border-border bg-muted/40 px-3 py-2">
+          <button
+            type="button"
+            onClick={() => run(openCart)}
+            aria-label={`Ver carrito: ${cartLabel}, total ${formatCOP(subtotal)}`}
+            className="-my-1 flex min-w-0 flex-1 items-center gap-2 rounded-sm px-1.5 py-1 text-left hover:bg-muted"
+          >
+            <ShoppingCartIcon aria-hidden className="size-4 shrink-0 text-azul" />
+            <span className="min-w-0 flex-1 truncate font-mono text-[11px] tabular-nums text-muted-foreground">
+              {cartLabel}
+            </span>
+            <span className="shrink-0 font-mono text-[11px] font-bold tabular-nums text-foreground">
+              {formatCOP(subtotal)}
+            </span>
+          </button>
+          {/* Las teclas van al lado y no adentro del botón: `raceSun` está
+              inclinado y arrastraría los Kbd con él. */}
+          <span className="hidden shrink-0 items-center gap-1 sm:flex">
+            <Kbd>{mod}</Kbd>
+            <Kbd>⇧</Kbd>
+            <Kbd>↵</Kbd>
+          </span>
+          <Button
+            type="button"
+            variant="raceSun"
+            size="sm"
+            onClick={goToCheckout}
+            className="-my-1 h-7 shrink-0 font-mono text-[11px]"
+          >
+            Pagar
+          </Button>
+        </div>
+      ) : null}
+
+      <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border px-3 py-2">
         <span className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
           <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-amarillo" />
           Torre de control

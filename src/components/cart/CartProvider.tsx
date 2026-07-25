@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   useSyncExternalStore,
@@ -27,12 +28,18 @@ interface CartContextValue {
   count: number;
   subtotal: number;
   isOpen: boolean;
+  /** Pago en curso: el carrito ya se pidió a Shopify y falta el redirect. */
+  isCheckingOut: boolean;
+  checkoutError: string | null;
   add: (line: CartLine, qty?: number) => void;
   setQty: (handle: string, qty: number) => void;
   remove: (handle: string) => void;
   clear: () => void;
   open: () => void;
   close: () => void;
+  /** Vive en el provider, no en el cajón: la paleta también lo dispara. */
+  checkout: () => Promise<void>;
+  clearCheckoutError: () => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -90,6 +97,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [serializedItems]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const updateItems = useCallback((recipe: (items: CartItem[]) => CartItem[]) => {
     try {
@@ -136,11 +145,99 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => setIsOpen(false), []);
 
+  const clearCheckoutError = useCallback(() => setCheckoutError(null), []);
+
+  /* Volver desde Shopify restaura la página del bfcache con el estado tal
+     cual quedó: sin esto el botón se queda congelado en "Abriendo pago". */
+  useEffect(() => {
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) setIsCheckingOut(false);
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, []);
+
+  const checkout = useCallback(async () => {
+    if (isCheckingOut) return;
+    setCheckoutError(null);
+
+    if (items.length === 0) {
+      setCheckoutError("Tu carrito está vacío.");
+      return;
+    }
+    if (items.some((item) => item.variantId === null)) {
+      setCheckoutError(
+        "Uno o más productos vienen del catálogo de respaldo. Recarga la página para volver a conectarte con Shopify.",
+      );
+      return;
+    }
+
+    setIsCheckingOut(true);
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lines: items.map((item) => ({
+            merchandiseId: item.variantId,
+            quantity: item.qty,
+          })),
+        }),
+      });
+      const result: unknown = await response.json();
+      const checkoutUrl =
+        typeof result === "object" && result !== null && "checkoutUrl" in result
+          ? (result as { checkoutUrl?: unknown }).checkoutUrl
+          : undefined;
+      if (!response.ok || typeof checkoutUrl !== "string") {
+        const message =
+          typeof result === "object" && result !== null && "error" in result
+            ? (result as { error?: unknown }).error
+            : undefined;
+        throw new Error(typeof message === "string" ? message : "No se pudo iniciar el pago.");
+      }
+      window.location.assign(checkoutUrl);
+    } catch (error) {
+      setCheckoutError(
+        error instanceof Error ? error.message : "No se pudo iniciar el pago. Inténtalo de nuevo.",
+      );
+      setIsCheckingOut(false);
+    }
+  }, [isCheckingOut, items]);
+
   const value = useMemo<CartContextValue>(() => {
     const count = items.reduce((acc, i) => acc + i.qty, 0);
     const subtotal = items.reduce((acc, i) => acc + i.price * i.qty, 0);
-    return { items, count, subtotal, isOpen, add, setQty, remove, clear, open, close };
-  }, [items, isOpen, add, setQty, remove, clear, open, close]);
+    return {
+      items,
+      count,
+      subtotal,
+      isOpen,
+      isCheckingOut,
+      checkoutError,
+      add,
+      setQty,
+      remove,
+      clear,
+      open,
+      close,
+      checkout,
+      clearCheckoutError,
+    };
+  }, [
+    items,
+    isOpen,
+    isCheckingOut,
+    checkoutError,
+    add,
+    setQty,
+    remove,
+    clear,
+    open,
+    close,
+    checkout,
+    clearCheckoutError,
+  ]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
