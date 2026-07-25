@@ -40,8 +40,8 @@ export default async function Home() {
 function Hero() {
   return (
     <section className="hero-evolved overflow-hidden text-white">
-      <div className="mx-auto grid min-h-[calc(100svh-67px)] max-w-[1440px] lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="relative z-10 flex flex-col justify-center px-4 py-14 sm:px-8 md:py-20 lg:px-14 xl:px-20">
+      <div className="mx-auto grid max-w-[1440px] lg:min-h-[calc(100svh-67px)] lg:grid-cols-[1.05fr_0.95fr]">
+        <div className="relative z-10 flex flex-col justify-center px-4 py-12 sm:px-8 md:py-20 lg:px-14 xl:px-20">
           <div className="fade-up flex items-center gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.22em] text-amarillo">
             <span className="h-px w-8 bg-amarillo" />
             El combustible de tu próxima historia
@@ -69,8 +69,8 @@ function Hero() {
             style={{ animationDelay: "0.24s" }}
           >
             <Button asChild variant="raceSun" size="lg" className="h-auto px-8 py-4 text-lg">
-              <Link href="#retos">
-                Elegir mi reto
+              <Link href="/productos">
+                Comprar productos
                 <ArrowRightIcon data-icon="inline-end" />
               </Link>
             </Button>
@@ -93,7 +93,7 @@ function Hero() {
                 <p className="font-display text-3xl font-extrabold italic text-white sm:text-4xl">
                   {value}
                 </p>
-                <p className="mt-0.5 font-mono text-[9px] uppercase leading-tight tracking-[0.12em] text-white/45 sm:text-[10px]">
+                <p className="mt-0.5 font-mono text-[10px] uppercase leading-tight tracking-[0.08em] text-white/65 sm:tracking-[0.12em]">
                   {label}
                 </p>
               </div>
@@ -101,7 +101,7 @@ function Hero() {
           </div>
         </div>
 
-        <div className="relative min-h-[560px] overflow-hidden border-t border-white/10 lg:min-h-full lg:border-l lg:border-t-0">
+        <div className="relative min-h-[400px] overflow-hidden border-t border-white/10 sm:min-h-[520px] lg:min-h-full lg:border-l lg:border-t-0">
           <Image
             src="/products/energy-pack-media-maraton-21k-1.jpg"
             alt="Atleta Actimax preparándose con un gel energético en la pista"
@@ -173,11 +173,11 @@ async function ChallengeSection() {
 
   return (
     <section id="retos" className="scroll-mt-24 bg-[#f4f2ec]">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-28 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
         <div className="reveal grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
             <p className="section-kicker">01 · Elige tu próxima meta</p>
-            <h2 className="mt-4 max-w-3xl font-display text-6xl font-extrabold uppercase italic leading-[0.84] tracking-tight sm:text-7xl lg:text-8xl">
+            <h2 className="mt-4 max-w-3xl font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl lg:text-8xl">
               ¿Qué historia vas a contar?
             </h2>
           </div>
@@ -264,7 +264,7 @@ function StorySection() {
   return (
     <section id="historia" className="scroll-mt-24 overflow-hidden bg-azul text-white">
       <div className="mx-auto grid max-w-[1440px] lg:grid-cols-2">
-        <div className="relative grid min-h-[620px] grid-cols-5 grid-rows-6 gap-3 p-4 sm:p-7 lg:min-h-[820px] lg:p-10">
+        <div className="relative grid min-h-[480px] grid-cols-5 grid-rows-6 gap-3 p-4 sm:min-h-[620px] sm:p-7 lg:min-h-[820px] lg:p-10">
           <div className="relative col-span-5 row-span-4 overflow-hidden">
             <Image
               src="/products/energy-pack-gran-fondo-1.webp"
@@ -283,17 +283,17 @@ function StorySection() {
               className="object-contain p-5"
             />
           </div>
-          <div className="col-span-2 row-span-2 flex flex-col justify-between bg-tinta p-5 sm:p-7">
+          <div className="col-span-2 row-span-2 flex flex-col justify-between bg-tinta p-3 sm:p-7">
             <SparklesIcon className="size-6 text-amarillo" />
-            <p className="font-display text-3xl font-extrabold uppercase italic leading-none sm:text-4xl">
+            <p className="font-display text-2xl font-extrabold uppercase italic leading-none sm:text-4xl">
               Hecho para nuestro terreno.
             </p>
           </div>
         </div>
 
-        <div className="flex flex-col justify-center px-4 py-20 sm:px-8 lg:px-16 xl:px-20">
+        <div className="flex flex-col justify-center px-4 py-16 sm:px-8 md:py-20 lg:px-16 xl:px-20">
           <p className="section-kicker section-kicker-dark">02 · Nuestra historia</p>
-          <h2 className="mt-5 max-w-xl font-display text-6xl font-extrabold uppercase italic leading-[0.84] tracking-tight sm:text-7xl lg:text-8xl">
+          <h2 className="mt-5 max-w-xl font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl lg:text-8xl">
             De una fórmula a miles de metas.
           </h2>
           <p className="mt-7 max-w-xl text-lg font-medium leading-relaxed text-white/70">
@@ -364,10 +364,10 @@ async function RitualSection() {
 
   return (
     <section id="metodo" className="scroll-mt-24 bg-white">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-28 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
         <div className="reveal max-w-4xl">
           <p className="section-kicker">03 · El método Actimax</p>
-          <h2 className="mt-4 font-display text-6xl font-extrabold uppercase italic leading-[0.84] tracking-tight sm:text-7xl lg:text-8xl">
+          <h2 className="mt-4 font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl lg:text-8xl">
             Todo atleta tiene un ritual.
           </h2>
           <p className="mt-6 max-w-2xl text-lg font-medium leading-relaxed text-tinta/65">
@@ -434,11 +434,11 @@ async function BestSellersSection() {
 
   return (
     <section className="bg-[#f4f2ec]">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-28 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
         <div className="reveal flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="section-kicker">04 · Los favoritos del club</p>
-            <h2 className="mt-4 font-display text-6xl font-extrabold uppercase italic leading-[0.84] tracking-tight sm:text-7xl">
+            <h2 className="mt-4 font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl">
               Los que siempre vuelven.
             </h2>
           </div>
@@ -464,13 +464,13 @@ async function BestSellersSection() {
 function ClubSection() {
   return (
     <section id="club" className="club-section scroll-mt-24 overflow-hidden text-white">
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-6 md:py-28 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 md:py-28 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:px-8">
         <div className="reveal">
           <div className="flex items-center gap-3 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-amarillo">
             <UsersRoundIcon className="size-5" />
             Actimax Club · La meta nos reúne
           </div>
-          <h2 className="mt-6 max-w-4xl font-display text-7xl font-extrabold uppercase italic leading-[0.8] tracking-tight sm:text-8xl lg:text-[7.6rem]">
+          <h2 className="mt-6 max-w-4xl font-display text-6xl font-extrabold uppercase italic leading-[0.82] tracking-tight sm:text-8xl lg:text-[7.6rem]">
             El club no se compra.
             <span className="block text-amarillo">Se entrena.</span>
           </h2>
@@ -531,11 +531,11 @@ function ClubSection() {
 function JournalSection({ posts }: { posts: Awaited<ReturnType<typeof getAllBlogPosts>> }) {
   return (
     <section id="historias" className="scroll-mt-24 bg-white">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-28 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
         <div className="reveal flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="section-kicker">05 · Historias y estrategia</p>
-            <h2 className="mt-4 font-display text-6xl font-extrabold uppercase italic leading-[0.84] tracking-tight sm:text-7xl">
+            <h2 className="mt-4 font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl">
               Lo que aprendemos en ruta.
             </h2>
           </div>

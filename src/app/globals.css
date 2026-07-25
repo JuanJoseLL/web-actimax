@@ -366,6 +366,7 @@ html {
   color: var(--color-azul);
   text-decoration: underline;
   text-underline-offset: 0.2em;
+  overflow-wrap: anywhere;
 }
 .prose-blog img {
   width: 100%;
@@ -407,8 +408,15 @@ html {
 }
 .prose-blog iframe {
   width: 100%;
+  min-width: 0;
   max-width: 100%;
   margin: 1.75rem 0;
+}
+.prose-blog .instagram-media,
+.prose-blog [data-exco-player] {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
 }
 .prose-blog .calculadora-geles {
   margin: 2rem 0;
@@ -456,11 +464,39 @@ html {
 }
 
 @media (max-width: 640px) {
-  .prose-blog .wp-block-table {
+  .prose-blog .wp-block-table,
+  .prose-blog .table-scroll {
+    max-width: 100%;
     overflow-x: auto;
+    overscroll-behavior-inline: contain;
   }
   .prose-blog table {
     min-width: 38rem;
+  }
+}
+
+/* Touch interfaces need larger hit areas than pointer-based layouts. */
+@media (pointer: coarse) {
+  [data-slot="button"] {
+    min-height: 2.75rem;
+  }
+  [data-slot="button"][data-size^="icon"] {
+    min-width: 2.75rem;
+  }
+  [data-slot="select-trigger"],
+  [data-slot="select-item"],
+  [data-slot="command-item"],
+  a[data-slot="badge"] {
+    min-height: 2.75rem;
+  }
+  [data-slot="command-input-wrapper"] {
+    padding-right: 3.5rem;
+  }
+  [data-slot="command-input-wrapper"] [data-slot="input-group"] {
+    min-height: 2.75rem;
+  }
+  [data-slot="command-input"] {
+    font-size: 1rem;
   }
 }
 

@@ -19,8 +19,8 @@ export function ProductCard({ product }: { product: Product }) {
               src={product.images[0]}
               alt={product.title}
               fill
-              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-              className="object-contain p-6 mix-blend-multiply transition-transform duration-300 group-hover:scale-[1.04]"
+              sizes="(min-width: 1024px) 25vw, 50vw"
+              className="object-contain p-4 mix-blend-multiply transition-transform duration-300 group-hover:scale-[1.04] sm:p-6"
             />
           ) : null}
           {product.onSale ? (
@@ -43,7 +43,7 @@ export function ProductCard({ product }: { product: Product }) {
             </h3>
           </Link>
         </CardContent>
-        <CardFooter className="mt-3 justify-between gap-2 bg-transparent px-3 py-3 sm:px-4">
+        <CardFooter className="mt-3 flex-col items-stretch gap-3 bg-transparent px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
           <div>
             {product.onSale ? (
               <p className="font-mono text-[11px] tabular-nums text-muted-foreground line-through">

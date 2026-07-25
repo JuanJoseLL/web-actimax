@@ -59,7 +59,7 @@ export function AddToCartButton({ product, qty = 1, variant = "card", disabled =
       aria-label="Agregar al carrito"
       variant={added ? "raceSun" : "race"}
       size="sm"
-      className={`font-mono text-xs ${
+      className={`w-full font-mono text-xs sm:w-auto ${
         disabled ? "bg-muted text-muted-foreground" : ""
       }`}
     >

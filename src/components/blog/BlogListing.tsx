@@ -27,7 +27,7 @@ export function BlogListing({
       <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-azul">
         {eyebrow}
       </p>
-      <h1 className="mt-2 font-display text-6xl font-extrabold uppercase italic leading-none sm:text-7xl">
+      <h1 className="mt-2 font-display text-5xl font-extrabold uppercase italic leading-none sm:text-7xl">
         {title}
       </h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-tinta/70">{description}</p>
@@ -36,7 +36,7 @@ export function BlogListing({
         <Card className="hero-course mt-12 overflow-hidden py-0 text-white transition-transform hover:-translate-y-0.5">
           <CardContent className="p-0">
             <Link href={first.path} className="group grid min-h-96 md:grid-cols-[1.15fr_0.85fr]">
-              <div className="flex flex-col justify-center p-8 sm:p-12">
+              <div className="flex flex-col justify-center p-6 sm:p-12">
                 <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
                   {first.category} · Más reciente
                 </span>

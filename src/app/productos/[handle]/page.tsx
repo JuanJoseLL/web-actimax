@@ -128,7 +128,7 @@ export default async function ProductPage({
                 <Badge
                   key={m}
                   asChild
-                  className="h-6 rounded-sm bg-accent/35 px-3 font-mono text-[11px] font-bold uppercase tracking-wider text-accent-foreground hover:bg-accent"
+                  className="h-10 rounded-sm bg-accent/35 px-3 font-mono text-[11px] font-bold uppercase tracking-wider text-accent-foreground hover:bg-accent sm:h-6"
                 >
                   <Link href={`/productos?momento=${m}`}>{MOMENTO_LABELS[m]} del esfuerzo</Link>
                 </Badge>
@@ -138,7 +138,7 @@ export default async function ProductPage({
                   key={d}
                   asChild
                   variant="secondary"
-                  className="h-6 rounded-sm px-3 font-mono text-[11px] font-bold uppercase tracking-wider hover:bg-primary hover:text-primary-foreground"
+                  className="h-10 rounded-sm px-3 font-mono text-[11px] font-bold uppercase tracking-wider hover:bg-primary hover:text-primary-foreground sm:h-6"
                 >
                   <Link href={`/productos?deporte=${d}`}>{DEPORTE_LABELS[d] ?? d}</Link>
                 </Badge>

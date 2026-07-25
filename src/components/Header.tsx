@@ -39,7 +39,7 @@ export function Header() {
         aria-hidden
         className="h-[3px] bg-[linear-gradient(90deg,#002f87_0%,#0a50d0_62%,#ffd23c_100%)]"
       />
-      <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-5 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-2 px-4 sm:gap-5 sm:px-6 lg:px-8">
         <Link href="/" className="shrink-0" aria-label="Actimax — inicio">
           <Image
             src="/actimax-logo.svg"
@@ -47,7 +47,7 @@ export function Header() {
             width={150}
             height={34}
             priority
-            className="h-8 w-auto"
+            className="h-7 w-auto sm:h-8"
           />
         </Link>
 
@@ -67,7 +67,7 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2 md:ml-0">
+        <div className="ml-auto flex items-center gap-0 sm:gap-2 md:ml-0">
           <Button
             type="button"
             variant="ghost"
@@ -129,7 +129,7 @@ export function Header() {
             </SheetTrigger>
             <SheetContent
               side="top"
-              className="gap-0 border-0 bg-foreground p-0 text-background md:hidden"
+              className="max-h-dvh gap-0 overflow-y-auto overscroll-contain border-0 bg-foreground p-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] text-background md:hidden"
             >
               <SheetHeader className="border-b border-background/15 px-6 py-5">
                 <SheetTitle className="font-display text-2xl font-bold uppercase italic tracking-wide text-background">

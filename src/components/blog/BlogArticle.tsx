@@ -7,6 +7,13 @@ import { formatPostDate, type BlogPost } from "@/lib/blog";
 import { LegacyArticleEnhancements } from "@/components/blog/LegacyArticleEnhancements";
 
 export function BlogArticle({ post, related }: { post: BlogPost; related: BlogPost[] }) {
+  const bodyHtml = post.bodyHtml.replace(
+    /<table\b[\s\S]*?<\/table>/gi,
+    (table, offset: number) => {
+      const tableIndex = [...post.bodyHtml.slice(0, offset).matchAll(/<table\b/gi)].length + 1;
+      return `<div class="table-scroll" role="region" aria-label="Tabla desplazable ${tableIndex}" tabindex="0">${table}</div>`;
+    },
+  );
   const structuredData = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -32,7 +39,7 @@ export function BlogArticle({ post, related }: { post: BlogPost; related: BlogPo
       <p className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-azul">
         {post.category}
       </p>
-      <h1 className="mt-3 font-display text-5xl font-extrabold uppercase italic leading-[0.95] sm:text-6xl">
+      <h1 className="mt-3 font-display text-4xl font-extrabold uppercase italic leading-[0.98] sm:text-6xl">
         {post.title}
       </h1>
       <p className="mt-4 font-mono text-[11px] text-tinta/50">
@@ -55,7 +62,7 @@ export function BlogArticle({ post, related }: { post: BlogPost; related: BlogPo
       <Separator className="mt-10" />
       <div
         className="prose-actimax prose-blog pt-8 text-[15px] text-foreground/85"
-        dangerouslySetInnerHTML={{ __html: post.bodyHtml }}
+        dangerouslySetInnerHTML={{ __html: bodyHtml }}
       />
       <LegacyArticleEnhancements />
 

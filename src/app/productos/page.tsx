@@ -134,7 +134,7 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
       <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-azul">
         Catálogo
       </p>
-      <h1 className="mt-2 font-display text-6xl font-extrabold uppercase italic leading-none sm:text-7xl">
+      <h1 className="mt-2 font-display text-5xl font-extrabold uppercase italic leading-none sm:text-7xl">
         {tipo !== undefined ? TYPE_LABELS[tipo] : "Productos"}
       </h1>
       <p className="mt-3 font-mono text-xs uppercase tracking-wider text-tinta/50">
@@ -145,7 +145,7 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
 
       <div className="mt-8 flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="w-20 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-tinta/40">
+          <span className="w-full font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-tinta/55 sm:w-20">
             Tipo
           </span>
           <Chip href={filterUrl(current, { tipo: undefined })} active={tipo === undefined}>
@@ -158,7 +158,7 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="w-20 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-tinta/40">
+          <span className="w-full font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-tinta/55 sm:w-20">
             Momento
           </span>
           <Chip href={filterUrl(current, { momento: undefined })} active={momento === undefined}>
@@ -171,7 +171,7 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="w-20 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-tinta/40">
+          <span className="w-full font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-tinta/55 sm:w-20">
             Deporte
           </span>
           <Chip href={filterUrl(current, { deporte: undefined })} active={deporte === undefined}>

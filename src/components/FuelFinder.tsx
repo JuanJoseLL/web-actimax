@@ -90,8 +90,11 @@ export function FuelFinder({ tone = "dark" }: { tone?: "dark" | "light" }) {
           Encuentra tu kit
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-lg">
-        <SheetHeader className="px-0 pt-0 pr-10">
+      <SheetContent
+        side="right"
+        className="h-dvh w-full overflow-y-auto overscroll-contain p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:max-w-lg sm:p-6"
+      >
+        <SheetHeader className="p-0 pr-10">
           <Badge className="w-fit rounded-sm bg-accent font-mono text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
             Recomendador Actimax
           </Badge>

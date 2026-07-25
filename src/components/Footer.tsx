@@ -53,12 +53,12 @@ export function Footer() {
             <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-white/40">
               {col.title}
             </p>
-            <ul className="mt-4 flex flex-col gap-2">
+            <ul className="mt-2 flex flex-col md:mt-4 md:gap-2">
               {col.links.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-white/75 transition-colors hover:text-amarillo"
+                    className="block py-3 text-sm text-white/75 transition-colors hover:text-amarillo md:py-0"
                   >
                     {link.label}
                   </Link>

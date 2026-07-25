@@ -25,7 +25,7 @@ function pageItems(current: number, total: number): Array<number | "gap"> {
 }
 
 const itemClass =
-  "flex h-10 min-w-10 items-center justify-center rounded-md border border-border px-2 font-mono text-sm tabular-nums transition-colors";
+  "flex h-11 min-w-11 items-center justify-center rounded-md border border-border px-2 font-mono text-sm tabular-nums transition-colors";
 
 export function BlogPagination({ page, totalPages }: { page: number; totalPages: number }) {
   if (totalPages <= 1) return null;

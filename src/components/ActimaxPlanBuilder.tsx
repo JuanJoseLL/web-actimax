@@ -182,7 +182,7 @@ function Timeline({ plan, durationMinutes }: { plan: PlanResult; durationMinutes
               {stepTime(first, durationMinutes)}
             </span>
             {km !== undefined ? (
-              <Badge variant="outline" className="rounded-sm font-mono text-[9px]">
+              <Badge variant="outline" className="rounded-sm font-mono text-[11px]">
                 km {km.toLocaleString("es-CO")}
               </Badge>
             ) : null}
@@ -223,22 +223,22 @@ function RoadbookSegment({
 
   return (
     <article className="overflow-hidden border border-tinta/10 bg-white">
-      <div className="flex items-center justify-between gap-3 border-b border-tinta/10 bg-niebla/70 px-4 py-3">
-        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-azul">
+      <div className="flex flex-col items-start gap-1 border-b border-tinta/10 bg-niebla/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+        <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-azul">
           {label}
         </p>
-        <p className="font-mono text-[10px] uppercase tabular-nums text-tinta/45">
+        <p className="font-mono text-[11px] uppercase tabular-nums text-tinta/65">
           {formatRaceTime(segment.startMinute)}–{rangeEnd}
           {kmRange !== null ? ` · ${kmRange}` : ""}
         </p>
       </div>
-      <div className="grid grid-cols-[5.5rem_1fr] divide-x divide-tinta/10">
+      <div className="grid grid-cols-[4.75rem_1fr] divide-x divide-tinta/10 sm:grid-cols-[5.5rem_1fr]">
         <div className="p-4">
           <DropletsIcon className="size-4 text-azul-vivo" />
           <p className="mt-2 font-display text-2xl font-extrabold italic leading-none tabular-nums">
             {segment.fluidMl}
           </p>
-          <p className="mt-1 font-mono text-[9px] font-bold uppercase tracking-wider text-tinta/40">
+          <p className="mt-1 font-mono text-[11px] font-bold uppercase tracking-wide text-tinta/60">
             ml líquidos
           </p>
         </div>
@@ -256,7 +256,7 @@ function RoadbookSegment({
                       {hasCaffeine ? <CoffeeIcon className="size-3.5" /> : <ZapIcon className="size-3.5" />}
                     </span>
                     <span className="min-w-0">
-                      <span className="block font-mono text-[9px] font-bold uppercase tracking-wider text-tinta/45">
+                      <span className="block font-mono text-[11px] font-bold uppercase tracking-wide text-tinta/65">
                         {formatRaceTime(fueling.minute)}
                         {fueling.estimatedKm !== undefined ? ` · km ${fueling.estimatedKm.toLocaleString("es-CO")}` : ""}
                       </span>
@@ -346,12 +346,12 @@ export function ActimaxPlanBuilder({
             <Badge className="rounded-sm bg-amarillo font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-tinta">
               Beta · Plan personalizado
             </Badge>
-            <h1 className="mt-5 max-w-4xl font-display text-6xl font-extrabold uppercase italic leading-[0.82] tracking-tight sm:text-8xl lg:text-9xl">
+            <h1 className="mt-5 max-w-4xl font-display text-5xl font-extrabold uppercase italic leading-[0.84] tracking-tight sm:text-8xl lg:text-9xl">
               Tu meta tiene
               <span className="block text-amarillo">un plan.</span>
             </h1>
           </div>
-          <div className="border-l border-white/20 pl-6">
+          <div className="border-l border-white/20 pl-4 sm:pl-6">
             <p className="text-lg font-medium leading-relaxed text-white/75">
               Define tu reto y construimos un punto de partida para saber qué consumir antes,
               durante y después, con un Energy Pack listo para probar en entrenamiento.
@@ -546,7 +546,7 @@ export function ActimaxPlanBuilder({
 
         <section ref={resultsRef} className="scroll-mt-24">
           {plan === null ? (
-            <div className="grid min-h-[440px] place-items-center border border-dashed border-tinta/20 bg-white/55 p-8 text-center">
+            <div className="grid min-h-80 place-items-center border border-dashed border-tinta/20 bg-white/55 p-6 text-center sm:min-h-[440px] sm:p-8">
               <div className="max-w-md">
                 <RouteIcon className="mx-auto size-10 text-azul" />
                 <h2 className="mt-4 font-display text-4xl font-extrabold uppercase italic leading-none">
@@ -619,15 +619,15 @@ export function ActimaxPlanBuilder({
                     Tu estrategia por tramos
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="bg-[#f7f6f2] px-5 py-6 sm:px-6">
+                <CardContent className="bg-[#f7f6f2] px-4 py-5 sm:px-6 sm:py-6">
                   <div className="bg-tinta px-4 py-4 text-white sm:flex sm:items-center sm:justify-between sm:gap-5">
                     <div>
-                      <p className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-amarillo">
+                      <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-amarillo">
                         Ritmo base
                       </p>
-                      <p className="mt-1 text-xs text-white/55">Mantén esta pauta durante todo el recorrido.</p>
+                      <p className="mt-1 text-xs text-white/70">Mantén esta pauta durante todo el recorrido.</p>
                     </div>
-                    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 font-mono text-[10px] font-semibold uppercase tracking-wider sm:mt-0 sm:justify-end">
+                    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 font-mono text-[11px] font-semibold uppercase tracking-wide sm:mt-0 sm:justify-end">
                       <span className="flex items-center gap-1.5"><DropletsIcon className="size-3.5 text-amarillo" />{plan.fluidPerHourMl} ml/h en sorbos</span>
                       <span className="flex items-center gap-1.5"><ZapIcon className="size-3.5 text-amarillo" />Combustible desde min 45</span>
                     </div>
@@ -638,7 +638,7 @@ export function ActimaxPlanBuilder({
                       <FlagIcon className="size-5" />
                     </div>
                     <div className="p-4">
-                      <p className="font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-azul">30 min antes · Salida</p>
+                      <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-azul">30 min antes · Salida</p>
                       <p className="mt-1 text-sm font-semibold">{plan.before[0].title}</p>
                       <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{plan.before[0].detail}</p>
                     </div>
@@ -660,7 +660,7 @@ export function ActimaxPlanBuilder({
                       <FlagIcon className="size-5" />
                     </div>
                     <div className="p-4">
-                      <p className="font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-tinta/45">Meta +30 min · Recuperación</p>
+                      <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-tinta/65">Meta +30 min · Recuperación</p>
                       <p className="mt-1 text-sm font-semibold">{plan.after[0].title}</p>
                       <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{plan.after[0].detail}</p>
                     </div>
@@ -668,13 +668,13 @@ export function ActimaxPlanBuilder({
 
                   {plan.warnings.length > 0 ? (
                     <aside className="mt-7 border-t border-tinta/10 pt-5">
-                      <p className="font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-tinta/45">
+                      <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-tinta/65">
                         Para afinar la estrategia
                       </p>
                       <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                         {plan.warnings.map((warning, index) => (
                           <li key={warning} className="flex gap-2.5 text-xs leading-relaxed text-muted-foreground">
-                            <span className="mt-0.5 font-mono text-[9px] font-bold text-azul/55">
+                            <span className="mt-0.5 font-mono text-[11px] font-bold text-azul/70">
                               {String(index + 1).padStart(2, "0")}
                             </span>
                             <span>{warning}</span>
@@ -685,7 +685,7 @@ export function ActimaxPlanBuilder({
                   ) : null}
 
                   <details className="group mt-6 border-t border-tinta/10 pt-1">
-                    <summary className="flex list-none items-center justify-between gap-3 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-azul marker:content-none">
+                    <summary className="flex min-h-11 list-none items-center justify-between gap-3 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-azul marker:content-none">
                       Ver detalle minuto a minuto
                       <ChevronDownIcon className="size-4 transition-transform group-open:rotate-180" />
                     </summary>

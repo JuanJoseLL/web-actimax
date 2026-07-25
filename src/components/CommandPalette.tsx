@@ -28,6 +28,7 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
+import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
 import { formatCOP } from "@/lib/format";
 import {
@@ -178,7 +179,8 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
       onOpenChange={setIsOpen}
       title="Torre de control"
       description="Busca productos o navega la tienda"
-      className="top-[18%] sm:top-1/4"
+      className="top-2 flex max-h-[calc(100dvh-1rem)] w-[calc(100%-1rem)] max-w-xl translate-y-0 flex-col sm:top-1/2 sm:w-full sm:max-w-xl sm:-translate-y-1/2"
+      showCloseButton
     >
       <div
         aria-hidden
@@ -187,6 +189,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
       {/* CommandDialog no incluye el root de cmdk: sin <Command> el input
           y la lista quedan sin contexto y la página se cae al abrir. */}
       <Command
+        className="h-auto! min-h-0 flex-1"
         filter={filter}
         onKeyDown={(e) => {
           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
@@ -208,7 +211,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
           onValueChange={setQuery}
           placeholder="Busca geles, kits, 21K… (3x gel = cantidad)"
         />
-        <CommandList className="max-h-80">
+        <CommandList className="min-h-0 max-h-none! flex-1">
           <CommandEmpty>
             <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
               Sin resultados en la ruta
@@ -252,18 +255,20 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
                 <span className="font-mono text-xs tabular-nums text-muted-foreground">
                   {formatCOP(product.price)}
                 </span>
-                <button
+                <Button
                   type="button"
+                  variant="outline"
+                  size="icon-xs"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     addToCart(product, qty);
                   }}
                   aria-label={`Agregar ${product.title} al carrito`}
-                  className="grid h-6 w-6 shrink-0 place-items-center rounded-sm border border-border text-muted-foreground transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
+                  className="size-11 shrink-0 rounded-sm text-muted-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground sm:size-6"
                 >
                   <PlusIcon className="size-3.5" />
-                </button>
+                </Button>
               </CommandItem>
             ))}
           </CommandGroup>
@@ -311,8 +316,11 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
           <span className="rounded-sm bg-amarillo px-1.5 font-mono text-[11px] font-bold tabular-nums text-tinta">
             ×{qty}
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-tinta/70">
+          <span className="hidden font-mono text-[10px] uppercase tracking-wider text-tinta/70 sm:inline">
             {isMac ? "⌘" : "Ctrl"}+↵ agrega {qty} unidades al carrito
+          </span>
+          <span className="font-mono text-[10px] uppercase tracking-wider text-tinta/70 sm:hidden">
+            Usa + para agregar {qty} unidades
           </span>
         </div>
       ) : null}
@@ -322,7 +330,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
           <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-amarillo" />
           Torre de control
         </span>
-        <span className="flex items-center gap-3 font-mono text-[10px] text-muted-foreground">
+        <span className="hidden items-center gap-3 font-mono text-[10px] text-muted-foreground sm:flex">
           <span className="flex items-center gap-1">
             <Kbd>↑</Kbd>
             <Kbd>↓</Kbd> moverte

@@ -113,7 +113,7 @@ export function CartDrawer() {
         if (!open) handleClose();
       }}
     >
-      <SheetContent side="right" className="w-full max-w-md gap-0 p-0 sm:max-w-md">
+      <SheetContent side="right" className="h-dvh w-full max-w-md gap-0 p-0 sm:max-w-md">
         <div
           aria-hidden
           className="h-[3px] shrink-0 bg-[linear-gradient(90deg,#002f87_0%,#0a50d0_62%,#ffd23c_100%)]"
@@ -151,30 +151,40 @@ export function CartDrawer() {
         ) : (
           <>
             <EnvioGratisMeta subtotal={subtotal} />
-            <ul className="flex-1 overflow-y-auto px-5">
+            <ul className="flex-1 overflow-y-auto overscroll-contain px-4 sm:px-5">
               {items.map((item) => (
-                <li key={item.handle} className="flex gap-4 border-b border-dashed border-border py-4">
+                <li
+                  key={item.handle}
+                  className="grid grid-cols-[4rem_minmax(0,1fr)] gap-3 border-b border-dashed border-border py-4"
+                >
                   <Link
                     href={`/productos/${item.handle}`}
                     onClick={handleClose}
-                    className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md bg-muted"
+                    className="relative size-16 shrink-0 overflow-hidden rounded-md bg-muted"
                   >
                     {item.image !== null ? (
                       <Image
                         src={item.image}
                         alt={item.title}
                         fill
-                        sizes="80px"
+                        sizes="64px"
                         className="object-contain p-1.5 mix-blend-multiply"
                       />
                     ) : null}
                   </Link>
-                  <div className="flex min-w-0 flex-1 flex-col">
-                    <p className="truncate text-sm font-semibold">{item.title}</p>
-                    <p className="mt-0.5 font-mono text-xs tabular-nums text-muted-foreground">
-                      {formatCOP(item.price)}
-                    </p>
-                    <div className="mt-auto flex items-center gap-2">
+                  <div className="min-w-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
+                        <p className="mt-1 font-mono text-xs tabular-nums text-muted-foreground">
+                          {formatCOP(item.price)} c/u
+                        </p>
+                      </div>
+                      <p className="shrink-0 font-mono text-sm font-semibold tabular-nums">
+                        {formatCOP(item.price * item.qty)}
+                      </p>
+                    </div>
+                    <div className="mt-3 flex items-center justify-between gap-2">
                       <QuantitySelector
                         value={item.qty}
                         onChange={(qty) => setQty(item.handle, qty)}
@@ -193,14 +203,11 @@ export function CartDrawer() {
                       </Button>
                     </div>
                   </div>
-                  <p className="font-mono text-sm font-semibold tabular-nums">
-                    {formatCOP(item.price * item.qty)}
-                  </p>
                 </li>
               ))}
             </ul>
 
-            <SheetFooter className="border-t border-border bg-background px-5 py-4">
+            <SheetFooter className="border-t border-border bg-background px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5">
               <div className="flex items-baseline justify-between">
                 <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
                   Subtotal
