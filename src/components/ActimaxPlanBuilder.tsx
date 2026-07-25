@@ -19,7 +19,7 @@ import {
   WavesIcon,
   ZapIcon,
 } from "lucide-react";
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -290,6 +290,30 @@ export function ActimaxPlanBuilder({
   const [plan, setPlan] = useState<PlanResult | null>(() => createActimaxPlan(initialInput));
   const [error, setError] = useState<string | null>(null);
   const resultsRef = useRef<HTMLElement>(null);
+  const detailRef = useRef<HTMLDetailsElement>(null);
+
+  /* Cmd+P no pasa por el botón "Imprimir": el detalle minuto a minuto vive en
+     un <details> y, cerrado, no llega al papel. Se abre justo para imprimir y
+     se devuelve como estaba, para no cambiar lo que hay en pantalla. */
+  useEffect(() => {
+    const detail = detailRef.current;
+    if (detail === null) return;
+
+    let wasOpen = detail.open;
+    const onBeforePrint = () => {
+      wasOpen = detail.open;
+      detail.open = true;
+    };
+    const onAfterPrint = () => {
+      detail.open = wasOpen;
+    };
+    window.addEventListener("beforeprint", onBeforePrint);
+    window.addEventListener("afterprint", onAfterPrint);
+    return () => {
+      window.removeEventListener("beforeprint", onBeforePrint);
+      window.removeEventListener("afterprint", onAfterPrint);
+    };
+  }, [plan]);
 
   function updateForm<K extends keyof PlanFormState>(key: K, value: PlanFormState[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -340,7 +364,7 @@ export function ActimaxPlanBuilder({
 
   return (
     <div className="bg-[#f4f2ec]">
-      <section className="hero-course overflow-hidden text-white">
+      <section className="hero-course overflow-hidden text-white print:hidden">
         <div className="mx-auto grid max-w-[1440px] gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-[1fr_0.72fr] lg:items-end lg:px-8">
           <div>
             <Badge className="rounded-sm bg-amarillo font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-tinta">
@@ -365,7 +389,7 @@ export function ActimaxPlanBuilder({
       </section>
 
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:py-16 lg:grid-cols-[0.78fr_1.22fr] lg:items-start lg:px-8">
-        <Card className="gap-0 py-0 lg:sticky lg:top-24">
+        <Card className="gap-0 py-0 print:hidden lg:sticky lg:top-24">
           <CardHeader className="border-b border-border bg-white px-5 py-5 sm:px-6">
             <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
               01 · Perfil del reto
@@ -544,7 +568,7 @@ export function ActimaxPlanBuilder({
           </CardContent>
         </Card>
 
-        <section ref={resultsRef} className="scroll-mt-24">
+        <section ref={resultsRef} className="print-plain scroll-mt-24">
           {plan === null ? (
             <div className="grid min-h-80 place-items-center border border-dashed border-tinta/20 bg-white/55 p-6 text-center sm:min-h-[440px] sm:p-8">
               <div className="max-w-md">
@@ -684,7 +708,7 @@ export function ActimaxPlanBuilder({
                     </aside>
                   ) : null}
 
-                  <details className="group mt-6 border-t border-tinta/10 pt-1">
+                  <details ref={detailRef} className="group mt-6 border-t border-tinta/10 pt-1">
                     <summary className="flex min-h-11 list-none items-center justify-between gap-3 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-azul marker:content-none">
                       Ver detalle minuto a minuto
                       <ChevronDownIcon className="size-4 transition-transform group-open:rotate-180" />

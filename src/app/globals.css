@@ -574,3 +574,28 @@ html {
     @apply font-sans;
   }
 }
+
+/* Impresión                                                                  */
+/* El roadbook del plan se lleva en el bolsillo el día de la carrera, así que  */
+/* la hoja solo debe traer la estrategia. Los navegadores no pintan fondos al  */
+/* imprimir: los bloques oscuros salían en blanco sobre blanco, o sea, vacíos. */
+@media print {
+  body > header,
+  body > footer {
+    display: none !important;
+  }
+
+  .print-plain,
+  .print-plain * {
+    background: #fff !important;
+    color: #000 !important;
+    border-color: #b9bec9 !important;
+    box-shadow: none !important;
+  }
+
+  /* Un tramo partido entre dos hojas no se puede leer en movimiento. */
+  .print-plain article,
+  .print-plain li {
+    break-inside: avoid;
+  }
+}
