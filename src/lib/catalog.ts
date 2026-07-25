@@ -177,7 +177,10 @@ export async function getAllProducts(): Promise<Product[]> {
 
   const fromShopify = await fetchShopifyProducts();
   if (fromShopify === null) {
-    // Respaldo local: que no quede cacheado mucho tiempo, reintenta pronto.
+    /* Respaldo local: que no quede cacheado mucho tiempo, reintenta pronto.
+       Next se queda con el mínimo de cada campo entre todas las llamadas a
+       cacheLife del mismo scope, así que esta segunda solo puede acortar la
+       ventana de arriba, nunca alargarla. */
     cacheLife({ stale: 10, revalidate: 10, expire: 60 });
     return localProducts();
   }

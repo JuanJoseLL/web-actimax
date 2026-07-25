@@ -10,22 +10,36 @@ const PACK_LINKS: Record<string, { href: string; label: string }> = {
   otro: { href: "/productos/?tipo=geles", label: "Explorar geles energéticos" },
 };
 
-function loadScript(id: string, src: string) {
-  if (document.getElementById(id) !== null) return;
+/** Devuelve true si el script ya estaba cargado de un artículo anterior. */
+function ensureScript(id: string, src: string): boolean {
+  if (document.getElementById(id) !== null) return true;
   const script = document.createElement("script");
   script.id = id;
   script.src = src;
   script.async = true;
   document.body.append(script);
+  return false;
+}
+
+interface InstagramEmbedApi {
+  Embeds?: { process?: () => void };
 }
 
 export function LegacyArticleEnhancements() {
   useEffect(() => {
     if (document.querySelector(".instagram-media") !== null) {
-      loadScript("actimax-instagram-embed", "https://www.instagram.com/embed.js");
+      const alreadyLoaded = ensureScript(
+        "actimax-instagram-embed",
+        "https://www.instagram.com/embed.js",
+      );
+      /* El script solo recorre el DOM al cargarse: si venimos de otro
+         artículo hay que pedirle que vuelva a mirar. */
+      if (alreadyLoaded) {
+        (window as { instgrm?: InstagramEmbedApi }).instgrm?.Embeds?.process?.();
+      }
     }
     if (document.querySelector(".exco") !== null) {
-      loadScript("actimax-exco-embed", "https://embed.ex.co/sdk.js");
+      ensureScript("actimax-exco-embed", "https://embed.ex.co/sdk.js");
     }
 
     const distance = document.querySelector<HTMLSelectElement>("#distancia-carrera");

@@ -6,14 +6,24 @@ import { Separator } from "@/components/ui/separator";
 import { formatPostDate, type BlogPost } from "@/lib/blog";
 import { LegacyArticleEnhancements } from "@/components/blog/LegacyArticleEnhancements";
 
+/**
+ * Las tablas heredadas de WordPress se desbordan en móvil: cada una va dentro
+ * de su propio contenedor con scroll y una etiqueta que la numera.
+ *
+ * El índice sale de un contador y no de recontar el prefijo en cada reemplazo:
+ * `replace` llama al reemplazante en orden, y recorrer el artículo entero por
+ * tabla convertía esto en O(tablas × largo del HTML).
+ */
+function wrapTablesForScroll(html: string): string {
+  let tableIndex = 0;
+  return html.replace(/<table\b[\s\S]*?<\/table>/gi, (table) => {
+    tableIndex += 1;
+    return `<div class="table-scroll" role="region" aria-label="Tabla desplazable ${tableIndex}" tabindex="0">${table}</div>`;
+  });
+}
+
 export function BlogArticle({ post, related }: { post: BlogPost; related: BlogPost[] }) {
-  const bodyHtml = post.bodyHtml.replace(
-    /<table\b[\s\S]*?<\/table>/gi,
-    (table, offset: number) => {
-      const tableIndex = [...post.bodyHtml.slice(0, offset).matchAll(/<table\b/gi)].length + 1;
-      return `<div class="table-scroll" role="region" aria-label="Tabla desplazable ${tableIndex}" tabindex="0">${table}</div>`;
-    },
-  );
+  const bodyHtml = wrapTablesForScroll(post.bodyHtml);
   const structuredData = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -64,7 +74,10 @@ export function BlogArticle({ post, related }: { post: BlogPost; related: BlogPo
         className="prose-actimax prose-blog pt-8 text-[15px] text-foreground/85"
         dangerouslySetInnerHTML={{ __html: bodyHtml }}
       />
-      <LegacyArticleEnhancements />
+      {/* key: al navegar de un artículo a otro el componente ocupa la misma
+          posición del árbol, así que React lo reusaría y su efecto no volvería
+          a correr sobre el HTML nuevo. */}
+      <LegacyArticleEnhancements key={post.slug} />
 
       <Card className="mt-12 bg-muted py-0 text-center">
         <CardContent className="p-8">

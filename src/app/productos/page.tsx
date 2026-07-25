@@ -123,14 +123,27 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
 
   const hasFilters = tipo !== undefined || momento !== undefined || deporte !== undefined;
 
+  /* La lista estructurada debe describir lo que se ve: con filtros activos
+     anunciar el catálogo entero le declara a los buscadores una página que
+     no existe. Sin resultados no se emite nada. */
+  const activeLabels = [
+    tipo !== undefined ? TYPE_LABELS[tipo] : null,
+    momento !== undefined ? MOMENTO_LABELS[momento] : null,
+    deporte !== undefined ? DEPORTE_LABELS[deporte] : null,
+  ].filter((label): label is string => label !== null);
+  const listName =
+    activeLabels.length === 0
+      ? "Catálogo Actimax de nutrición deportiva"
+      : `Actimax · ${activeLabels.join(" · ")}`;
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: jsonLd(itemListJsonLd("Catálogo Actimax de nutrición deportiva", products)),
-        }}
-      />
+      {filtered.length > 0 ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLd(itemListJsonLd(listName, filtered)) }}
+        />
+      ) : null}
       <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-azul">
         Catálogo
       </p>
