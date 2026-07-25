@@ -31,6 +31,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
 import { formatCOP } from "@/lib/format";
+import { scoreMatch } from "@/lib/palette-search";
 import {
   DEPORTE_LABELS,
   MOMENTO_LABELS,
@@ -52,7 +53,14 @@ export interface PaletteProduct {
   image: string | null;
 }
 
+/** Cantidad preparada con el teclado, anclada al producto que la recibió. */
+interface PendingQty {
+  handle: string;
+  qty: number;
+}
+
 const OPEN_EVENT = "actimax-palette-open";
+const MAX_QTY = 99;
 
 /** Abre la Torre de Control desde cualquier componente cliente. */
 export function openCommandPalette() {
@@ -60,23 +68,16 @@ export function openCommandPalette() {
 }
 
 /**
- * Prefijo de cantidad al estilo power user: "3x gel" busca "gel" con
- * cantidad 3. Exige la "x" para no confundirse con distancias ("21k").
+ * El item activo se lee del DOM y no del estado controlado de cmdk: cmdk
+ * reposiciona la selección en un layout effect al cambiar el filtro, así que
+ * el atributo siempre va un paso adelante de cualquier estado en React.
  */
-function parseQuery(query: string): { qty: number; term: string } {
-  const match = query.match(/^\s*(\d{1,3})\s*[x×]\s*(.*)$/i);
-  if (match !== null) {
-    return { qty: Math.max(1, Number(match[1])), term: match[2] };
-  }
-  return { qty: 1, term: query };
-}
-
-/** Sin tildes ni mayúsculas: "cafeina" debe encontrar "cafeína". */
-function normalize(text: string): string {
-  return text
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
+function selectedValue(root: HTMLElement): string | null {
+  return (
+    root
+      .querySelector('[cmdk-item][aria-selected="true"]')
+      ?.getAttribute("data-value") ?? null
+  );
 }
 
 const RUTAS = [
@@ -113,70 +114,117 @@ const GROUP_STYLE =
 export function CommandPalette({ products }: { products: PaletteProduct[] }) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [pending, setPending] = useState<PendingQty | null>(null);
   const router = useRouter();
-  const { add, open: openCart } = useCart();
+  const { add, items, open: openCart } = useCart();
   const isMac = useIsMac();
+  const mod = isMac ? "⌘" : "Ctrl";
 
-  const { qty } = parseQuery(query);
   const byHandle = useMemo(
     () => new Map(products.map((p) => [p.handle, p])),
     [products],
   );
 
+  /** La cantidad vive pegada a un producto: moverse por la lista no la arrastra. */
+  const qtyFor = useCallback(
+    (handle: string) => (pending?.handle === handle ? pending.qty : 1),
+    [pending],
+  );
+
+  /** Cada apertura arranca en limpio: sin la búsqueda ni la cantidad anteriores. */
+  const setOpen = useCallback((next: boolean) => {
+    if (next) {
+      setQuery("");
+      setPending(null);
+    }
+    setIsOpen(next);
+  }, []);
+
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setIsOpen((prev) => !prev);
-      }
+      if (!(e.metaKey || e.ctrlKey) || e.altKey) return;
+      /* e.key llega en mayúscula con Shift o Bloq Mayús: sin normalizar,
+         el atajo se pierde justo cuando el usuario lo teclea más rápido. */
+      if (e.key.toLowerCase() !== "k") return;
+      /* En captura: cmdk trae Ctrl+K como binding vim de "subir", y en Windows
+         eso movía la selección mientras el diálogo se cerraba. */
+      e.preventDefault();
+      setOpen(!isOpen);
     };
-    const onOpenEvent = () => setIsOpen(true);
-    window.addEventListener("keydown", onKeyDown);
+    const onOpenEvent = () => setOpen(true);
+    window.addEventListener("keydown", onKeyDown, true);
     window.addEventListener(OPEN_EVENT, onOpenEvent);
     return () => {
-      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keydown", onKeyDown, true);
       window.removeEventListener(OPEN_EVENT, onOpenEvent);
     };
-  }, []);
+  }, [isOpen, setOpen]);
 
-  const run = useCallback((action: () => void) => {
-    setIsOpen(false);
-    action();
-  }, []);
-
-  /* El término puede llevar prefijo de cantidad y venir con o sin tildes;
-     todas las palabras deben aparecer en el valor o las keywords. */
-  const filter = useCallback(
-    (value: string, search: string, keywords?: string[]) => {
-      const tokens = normalize(parseQuery(search).term).split(/\s+/).filter(Boolean);
-      if (tokens.length === 0) return 1;
-      const haystack = normalize([value, ...(keywords ?? [])].join(" "));
-      return tokens.every((t) => haystack.includes(t)) ? 1 : 0;
+  const run = useCallback(
+    (action: () => void) => {
+      setOpen(false);
+      action();
     },
-    [],
+    [setOpen],
   );
 
   const addToCart = useCallback(
     (product: PaletteProduct, quantity: number) => {
+      const total =
+        (items.find((i) => i.handle === product.handle)?.qty ?? 0) + quantity;
       add(product, quantity);
+      setPending(null);
       toast.success(product.title, {
-        description: `${quantity} × ${formatCOP(product.price)} · en tu carrito`,
+        /* Un toast por producto: agregar de a uno no debe apilar avisos. */
+        id: `palette-${product.handle}`,
+        description: `${total} × ${formatCOP(product.price)} · en tu carrito`,
         action: {
           label: "Ver carrito",
           onClick: () => {
-            setIsOpen(false);
+            setOpen(false);
             openCart();
           },
         },
       });
     },
-    [add, openCart],
+    [add, items, openCart, setOpen],
   );
+
+  /** ⌘↵ agrega la cantidad preparada; ⌘↑ / ⌘↓ la suben y bajan. */
+  const onCommandKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey) return;
+      if (e.key !== "Enter" && e.key !== "ArrowUp" && e.key !== "ArrowDown") {
+        return;
+      }
+      const value = selectedValue(e.currentTarget);
+      const product = value !== null ? byHandle.get(value) : undefined;
+      /* Sobre un momento o una ruta no hay nada que sumar: se deja pasar la
+         tecla para que cmdk siga haciendo lo suyo (ir al primero/último). */
+      if (product === undefined) return;
+      e.preventDefault();
+
+      if (e.key === "Enter") {
+        addToCart(product, qtyFor(product.handle));
+        return;
+      }
+      const next = qtyFor(product.handle) + (e.key === "ArrowUp" ? 1 : -1);
+      setPending(
+        next <= 1
+          ? null
+          : { handle: product.handle, qty: Math.min(MAX_QTY, next) },
+      );
+    },
+    [addToCart, byHandle, qtyFor],
+  );
+
+  const pendingProduct =
+    pending !== null ? byHandle.get(pending.handle) : undefined;
 
   return (
     <CommandDialog
       open={isOpen}
-      onOpenChange={setIsOpen}
+      onOpenChange={setOpen}
       title="Torre de control"
       description="Busca productos o navega la tienda"
       className="top-2 flex max-h-[calc(100dvh-1rem)] w-[calc(100%-1rem)] max-w-xl translate-y-0 flex-col sm:top-1/2 sm:w-full sm:max-w-xl sm:-translate-y-1/2"
@@ -190,26 +238,13 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
           y la lista quedan sin contexto y la página se cae al abrir. */}
       <Command
         className="h-auto! min-h-0 flex-1"
-        filter={filter}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-            /* Selección leída del DOM al momento de la tecla: el estado
-               controlado de cmdk queda obsoleto al cambiar el filtro. */
-            const handle = e.currentTarget
-              .querySelector('[cmdk-item][aria-selected="true"]')
-              ?.getAttribute("data-value");
-            const product = handle != null ? byHandle.get(handle) : undefined;
-            if (product !== undefined) {
-              e.preventDefault();
-              addToCart(product, qty);
-            }
-          }
-        }}
+        filter={scoreMatch}
+        onKeyDown={onCommandKeyDown}
       >
         <CommandInput
           value={query}
           onValueChange={setQuery}
-          placeholder="Busca geles, kits, 21K… (3x gel = cantidad)"
+          placeholder="Busca geles, kits, 21K…"
         />
         <CommandList className="min-h-0 max-h-none! flex-1">
           <CommandEmpty>
@@ -219,58 +254,69 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
           </CommandEmpty>
 
           <CommandGroup heading="Productos" className={GROUP_STYLE}>
-            {products.map((product) => (
-              <CommandItem
-                key={product.handle}
-                value={product.handle}
-                keywords={[
-                  product.title,
-                  typeLabel(product.type),
-                  ...product.momentos.map((m) => MOMENTO_LABELS[m]),
-                  ...product.deportes.map((d) => DEPORTE_LABELS[d] ?? d),
-                ]}
-                onSelect={() =>
-                  run(() => router.push(`/productos/${product.handle}`))
-                }
-              >
-                <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-sm bg-muted">
-                  {product.image !== null ? (
-                    <Image
-                      src={product.image}
-                      alt=""
-                      fill
-                      sizes="32px"
-                      className="object-contain p-0.5 mix-blend-multiply"
-                    />
-                  ) : null}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate font-medium">
-                    {product.title}
-                  </span>
-                  <span className="block font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                    {typeLabel(product.type)}
-                  </span>
-                </span>
-                <span className="font-mono text-xs tabular-nums text-muted-foreground">
-                  {formatCOP(product.price)}
-                </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon-xs"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    addToCart(product, qty);
-                  }}
-                  aria-label={`Agregar ${product.title} al carrito`}
-                  className="size-11 shrink-0 rounded-sm text-muted-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground sm:size-6"
+            {products.map((product) => {
+              const qty = qtyFor(product.handle);
+              return (
+                <CommandItem
+                  key={product.handle}
+                  value={product.handle}
+                  keywords={[
+                    product.title,
+                    typeLabel(product.type),
+                    ...product.momentos.map((m) => MOMENTO_LABELS[m]),
+                    ...product.deportes.map((d) => DEPORTE_LABELS[d] ?? d),
+                  ]}
+                  onSelect={() =>
+                    run(() => router.push(`/productos/${product.handle}`))
+                  }
                 >
-                  <PlusIcon className="size-3.5" />
-                </Button>
-              </CommandItem>
-            ))}
+                  <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-sm bg-muted">
+                    {product.image !== null ? (
+                      <Image
+                        src={product.image}
+                        alt=""
+                        fill
+                        sizes="32px"
+                        className="object-contain p-0.5 mix-blend-multiply"
+                      />
+                    ) : null}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-medium">
+                      {product.title}
+                    </span>
+                    <span className="block font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                      {typeLabel(product.type)}
+                    </span>
+                  </span>
+                  {qty > 1 ? (
+                    <span className="rounded-sm bg-amarillo px-1.5 font-mono text-[11px] font-bold tabular-nums text-tinta">
+                      ×{qty}
+                    </span>
+                  ) : null}
+                  <span className="font-mono text-xs tabular-nums text-muted-foreground">
+                    {formatCOP(product.price)}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon-xs"
+                    /* Fuera del tab: la lista se recorre con flechas, y con un
+                       botón por fila el Tab abandonaba el campo de búsqueda. */
+                    tabIndex={-1}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      addToCart(product, qty);
+                    }}
+                    aria-label={`Agregar ${qty} × ${product.title} al carrito`}
+                    className="size-11 shrink-0 rounded-sm text-muted-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground sm:size-6"
+                  >
+                    <PlusIcon className="size-3.5" />
+                  </Button>
+                </CommandItem>
+              );
+            })}
           </CommandGroup>
 
           <CommandSeparator />
@@ -311,27 +357,30 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
         </CommandList>
       </Command>
 
-      {qty > 1 ? (
-        <div className="flex items-center gap-2 border-t border-border bg-amarillo/15 px-3 py-1.5">
+      {pending !== null && pendingProduct !== undefined ? (
+        <div
+          aria-live="polite"
+          className="flex shrink-0 items-center gap-2 border-t border-border bg-amarillo/15 px-3 py-1.5"
+        >
           <span className="rounded-sm bg-amarillo px-1.5 font-mono text-[11px] font-bold tabular-nums text-tinta">
-            ×{qty}
+            ×{pending.qty}
           </span>
-          <span className="hidden font-mono text-[10px] uppercase tracking-wider text-tinta/70 sm:inline">
-            {isMac ? "⌘" : "Ctrl"}+↵ agrega {qty} unidades al carrito
+          <span className="min-w-0 flex-1 truncate font-mono text-[10px] uppercase tracking-wider text-tinta/70">
+            {pendingProduct.title}
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-tinta/70 sm:hidden">
-            Usa + para agregar {qty} unidades
+          <span className="shrink-0 font-mono text-[10px] uppercase tracking-wider text-tinta/70">
+            {mod}+↵ agrega {pending.qty}
           </span>
         </div>
       ) : null}
 
-      <div className="flex items-center justify-between border-t border-border px-3 py-2">
+      <div className="flex shrink-0 items-center justify-between border-t border-border px-3 py-2">
         <span className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
           <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-amarillo" />
           Torre de control
         </span>
         <span className="hidden items-center gap-3 font-mono text-[10px] text-muted-foreground sm:flex">
-          <span className="flex items-center gap-1">
+          <span className="hidden items-center gap-1 md:flex">
             <Kbd>↑</Kbd>
             <Kbd>↓</Kbd> moverte
           </span>
@@ -339,7 +388,11 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
             <Kbd>↵</Kbd> ir
           </span>
           <span className="flex items-center gap-1">
-            <Kbd>{isMac ? "⌘" : "Ctrl"}</Kbd>
+            <Kbd>{mod}</Kbd>
+            <Kbd>↑</Kbd> cantidad
+          </span>
+          <span className="flex items-center gap-1">
+            <Kbd>{mod}</Kbd>
             <Kbd>↵</Kbd> al carrito
           </span>
         </span>
