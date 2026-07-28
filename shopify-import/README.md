@@ -48,9 +48,9 @@ pnpm blog:import
 ```
 
 El importador es reanudable e idempotente. Crea o actualiza articulos por
-`handle`, copia las imagenes externas y las imagenes base64 a Shopify Files,
-conserva las fechas historicas y guarda el progreso en
-`blog-migration-state.json`.
+`handle`, copia las imagenes externas, las imagenes base64 y las imagenes
+heredadas del catalogo local a Shopify Files, conserva las fechas historicas y
+guarda el progreso en `blog-migration-state.json`.
 
 ## 4. Verificar
 
@@ -60,8 +60,8 @@ pnpm build
 ```
 
 La verificacion compara WordPress con Storefront API y falla si falta un
-articulo, cambia un titulo, falta una imagen destacada o queda una imagen
-enlazada a WordPress.
+articulo, cambia un titulo, falta una imagen destacada o cualquier imagen del
+blog o cualquier imagen externa del catalogo no esta alojada en Shopify CDN.
 
 ## Corte de dominio
 

@@ -15,8 +15,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       // Fotos de producto servidas por Shopify
       { protocol: "https", hostname: "cdn.shopify.com" },
-      // Respaldo temporal mientras los artículos se copian a Shopify.
-      { protocol: "https", hostname: "actimax.com.co" },
     ],
   },
   async redirects() {

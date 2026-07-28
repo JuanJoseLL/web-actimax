@@ -26,17 +26,8 @@ interface ShopifyArticleNode {
 
 interface BlogPathData {
   posts: Array<{
-    wordpressId: number;
-    wordpressSlug: string;
     slug: string;
     sourcePath: string;
-    title: string;
-    excerpt: string;
-    publishedAt: string;
-    categories: string[];
-    featuredImage: { source: string; alt: string } | null;
-    seoTitle: string;
-    seoDescription: string;
   }>;
   categories: BlogCategory[];
 }
@@ -173,52 +164,6 @@ function mapArticle(node: ShopifyArticleNode): BlogPost {
   };
 }
 
-async function fetchWordPressFallback(slug: string): Promise<BlogPost | undefined> {
-  const source = pathData.posts.find((post) => post.slug === slug);
-  if (source === undefined) return undefined;
-
-  try {
-    const fields = "id,content";
-    const response = await fetch(
-      `https://actimax.com.co/wp-json/wp/v2/posts?slug=${encodeURIComponent(source.wordpressSlug)}&_fields=${fields}`,
-    );
-    if (!response.ok) return undefined;
-    const posts = (await response.json()) as Array<{
-      id: number;
-      content: { rendered: string };
-    }>;
-    const post = posts[0];
-    if (post === undefined) return undefined;
-
-    return {
-      id: `wordpress-${post.id}`,
-      slug: source.slug,
-      path: source.sourcePath,
-      title: source.title,
-      category: source.categories[0] ?? "Nutrición deportiva",
-      tags: source.categories,
-      excerpt: source.excerpt,
-      date: source.publishedAt,
-      minutes: readingMinutes(stripHtml(post.content.rendered)),
-      author: "Actimax",
-      image:
-        source.featuredImage === null
-          ? null
-          : {
-              url: source.featuredImage.source,
-              altText: source.featuredImage.alt,
-              width: null,
-              height: null,
-            },
-      seoTitle: source.seoTitle,
-      seoDescription: source.seoDescription,
-      bodyHtml: post.content.rendered,
-    };
-  } catch {
-    return undefined;
-  }
-}
-
 async function storefrontQuery<T>(query: string, variables?: Record<string, string>): Promise<T | null> {
   if (STORE_DOMAIN === undefined || STOREFRONT_TOKEN === undefined) return null;
 
@@ -300,7 +245,7 @@ export async function getBlogPost(slug: string): Promise<BlogPost | undefined> {
   if (article !== undefined && article !== null) return mapArticle(article);
 
   cacheLife({ stale: 10, revalidate: 10, expire: 60 });
-  return fallbackPosts.find((post) => post.slug === slug) ?? fetchWordPressFallback(slug);
+  return fallbackPosts.find((post) => post.slug === slug);
 }
 
 export async function getBlogPostsPage(page: number): Promise<{

@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const IMPORT_DIR = path.join(ROOT, "shopify-import");
 const BLOG_PATHS_FILE = path.join(ROOT, "src/data/blog-paths.json");
+const CATALOG_FILE = path.join(ROOT, "src/data/catalog.json");
 const IMAGE_REDIRECTS_FILE = path.join(ROOT, "src/data/legacy-image-redirects.json");
 const MANIFEST_FILE = path.join(IMPORT_DIR, "blog-migration-manifest.json");
 const STATE_FILE = path.join(IMPORT_DIR, "blog-migration-state.json");
@@ -25,6 +26,12 @@ const command = process.argv[2] ?? "prepare";
 
 const WP_IMAGE_PATTERN = /https:\/\/actimax\.com\.co\/wp-content\/uploads\/[^\s"'<>),]+/gi;
 const DATA_IMAGE_PATTERN = /data:image\/(?:png|jpe?g|webp|gif);base64,[a-z0-9+/=]+/gi;
+const LEGACY_IMAGE_REPLACEMENTS = new Map([
+  [
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Eddy_Merckx%2C_TDF_1970.jpg/571px-Eddy_Merckx%2C_TDF_1970.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/f/f2/Eddy_Merckx_en_1970.jpg",
+  ],
+]);
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -117,10 +124,18 @@ function cleanExcerpt(html, title) {
 function cleanBodyHtml(html, title) {
   let body = html
     .replace(/https?:\/\/web\.actimax\.xyz\/wp-content\/uploads\//gi, `${WP_BASE_URL}/wp-content/uploads/`)
+    .replace(/(?:https?:)?\/\/actimax\.com\.co\/wp-content\/uploads\//gi, `${WP_BASE_URL}/wp-content/uploads/`)
+    .replace(/(["'])\/wp-content\/uploads\//gi, `$1${WP_BASE_URL}/wp-content/uploads/`)
     .replace(/<div\b[^>]*class=["'][^"']*kk-star-ratings[^"']*["'][^>]*>[\s\S]*$/i, "")
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "")
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace(/<img\b[^>]*class=["'][^"']*\bemoji\b[^"']*["'][^>]*>/gi, (tag) => parseAttributes(tag).alt ?? "")
+    .replace(/<img\b[^>]*\bsrc=(?:"(?!https?:\/\/|data:image\/)[^"]*"|'(?!https?:\/\/|data:image\/)[^']*')[^>]*>/gi, "")
     .replace(/\s(?:srcset|sizes)=(?:"[^"]*"|'[^']*')/gi, "");
+
+  for (const [source, destination] of LEGACY_IMAGE_REPLACEMENTS) {
+    body = body.replaceAll(source, destination);
+  }
 
   if (/<!doctype\s+html/i.test(body)) {
     const nestedArticle = body.match(/<article\b[^>]*>[\s\S]*<\/article>/i);
@@ -190,6 +205,18 @@ function chunks(items, size) {
   const batches = [];
   for (let index = 0; index < items.length; index += size) batches.push(items.slice(index, index + size));
   return batches;
+}
+
+function isWordPressImage(source) {
+  return typeof source === "string" && /^https:\/\/actimax\.com\.co\/wp-content\/uploads\//i.test(source);
+}
+
+function isShopifyImage(source) {
+  try {
+    return new URL(source).hostname === "cdn.shopify.com";
+  } catch {
+    return false;
+  }
 }
 
 async function fetchWordPressPosts() {
@@ -317,6 +344,10 @@ function inspectSource(source) {
 
   for (const post of source.posts) {
     for (const url of post.bodyHtml.match(WP_IMAGE_PATTERN) ?? []) externalImages.add(url);
+    for (const tag of post.bodyHtml.match(/<img\b[^>]*>/gi) ?? []) {
+      const source = parseAttributes(tag).src;
+      if (/^https?:\/\//i.test(source) && !isShopifyImage(source)) externalImages.add(source);
+    }
     if (post.featuredImage !== null) externalImages.add(post.featuredImage.source);
 
     const postDataImages = post.bodyHtml.match(DATA_IMAGE_PATTERN) ?? [];
@@ -357,17 +388,8 @@ async function writePreparationFiles(source, inspection) {
   await mkdir(IMPORT_DIR, { recursive: true });
   const paths = {
     posts: source.posts.map((post) => ({
-      wordpressId: post.wordpressId,
-      wordpressSlug: post.wordpressSlug,
       slug: post.slug,
       sourcePath: post.sourcePath,
-      title: post.title,
-      excerpt: post.excerpt,
-      publishedAt: post.publishedAt,
-      categories: post.categories,
-      featuredImage: post.featuredImage,
-      seoTitle: post.seo.title,
-      seoDescription: post.seo.description,
     })),
     categories: source.categories,
   };
@@ -678,7 +700,14 @@ async function uploadDataImages(dataImages, state) {
 
 function rewriteBodyImages(bodyHtml, state) {
   let body = bodyHtml;
-  const externalInBody = new Set(body.match(WP_IMAGE_PATTERN) ?? []);
+  const externalInBody = new Set(
+    [
+      ...(body.match(WP_IMAGE_PATTERN) ?? []),
+      ...(body.match(/<img\b[^>]*>/gi) ?? [])
+        .map((tag) => parseAttributes(tag).src)
+        .filter((source) => /^https?:\/\//i.test(source) && !isShopifyImage(source)),
+    ],
+  );
   for (const source of externalInBody) {
     const destination = state.images[source]?.url;
     if (!destination) throw new Error(`Missing migrated image for ${source}`);
@@ -690,8 +719,11 @@ function rewriteBodyImages(bodyHtml, state) {
     if (!destination) throw new Error(`Missing migrated embedded image ${key}`);
     body = body.replaceAll(dataUri, destination);
   }
-  if ((body.match(WP_IMAGE_PATTERN) ?? []).length > 0 || (body.match(DATA_IMAGE_PATTERN) ?? []).length > 0) {
-    throw new Error("Body still contains a WordPress or embedded image after rewriting.");
+  const remainingExternalImages = (body.match(/<img\b[^>]*>/gi) ?? [])
+    .map((tag) => parseAttributes(tag).src)
+    .filter((source) => !isShopifyImage(source));
+  if (remainingExternalImages.length > 0 || (body.match(DATA_IMAGE_PATTERN) ?? []).length > 0) {
+    throw new Error("Body still contains a non-Shopify or embedded image after rewriting.");
   }
   return body;
 }
@@ -784,9 +816,32 @@ async function upsertArticles(source, blog, state) {
   }
 }
 
-async function writeLegacyImageRedirects(inspection, state) {
+async function readCatalogImages() {
+  const catalog = JSON.parse(await readFile(CATALOG_FILE, "utf8"));
+  const sources = [
+    ...new Set(catalog.flatMap((product) => product.images ?? []).filter(isWordPressImage)),
+  ];
+  return { catalog, sources };
+}
+
+async function rewriteCatalogImages(catalog, state) {
+  let rewritten = 0;
+  for (const product of catalog) {
+    product.images = (product.images ?? []).map((source) => {
+      if (!isWordPressImage(source)) return source;
+      const destination = state.images[source]?.url;
+      if (!destination) throw new Error(`Missing migrated catalog image for ${source}`);
+      rewritten += 1;
+      return destination;
+    });
+  }
+  await writeFile(CATALOG_FILE, `${JSON.stringify(catalog, null, 2)}\n`);
+  return rewritten;
+}
+
+async function writeLegacyImageRedirects(state) {
   const redirects = {};
-  for (const source of inspection.externalImages) {
+  for (const source of Object.keys(state.images).filter(isWordPressImage)) {
     const destination = state.images[source]?.url;
     if (destination) redirects[new URL(source).pathname] = destination;
   }
@@ -802,14 +857,19 @@ async function importToShopify() {
   }
   await getAdminToken();
   const { source, inspection } = await prepare();
+  const { catalog, sources: catalogImages } = await readCatalogImages();
+  const externalImages = [...new Set([...inspection.externalImages, ...catalogImages])];
   const state = await readState();
   const blog = await findOrCreateBlog();
   console.log(`Shopify blog: ${blog.title} (${blog.handle})`);
-  await uploadExternalImages(inspection.externalImages, state);
+  await uploadExternalImages(externalImages, state);
   await uploadDataImages(inspection.dataImages, state);
   await upsertArticles(source, blog, state);
-  await writeLegacyImageRedirects(inspection, state);
-  console.log(`Import complete: ${source.posts.length} articles and ${inspection.externalImages.length + inspection.dataImages.size} images.`);
+  const rewrittenCatalogImages = await rewriteCatalogImages(catalog, state);
+  await writeLegacyImageRedirects(state);
+  console.log(
+    `Import complete: ${source.posts.length} articles, ${externalImages.length + inspection.dataImages.size} images, and ${rewrittenCatalogImages} catalog URLs rewritten.`,
+  );
 }
 
 async function storefrontGraphql(query) {
@@ -831,6 +891,7 @@ async function storefrontGraphql(query) {
 
 async function verify() {
   const source = await fetchWordPressSource();
+  const { catalog } = await readCatalogImages();
   const data = await storefrontGraphql(`query {
     articles(first: 250) {
       nodes { handle title contentHtml publishedAt image { url } blog { handle } }
@@ -849,9 +910,26 @@ async function verify() {
   const hotlinks = [...articles.values()]
     .filter((article) => /wp-content\/uploads|data:image\//i.test(article.contentHtml))
     .map((article) => article.handle);
+  const nonShopifyContentImages = [...articles.values()].flatMap((article) =>
+    [...article.contentHtml.matchAll(/<img\b[^>]*\bsrc=(?:"([^"]+)"|'([^']+)')[^>]*>/gi)]
+      .map((match) => match[1] ?? match[2])
+      .filter((url) => !isShopifyImage(url))
+      .map((url) => ({ article: article.handle, url })),
+  );
   const missingFeaturedImages = source.posts
     .filter((post) => post.featuredImage !== null && !articles.get(post.slug)?.image?.url)
     .map((post) => post.slug);
+  const nonShopifyFeaturedImages = [...articles.values()]
+    .filter((article) => article.image?.url && !isShopifyImage(article.image.url))
+    .map((article) => ({ article: article.handle, url: article.image.url }));
+  const catalogWordPressImages = [
+    ...new Set(catalog.flatMap((product) => product.images ?? []).filter(isWordPressImage)),
+  ];
+  const nonShopifyCatalogImages = catalog.flatMap((product) =>
+    (product.images ?? [])
+      .filter((url) => /^https?:\/\//i.test(url) && !isShopifyImage(url))
+      .map((url) => ({ product: product.handle, url })),
+  );
   const report = {
     expected: source.posts.length,
     actual: articles.size,
@@ -859,10 +937,27 @@ async function verify() {
     unexpected,
     titleMismatches,
     hotlinks,
+    nonShopifyContentImages,
     missingFeaturedImages,
+    nonShopifyFeaturedImages,
+    catalogWordPressImages,
+    nonShopifyCatalogImages,
   };
   console.log(JSON.stringify(report, null, 2));
-  if ([missing, titleMismatches, hotlinks, missingFeaturedImages].some((items) => items.length > 0)) process.exitCode = 1;
+  if (
+    [
+      missing,
+      titleMismatches,
+      hotlinks,
+      nonShopifyContentImages,
+      missingFeaturedImages,
+      nonShopifyFeaturedImages,
+      catalogWordPressImages,
+      nonShopifyCatalogImages,
+    ].some((items) => items.length > 0)
+  ) {
+    process.exitCode = 1;
+  }
 }
 
 try {

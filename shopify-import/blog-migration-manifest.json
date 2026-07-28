@@ -1,23 +1,25 @@
 {
-  "generatedAt": "2026-07-24T15:44:16.491Z",
+  "generatedAt": "2026-07-28T14:58:59.873Z",
   "source": "https://actimax.com.co",
   "totals": {
-    "posts": 79,
+    "posts": 81,
     "rootPosts": 9,
     "categories": 12,
-    "sitemapImages": 278,
-    "discoveredExternalImages": 381,
-    "embeddedDataImages": 36
+    "sitemapImages": 279,
+    "discoveredExternalImages": 383,
+    "embeddedDataImages": 39
   },
   "diagnostics": {
-    "postsWithDataImages": 13,
+    "postsWithDataImages": 15,
     "postsWithForms": 0,
     "postsWithIframes": 4,
     "postsWithScripts": 3,
-    "postsWithTables": 19
+    "postsWithTables": 21
   },
   "diagnosticPosts": {
     "dataImages": [
+      "que-llevar-en-el-jersey-para-una-salida-larga-guia-practica-de-nutricion-herramientas-y-seguridad",
+      "nutricion-previa-a-rodadas-largas-que-comer-para-optimizar-rendimiento-y-resistencia",
       "nutricion-para-ciclismo-de-ruta-estrategia-de-alimentacion-para-rendimiento-y-recuperacion",
       "carga-de-carbohidratos-antes-de-competir-protocolo-timing-y-alimentos-practicos",
       "carbohidratos-para-deportes-de-resistencia-estrategia-nutricional-basada-en-evidencia",
@@ -45,6 +47,8 @@
       "cuando-ejercitarse-la-mejor-hora-del-dia-para-hacer-ejercicio"
     ],
     "tables": [
+      "que-llevar-en-el-jersey-para-una-salida-larga-guia-practica-de-nutricion-herramientas-y-seguridad",
+      "nutricion-previa-a-rodadas-largas-que-comer-para-optimizar-rendimiento-y-resistencia",
       "nutricion-para-ciclismo-de-ruta-estrategia-de-alimentacion-para-rendimiento-y-recuperacion",
       "carga-de-carbohidratos-antes-de-competir-protocolo-timing-y-alimentos-practicos",
       "carbohidratos-para-deportes-de-resistencia-estrategia-nutricional-basada-en-evidencia",
@@ -67,6 +71,8 @@
     ]
   },
   "externalImages": [
+    "https://actimax.com.co/wp-content/uploads/2026/07/1.-Que-llevar-en-el-jersey-para-salir-a-rodar.webp",
+    "https://actimax.com.co/wp-content/uploads/2026/07/1.-Opciones-desayunos-para-ciclistas.webp",
     "https://actimax.com.co/wp-content/uploads/2026/07/1.-Nutricion-e-hidratacion-para-ciclismo-de-ruta.webp",
     "https://actimax.com.co/wp-content/uploads/2026/07/1.-Carga-de-carbohidratos-antes-de-competir.webp",
     "https://actimax.com.co/wp-content/uploads/2026/07/1.-Carbohidratos-para-deportes-de-resistencia1.webp",
@@ -242,7 +248,6 @@
     "https://actimax.com.co/wp-content/uploads/2023/12/Plato-de-fideos.jpg",
     "https://actimax.com.co/wp-content/uploads/2023/12/Desayuno-deportistas.jpg",
     "https://actimax.com.co/wp-content/uploads/2023/09/beneficios-cafeina.jpg",
-    "https://actimax.com.co/wp-content/uploads/2023/03/Pack-x20-sachets-Bebida-Deportiva-Elite-con-Cafeina-300x300.png",
     "https://actimax.com.co/wp-content/uploads/2021/12/gel-energetico-actimax-con-cafeina-90-300x300.png",
     "https://actimax.com.co/wp-content/uploads/2021/11/gel-energetico-actimax-con-cafeina-300x300.png",
     "https://actimax.com.co/wp-content/uploads/2023/11/cyclist-man-riding-bike-road.jpg",
@@ -359,6 +364,7 @@
     "https://actimax.com.co/wp-content/uploads/2024/08/carrera-valencia-Energy-Gel-974x1024.webp",
     "https://actimax.com.co/wp-content/uploads/2024/02/beneficios-del-ciclismo-ciclista-en-bicicleta-691x1024.jpg",
     "https://actimax.com.co/wp-content/uploads/2023/12/Desayuno-deportistas-1024x683.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/f/f2/Eddy_Merckx_en_1970.jpg",
     "https://actimax.com.co/wp-content/uploads/2023/06/fractura-por-caida-1024x627.jpg",
     "https://actimax.com.co/wp-content/uploads/2023/06/lesiones-de-espalda-1024x587.jpg",
     "https://actimax.com.co/wp-content/uploads/2023/06/ciclista-entrenando2-1024x600.jpg",
@@ -418,22 +424,22 @@
     "https://actimax.com.co/wp-content/uploads/2022/01/10_340_victoreleuterio_032024_38910-2-300x200.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/12_340_viniciuscabral_0020678_38910-2.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/12_340_viniciuscabral_0020678_38910-2-300x200.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-5.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-5-300x188.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-1.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-1-225x300.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-2.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-2-300x225.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-3.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-3-225x300.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-1.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-1-225x300.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-2.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-2-300x225.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-5.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-5-300x188.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-3.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-3-225x300.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-4.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-4-225x300.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-3.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-3-300x225.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-1.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-1-225x300.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-2.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-2-300x225.jpg",
     "https://actimax.com.co/wp-content/uploads/2021/12/sandra-lorena-arenas.jpeg",
     "https://actimax.com.co/wp-content/uploads/2021/12/sandra-lorena-arenas_2.jpeg",
     "https://actimax.com.co/wp-content/uploads/2021/12/sandra-lorena-arenas_2-300x199.jpeg",
@@ -450,6 +456,50 @@
     "https://actimax.com.co/wp-content/uploads/2021/12/geles-energeticos.jpg"
   ],
   "posts": [
+    {
+      "wordpressId": 29827,
+      "wordpressSlug": "que-llevar-en-el-jersey-para-una-salida-larga-guia-practica-de-nutricion-herramientas-y-seguridad",
+      "slug": "que-llevar-en-el-jersey-para-una-salida-larga-guia-practica-de-nutricion-herramientas-y-seguridad",
+      "sourceUrl": "https://actimax.com.co/blog/que-llevar-en-el-jersey-para-una-salida-larga-guia-practica-de-nutricion-herramientas-y-seguridad/",
+      "sourcePath": "/blog/que-llevar-en-el-jersey-para-una-salida-larga-guia-practica-de-nutricion-herramientas-y-seguridad/",
+      "title": "Qué llevar en el jersey para una salida larga: guía práctica de nutrición, herramientas y seguridad",
+      "excerpt": "El glucógeno muscular representa el combustible principal durante ejercicios de resistencia. Los músculos pueden almacenar aproximadamente 300–600 g de",
+      "publishedAt": "2026-07-25T11:16:51-05:00",
+      "modifiedAt": "2026-07-24T11:19:37-05:00",
+      "categories": [
+        "Ciclismo"
+      ],
+      "featuredImage": "https://actimax.com.co/wp-content/uploads/2026/07/1.-Que-llevar-en-el-jersey-para-salir-a-rodar.webp",
+      "seo": {
+        "title": "Qué llevar en el jersey para una salida larga: guía práctica de nutrición, herramientas y seguridad | Actimax",
+        "description": "El glucógeno muscular representa el combustible principal durante ejercicios de resistencia. Los músculos pueden almacenar aproximadamente 300–600 g de",
+        "canonical": "https://actimax.com.co/blog/que-llevar-en-el-jersey-para-una-salida-larga-guia-practica-de-nutricion-herramientas-y-seguridad/",
+        "image": "https://actimax.com.co/wp-content/uploads/2026/07/1.-Que-llevar-en-el-jersey-para-salir-a-rodar.webp"
+      },
+      "bodyBytesBeforeImageMigration": 332881
+    },
+    {
+      "wordpressId": 29820,
+      "wordpressSlug": "nutricion-previa-a-rodadas-largas-que-comer-para-optimizar-rendimiento-y-resistencia",
+      "slug": "nutricion-previa-a-rodadas-largas-que-comer-para-optimizar-rendimiento-y-resistencia",
+      "sourceUrl": "https://actimax.com.co/blog/nutricion-previa-a-rodadas-largas-que-comer-para-optimizar-rendimiento-y-resistencia/",
+      "sourcePath": "/blog/nutricion-previa-a-rodadas-largas-que-comer-para-optimizar-rendimiento-y-resistencia/",
+      "title": "Nutrición previa a rodadas largas: qué comer para optimizar rendimiento y resistencia",
+      "excerpt": "El glucógeno muscular representa el combustible principal durante ejercicios de resistencia. Los músculos pueden almacenar aproximadamente 300–600 g de",
+      "publishedAt": "2026-07-24T10:52:31-05:00",
+      "modifiedAt": "2026-07-24T11:01:09-05:00",
+      "categories": [
+        "Nutrición deportiva"
+      ],
+      "featuredImage": "https://actimax.com.co/wp-content/uploads/2026/07/1.-Opciones-desayunos-para-ciclistas.webp",
+      "seo": {
+        "title": "Nutrición previa a rodadas largas: qué comer para optimizar rendimiento y resistencia | Actimax",
+        "description": "El glucógeno muscular representa el combustible principal durante ejercicios de resistencia. Los músculos pueden almacenar aproximadamente 300–600 g de",
+        "canonical": "https://actimax.com.co/blog/nutricion-previa-a-rodadas-largas-que-comer-para-optimizar-rendimiento-y-resistencia/",
+        "image": "https://actimax.com.co/wp-content/uploads/2026/07/1.-Opciones-desayunos-para-ciclistas.webp"
+      },
+      "bodyBytesBeforeImageMigration": 332881
+    },
     {
       "wordpressId": 29800,
       "wordpressSlug": "nutricion-para-ciclismo-de-ruta-estrategia-de-alimentacion-para-rendimiento-y-recuperacion",
@@ -895,7 +945,7 @@
         "canonical": "https://actimax.com.co/blog/ciclismo-de-ruta-consejos-para-ciclistas-principiantes/",
         "image": "https://actimax.com.co/wp-content/uploads/2021/03/ciclismo-de-ruta-para-principiantes.jpg"
       },
-      "bodyBytesBeforeImageMigration": 19171
+      "bodyBytesBeforeImageMigration": 19147
     },
     {
       "wordpressId": 28430,
@@ -918,7 +968,7 @@
         "canonical": "https://actimax.com.co/blog/que-comer-antes-de-una-carrera-guia-practica-para-runners/",
         "image": "https://actimax.com.co/wp-content/uploads/2025/11/Que-comer-antes-de-una-carrera-Guia-practica-para-runners.webp"
       },
-      "bodyBytesBeforeImageMigration": 24100
+      "bodyBytesBeforeImageMigration": 24124
     },
     {
       "wordpressId": 15272,
@@ -1183,7 +1233,7 @@
         "canonical": "https://actimax.com.co/blog/proteina-whey-vs-creatina/",
         "image": "https://actimax.com.co/wp-content/uploads/2025/04/whey-protein-1024x683.webp"
       },
-      "bodyBytesBeforeImageMigration": 9673
+      "bodyBytesBeforeImageMigration": 9590
     },
     {
       "wordpressId": 26090,
@@ -1315,7 +1365,7 @@
         "canonical": "https://actimax.com.co/blog/desmitificando-los-geles-energeticos-como-usarlos/",
         "image": "https://actimax.com.co/wp-content/uploads/2024/10/deportista-con-dolor.webp"
       },
-      "bodyBytesBeforeImageMigration": 9381
+      "bodyBytesBeforeImageMigration": 9387
     },
     {
       "wordpressId": 24617,
@@ -1338,7 +1388,7 @@
         "canonical": "https://actimax.com.co/blog/geles-energeticos-que-son-como-usarlos-y-cuanto-tomarlos/",
         "image": "https://actimax.com.co/wp-content/uploads/2024/10/media-maraton-alimentacion.jpg"
       },
-      "bodyBytesBeforeImageMigration": 13506
+      "bodyBytesBeforeImageMigration": 13476
     },
     {
       "wordpressId": 24238,
@@ -1360,7 +1410,7 @@
         "canonical": "https://actimax.com.co/blog/el-muro-en-la-maraton-que-es-y-como-prevenirlo/",
         "image": "https://actimax.com.co/wp-content/uploads/2024/08/deportista-cansada.webp"
       },
-      "bodyBytesBeforeImageMigration": 9689
+      "bodyBytesBeforeImageMigration": 9713
     },
     {
       "wordpressId": 23079,
@@ -1494,7 +1544,7 @@
         "canonical": "https://actimax.com.co/blog/beneficios-de-la-cafeina-en-el-deporte/",
         "image": "https://actimax.com.co/wp-content/uploads/2023/09/beneficios-cafeina.jpg"
       },
-      "bodyBytesBeforeImageMigration": 9565
+      "bodyBytesBeforeImageMigration": 8441
     },
     {
       "wordpressId": 19918,
@@ -1538,7 +1588,7 @@
         "canonical": "https://actimax.com.co/blog/los-15-mejores-ciclistas-de-la-historia-hazanas-y-legados/",
         "image": "https://actimax.com.co/wp-content/uploads/2023/04/BmSm2R9-MY8-unsplash.jpg"
       },
-      "bodyBytesBeforeImageMigration": 16846
+      "bodyBytesBeforeImageMigration": 16787
     },
     {
       "wordpressId": 19442,
@@ -1561,7 +1611,7 @@
         "canonical": "https://actimax.com.co/blog/lesiones-mas-comunes-en-ciclismo-y-como-prevenirlas/",
         "image": "https://actimax.com.co/wp-content/uploads/2023/06/ciclista-lesion.jpg"
       },
-      "bodyBytesBeforeImageMigration": 9172
+      "bodyBytesBeforeImageMigration": 9163
     },
     {
       "wordpressId": 19007,
@@ -1583,7 +1633,7 @@
         "canonical": "https://actimax.com.co/blog/mitos-mas-comunes-sobre-la-nutricion-deportiva/",
         "image": "https://actimax.com.co/wp-content/uploads/2023/05/mitos-nutricion-deportiva-blog.jpg"
       },
-      "bodyBytesBeforeImageMigration": 12762
+      "bodyBytesBeforeImageMigration": 12756
     },
     {
       "wordpressId": 18920,
@@ -1605,7 +1655,7 @@
         "canonical": "https://actimax.com.co/blog/electrolitos-lo-que-todo-deportista-debe-saber/",
         "image": "https://actimax.com.co/wp-content/uploads/2023/04/Electrolitos-Lo-que-todo-deportista-debe-saber.jpg"
       },
-      "bodyBytesBeforeImageMigration": 10725
+      "bodyBytesBeforeImageMigration": 10755
     },
     {
       "wordpressId": 18701,
@@ -1763,7 +1813,7 @@
         "canonical": "https://actimax.com.co/blog/proteinas-para-mujeres-beneficios-mitos-y-consejos/",
         "image": "https://actimax.com.co/wp-content/uploads/2022/11/Proteinas-para-mujeres.jpg"
       },
-      "bodyBytesBeforeImageMigration": 15319
+      "bodyBytesBeforeImageMigration": 15325
     },
     {
       "wordpressId": 15821,
@@ -1832,7 +1882,7 @@
         "canonical": "https://actimax.com.co/blog/consejos-para-empezar-a-practicar-ciclismo-de-montana/",
         "image": "https://actimax.com.co/wp-content/uploads/2022/06/ciclismo-de-montana_3.jpg"
       },
-      "bodyBytesBeforeImageMigration": 33608
+      "bodyBytesBeforeImageMigration": 33587
     },
     {
       "wordpressId": 14102,
@@ -1854,7 +1904,7 @@
         "canonical": "https://actimax.com.co/blog/consejos-gran-fondo-en-ciclismo/",
         "image": "https://actimax.com.co/wp-content/uploads/2022/05/gran-fondo-en-cilcismo.jpg"
       },
-      "bodyBytesBeforeImageMigration": 24896
+      "bodyBytesBeforeImageMigration": 24770
     },
     {
       "wordpressId": 13884,
@@ -1988,7 +2038,7 @@
         "canonical": "https://actimax.com.co/blog/sandra-lorena-arenas-ganadora-de-medalla-de-plata-tokyo-2020/",
         "image": "https://actimax.com.co/wp-content/uploads/2021/12/sandra-lorena-arenas-1.jpeg"
       },
-      "bodyBytesBeforeImageMigration": 27154
+      "bodyBytesBeforeImageMigration": 27160
     },
     {
       "wordpressId": 3739,
@@ -2010,7 +2060,7 @@
         "canonical": "https://actimax.com.co/blog/cuando-ejercitarse-la-mejor-hora-del-dia-para-hacer-ejercicio/",
         "image": "https://actimax.com.co/wp-content/uploads/2021/12/cuando-hacer-ejercicio_2.jpg"
       },
-      "bodyBytesBeforeImageMigration": 36442
+      "bodyBytesBeforeImageMigration": 36412
     },
     {
       "wordpressId": 3747,
@@ -2032,7 +2082,7 @@
         "canonical": "https://actimax.com.co/blog/hidratacion-en-deportes-de-alta-duracion-y-resistencia/",
         "image": "https://actimax.com.co/wp-content/uploads/2021/12/hidratacion-para-deportistas-2.jpg"
       },
-      "bodyBytesBeforeImageMigration": 40418
+      "bodyBytesBeforeImageMigration": 40442
     },
     {
       "wordpressId": 3759,
@@ -2208,7 +2258,7 @@
         "canonical": "https://actimax.com.co/blog/geles-energeticos-actimax/",
         "image": "https://actimax.com.co/wp-content/uploads/2019/04/geles-energeeticos-productos-actimax.jpg"
       },
-      "bodyBytesBeforeImageMigration": 9421
+      "bodyBytesBeforeImageMigration": 9427
     }
   ]
 }
