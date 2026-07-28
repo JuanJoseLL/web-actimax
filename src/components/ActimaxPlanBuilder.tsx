@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatCOP } from "@/lib/format";
+import { canonicalProductPath } from "@/lib/product-paths";
 import {
   createActimaxPlan,
   getDefaultPlanInput,
@@ -49,6 +50,7 @@ import {
 
 export interface PlanPack {
   variantId: string | null;
+  variantTitle?: string;
   handle: string;
   title: string;
   price: number;
@@ -757,13 +759,14 @@ export function ActimaxPlanBuilder({
                             <p className="font-mono text-2xl font-bold tabular-nums">{formatCOP(recommendedPack.price)}</p>
                           </div>
                           <Button asChild variant="outline" size="sm">
-                            <Link href={`/productos/${recommendedPack.handle}`}>Ver contenido</Link>
+                            <Link href={canonicalProductPath(recommendedPack.handle)}>Ver contenido</Link>
                           </Button>
                         </div>
                         {recommendedPack.variantId !== null ? (
                           <AddToCartButton
                             product={{
                               variantId: recommendedPack.variantId,
+                              variantTitle: recommendedPack.variantTitle,
                               handle: recommendedPack.handle,
                               title: recommendedPack.title,
                               price: recommendedPack.price,

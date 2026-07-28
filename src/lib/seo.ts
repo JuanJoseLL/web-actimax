@@ -10,6 +10,7 @@ import {
   typeLabel,
   type Product,
 } from "@/lib/taxonomia";
+import { canonicalProductPath } from "@/lib/product-paths";
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://actimax.com.co";
 
@@ -37,7 +38,7 @@ export function jsonLd(data: object): string {
 }
 
 export function productUrl(handle: string): string {
-  return `${SITE_URL}/productos/${handle}/`;
+  return `${SITE_URL}${canonicalProductPath(handle)}`;
 }
 
 export function organizationJsonLd(): object {
@@ -89,17 +90,18 @@ export function productJsonLd(product: Product): object {
       ...product.momentos.map((m) => `${MOMENTO_LABELS[m]} del esfuerzo`),
       ...product.deportes.map((d) => DEPORTE_LABELS[d] ?? d),
     ].join(", "),
-    offers: {
+    offers: product.variants.map((variant) => ({
       "@type": "Offer",
       url: productUrl(product.handle),
-      price: product.price,
+      name: variant.title === "Default Title" ? product.title : variant.title,
+      price: variant.price,
       priceCurrency: "COP",
-      availability: product.inStock
+      availability: variant.inStock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       itemCondition: "https://schema.org/NewCondition",
       seller: { "@id": ORGANIZATION_ID },
-    },
+    })),
   };
 }
 

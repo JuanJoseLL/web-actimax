@@ -5,7 +5,11 @@ import {
   isMomento,
   isProductType,
   type Product,
+  type ProductOption,
+  type ProductOptionValue,
+  type ProductVariant,
 } from "@/lib/taxonomia";
+import { initialProductVariant } from "@/lib/product-variants";
 
 export * from "@/lib/taxonomia";
 
@@ -34,14 +38,27 @@ const PRODUCTS_QUERY = /* GraphQL */ `
             url
           }
         }
-        variants(first: 1) {
+        options {
+          name
+          values
+        }
+        variants(first: 100) {
           nodes {
             id
+            title
+            availableForSale
+            selectedOptions {
+              name
+              value
+            }
             price {
               amount
             }
             compareAtPrice {
               amount
+            }
+            image {
+              url
             }
           }
         }
@@ -58,11 +75,16 @@ interface ShopifyProductNode {
   availableForSale: boolean;
   tags: string[];
   images: { nodes: Array<{ url: string }> };
+  options: ProductOption[];
   variants: {
     nodes: Array<{
       id: string;
+      title: string;
+      availableForSale: boolean;
+      selectedOptions: ProductOptionValue[];
       price: { amount: string };
       compareAtPrice: { amount: string } | null;
+      image: { url: string } | null;
     }>;
   };
 }
@@ -76,6 +98,20 @@ function stripTags(htmlStr: string): string {
     .trim();
 }
 
+function prices(
+  priceValue: string | number,
+  compareAtValue?: string | number | null,
+): Pick<ProductVariant, "price" | "regularPrice" | "onSale"> {
+  const parsedPrice = Number(priceValue);
+  const price = Number.isFinite(parsedPrice) ? Math.round(parsedPrice) : 0;
+  const parsedCompareAt = Number(compareAtValue);
+  const compareAt = Number.isFinite(parsedCompareAt)
+    ? Math.round(parsedCompareAt)
+    : price;
+  const regularPrice = Math.max(price, compareAt);
+  return { price, regularPrice, onSale: regularPrice > price };
+}
+
 function mapShopifyProduct(node: ShopifyProductNode): Product {
   const body = node.descriptionHtml ?? "";
   const match = body.match(RECOMENDACIONES_MARKER);
@@ -83,11 +119,17 @@ function mapShopifyProduct(node: ShopifyProductNode): Product {
   const shortDescriptionHtml = splitAt >= 0 ? body.slice(0, splitAt) : body;
   const descriptionHtml = splitAt >= 0 ? body.slice(splitAt) : "";
 
-  const variant = node.variants.nodes[0];
-  const price = variant !== undefined ? Math.round(parseFloat(variant.price.amount)) : 0;
-  const compareAt =
-    variant?.compareAtPrice != null ? Math.round(parseFloat(variant.compareAtPrice.amount)) : price;
-  const regularPrice = Math.max(price, compareAt);
+  const variants: ProductVariant[] = node.variants.nodes.map((variant) => ({
+    id: variant.id,
+    title: variant.title,
+    options: variant.selectedOptions,
+    ...prices(variant.price.amount, variant.compareAtPrice?.amount),
+    inStock: variant.availableForSale,
+    image: variant.image?.url ?? null,
+  }));
+  const variant = initialProductVariant(variants);
+  const price = variant?.price ?? 0;
+  const regularPrice = variant?.regularPrice ?? price;
 
   const tags = node.tags.map((t) => t.toLowerCase().trim());
   const type = tags.find(isProductType) ?? null;
@@ -102,12 +144,14 @@ function mapShopifyProduct(node: ShopifyProductNode): Product {
     deportes: tags.filter((t) => t in DEPORTE_LABELS),
     price,
     regularPrice,
-    onSale: regularPrice > price,
-    inStock: node.availableForSale,
+    onSale: variant?.onSale ?? false,
+    inStock: variant?.inStock ?? node.availableForSale,
     excerpt: stripTags(shortDescriptionHtml).slice(0, 280),
     shortDescriptionHtml,
     descriptionHtml,
     images: node.images.nodes.map((img) => img.url),
+    options: node.options,
+    variants,
   };
 }
 
@@ -149,20 +193,79 @@ async function fetchShopifyProducts(): Promise<Product[] | null> {
   }
 }
 
-interface LocalProduct extends Omit<Product, "id" | "type" | "momentos"> {
+interface LocalVariant {
+  id?: string | number | null;
+  title?: string;
+  options?: ProductOptionValue[];
+  selectedOptions?: ProductOptionValue[];
+  price: number | string;
+  regularPrice?: number | string;
+  compareAtPrice?: number | string | null;
+  onSale?: boolean;
+  inStock?: boolean;
+  availableForSale?: boolean;
+  image?: string | null;
+}
+
+interface LocalProduct extends Omit<Product, "id" | "variantId" | "type" | "momentos" | "options" | "variants"> {
   id: number;
   type: string;
   momentos: string[];
+  options?: ProductOption[];
+  variants?: LocalVariant[];
+}
+
+function localVariantId(id: LocalVariant["id"]): string | null {
+  return typeof id === "string" &&
+    id.startsWith("gid://shopify/ProductVariant/")
+    ? id
+    : null;
 }
 
 function localProducts(): Product[] {
-  return (localCatalog as LocalProduct[]).map((p) => ({
-    ...p,
-    id: String(p.id),
-    variantId: null,
-    type: isProductType(p.type) ? p.type : null,
-    momentos: p.momentos.filter(isMomento),
-  }));
+  return (localCatalog as LocalProduct[]).map((p) => {
+    const variants: ProductVariant[] =
+      p.variants !== undefined && p.variants.length > 0
+        ? p.variants.map((variant) => ({
+            id: localVariantId(variant.id),
+            title: variant.title ?? "Default Title",
+            options: variant.options ?? variant.selectedOptions ?? [],
+            ...prices(
+              variant.price,
+              variant.regularPrice ?? variant.compareAtPrice,
+            ),
+            inStock:
+              variant.inStock ?? variant.availableForSale ?? p.inStock,
+            image: variant.image ?? null,
+          }))
+        : [
+            {
+              id: null,
+              title: "Default Title",
+              options: [],
+              price: p.price,
+              regularPrice: p.regularPrice,
+              onSale: p.onSale,
+              inStock: p.inStock,
+              image: p.images[0] ?? null,
+            },
+          ];
+    const variant = initialProductVariant(variants);
+
+    return {
+      ...p,
+      id: String(p.id),
+      variantId: variant?.id ?? null,
+      type: isProductType(p.type) ? p.type : null,
+      momentos: p.momentos.filter(isMomento),
+      price: variant?.price ?? p.price,
+      regularPrice: variant?.regularPrice ?? p.regularPrice,
+      onSale: variant?.onSale ?? p.onSale,
+      inStock: variant?.inStock ?? p.inStock,
+      options: p.options ?? [],
+      variants,
+    };
+  });
 }
 
 /**
@@ -176,15 +279,20 @@ export async function getAllProducts(): Promise<Product[]> {
   cacheLife({ stale: 30, revalidate: 30, expire: 86400 });
 
   const fromShopify = await fetchShopifyProducts();
+  const fallback = localProducts();
   if (fromShopify === null) {
     /* Respaldo local: que no quede cacheado mucho tiempo, reintenta pronto.
        Next se queda con el mínimo de cada campo entre todas las llamadas a
        cacheLife del mismo scope, así que esta segunda solo puede acortar la
        ventana de arriba, nunca alargarla. */
     cacheLife({ stale: 10, revalidate: 10, expire: 60 });
-    return localProducts();
+    return fallback;
   }
-  return fromShopify;
+  const liveHandles = new Set(fromShopify.map((product) => product.handle));
+  return [
+    ...fromShopify,
+    ...fallback.filter((product) => !liveHandles.has(product.handle)),
+  ];
 }
 
 export async function getProduct(handle: string): Promise<Product | undefined> {

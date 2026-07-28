@@ -5,6 +5,7 @@ import { CheckIcon, ShoppingBagIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useCart, type CartLine } from "@/components/cart/CartProvider";
 import { Button } from "@/components/ui/button";
+import { cartLineId } from "@/lib/cart";
 import { formatCOP } from "@/lib/format";
 
 interface Props {
@@ -28,7 +29,9 @@ export function AddToCartButton({ product, qty = 1, variant = "card", disabled =
   }, []);
 
   const handleClick = () => {
-    const total = (items.find((i) => i.handle === product.handle)?.qty ?? 0) + qty;
+    const lineId = cartLineId(product);
+    const total =
+      (items.find((item) => cartLineId(item) === lineId)?.qty ?? 0) + qty;
     add(product, qty);
     if (variant === "full") {
       open();
@@ -41,7 +44,7 @@ export function AddToCartButton({ product, qty = 1, variant = "card", disabled =
       /* Un toast por producto, compartido con la paleta: agregar de a uno
          actualiza el aviso en vez de apilar cuatro iguales. Por eso muestra
          el total de la línea y no lo que se acaba de sumar. */
-      id: `cart-${product.handle}`,
+      id: `cart-${lineId}`,
       description: `${total} × ${formatCOP(product.price)} · en tu carrito`,
       action: { label: "Ver carrito", onClick: open },
     });

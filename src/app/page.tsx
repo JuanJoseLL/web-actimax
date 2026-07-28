@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { formatPostDate, getAllBlogPosts } from "@/lib/blog";
 import { getAllProducts, getProducts } from "@/lib/catalog";
 import { formatCOP } from "@/lib/format";
+import { canonicalProductPath } from "@/lib/product-paths";
 
 export default async function Home() {
   "use cache";
@@ -128,7 +129,7 @@ function Hero() {
               </p>
             </div>
             <Link
-              href="/productos/energy-pack-media-maraton-21k"
+              href={canonicalProductPath("energy-pack-media-maraton-21k")}
               className="group hidden shrink-0 items-center gap-3 rounded-full border border-white/30 bg-white/10 px-4 py-2.5 text-xs font-semibold backdrop-blur-md transition hover:border-amarillo hover:text-amarillo sm:flex"
             >
               Ver pack 21K
@@ -212,7 +213,7 @@ async function ChallengeSection() {
                   href={
                     product === undefined
                       ? "/productos?tipo=kits"
-                      : `/productos/${challenge.handle}`
+                      : canonicalProductPath(challenge.handle)
                   }
                   className="block h-full"
                 >

@@ -1,10 +1,9 @@
-# Actimax — Demo de la nueva tienda
+# Actimax — Storefront Shopify
 
-Demo de la nueva web de Actimax (nutrición deportiva especializada, Medellín)
-construido con **Next.js 16 + Tailwind CSS v4**. Reemplaza al sitio actual en
-WooCommerce ([actimax.com.co](https://actimax.com.co)).
+Storefront de Actimax (nutrición deportiva especializada, Medellín) construido
+con **Next.js 16 + Tailwind CSS v4** y conectado a Shopify.
 
-## Correr el demo
+## Desarrollo local
 
 ```bash
 pnpm install
@@ -13,20 +12,23 @@ pnpm dev
 
 Abre <http://localhost:3000>.
 
-## Qué es real y qué es simulado
+## Fuentes de datos
 
 **Real (extraído del sitio actual de WooCommerce):**
 
-- Los 19 productos con nombres, precios en COP, ofertas, descripciones y
+- Los 35 productos históricos con nombres, precios en COP, descripciones y
   recomendaciones de uso (`src/data/catalog.json`).
-- Las 74 fotos de producto y el logo (`public/products/`).
+- Las imágenes migradas a Shopify y el respaldo de medios históricos.
 - Las categorías: tipo (geles/bebidas/barras/kits), momento de uso
   (antes/durante/después) y deporte.
 
 **Integrado con Shopify:**
 
 - El catálogo lee productos publicados mediante la Storefront API y conserva
-  un respaldo local si Shopify no está disponible.
+  el catálogo local por producto cuando Shopify no está disponible o un
+  producto sigue como borrador.
+- Los productos con sabores exponen sus variantes reales y obligan a elegir una
+  opción antes de agregarlos al carrito.
 - El carrito se conserva en el navegador. "Finalizar compra" crea un carrito
   en Shopify y abre su checkout seguro; Shopify calcula el total definitivo,
   envío, impuestos y pago.
@@ -37,19 +39,51 @@ Abre <http://localhost:3000>.
   no tenga artículos publicados o no esté disponible.
 - El enlace de WhatsApp de mayoristas apunta a un número de relleno.
 
-## Arquitectura pensada para migrar a Shopify
+## Arquitectura Shopify
 
 El plan es que la tienda real corra sobre **Shopify** (la administra una
 persona no técnica) con este front en Next.js:
 
-- Toda la lectura de productos pasa por `src/lib/catalog.ts`, que usa Shopify
-  cuando están configuradas las credenciales y el JSON local como respaldo.
+- Toda la lectura de productos pasa por `src/lib/catalog.ts`, que combina
+  Shopify con `src/data/catalog.json` como respaldo por handle.
 - El carrito visual vive en `src/components/cart/`; al finalizar, la ruta
   `src/app/api/checkout/route.ts` crea el carrito de Shopify y devuelve su
   `checkoutUrl` hosteado.
 - El blog saldrá del blog nativo de Shopify (mismo panel de administración que
   los productos). El storefront conserva las URL históricas de WordPress y lee
   los artículos publicados mediante Storefront API.
+
+## Estado del catálogo
+
+La migración de WooCommerce se completó el 28 de julio de 2026:
+
+- 19 productos existentes conservaron sus GID, publicaciones, precios e
+  inventario.
+- 10 productos variables recuperaron sus sabores; la variante original heredó
+  el primer sabor y conservó su inventario.
+- 16 productos nuevos quedaron como borradores en Shopify. El storefront sirve
+  sus URL y contenido desde el respaldo local, pero no permite comprarlos.
+- El catálogo final contiene 35 productos y 59 variantes verificadas.
+- El GTIN `7709990576603` no se asignó porque aparece en los productos de origen
+  `524`, `22458` y `22468`; debe resolverse antes de completar esos códigos.
+
+Para activar uno de los 16 borradores, configura primero el inventario de todas
+sus variantes en Shopify, cambia su estado a activo y publícalo en el canal que
+usa la Storefront API. No vuelvas a importar el CSV histórico de productos.
+
+## URL de productos
+
+Las 35 URL canónicas de WooCommerce son parte de la identidad permanente del
+catálogo y no se derivan del handle de Shopify:
+
+- `src/data/product-identities.json` relaciona WordPress ID, handle y canonical.
+- `src/lib/product-paths.ts` resuelve enlaces internos y genera los 31 rewrites
+  y alias necesarios.
+- `src/data/legacy-url-redirects.json` contiene únicamente redirecciones
+  históricas que necesita el runtime.
+- `next.config.ts` sirve los canonicals históricos y redirige las rutas planas.
+
+No cambies un canonical existente ni vuelvas a aplanar las rutas de producto.
 
 ## Configurar Shopify y pagos de prueba
 
@@ -63,7 +97,8 @@ SHOPIFY_BLOG_HANDLE=blog
 ```
 
 Los productos deben estar activos y publicados en el canal asociado a la
-Storefront API. Esta interfaz vende la primera variante de cada producto.
+Storefront API. Cuando un producto tiene varias variantes, la página exige
+seleccionar una opción disponible y envía su GID exacto al checkout.
 
 Para recorrer el pago sin cobrar en una tienda de desarrollo:
 
@@ -91,12 +126,15 @@ datos de tarjeta por esta aplicación.
 
 ```
 src/
-  app/                 páginas (home, /productos, /productos/[handle], /blog)
+  app/                 páginas y ruta interna /productos/[handle]
   components/          Header, Footer, ProductCard, carrito, galería, etc.
-  data/catalog.json    catálogo extraído de WooCommerce
+  data/catalog.json    respaldo local de los 35 productos
+  data/product-identities.json  identidad y canonical de producto
+  data/legacy-url-redirects.json  redirecciones requeridas en producción
   data/blog.ts         respaldo local si Shopify no está disponible
   lib/blog.ts          lectura del blog nativo de Shopify
-  lib/catalog.ts       capa de datos (punto único de conexión futura a Shopify)
+  lib/catalog.ts       Shopify Storefront API + respaldo local
+  lib/product-paths.ts resolución de URL canónicas
 public/products/       fotos reales de producto
 ```
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PackComparator, type ComparablePack } from "@/components/PackComparator";
 import { getAllProducts } from "@/lib/catalog";
+import { initialProductVariant } from "@/lib/product-variants";
 
 export const metadata: Metadata = {
   title: "Comparar Energy Packs — Actimax",
@@ -10,18 +11,22 @@ export const metadata: Metadata = {
 export default async function CompararPacksPage() {
   const packs: ComparablePack[] = (await getAllProducts())
     .filter((product) => product.type === "kits")
-    .map((product) => ({
-      variantId: product.variantId,
-      handle: product.handle,
-      title: product.title,
-      price: product.price,
-      regularPrice: product.regularPrice,
-      onSale: product.onSale,
-      inStock: product.inStock,
-      excerpt: product.excerpt,
-      image: product.images[0] ?? null,
-      deportes: product.deportes,
-    }));
+    .map((product) => {
+      const variant = initialProductVariant(product.variants);
+      return {
+        variantId: product.variantId,
+        variantTitle: variant?.title,
+        handle: product.handle,
+        title: product.title,
+        price: product.price,
+        regularPrice: product.regularPrice,
+        onSale: product.onSale,
+        inStock: product.inStock,
+        excerpt: product.excerpt,
+        image: variant?.image ?? product.images[0] ?? null,
+        deportes: product.deportes,
+      };
+    });
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">

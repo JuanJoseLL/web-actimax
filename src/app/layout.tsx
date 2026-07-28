@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { getAllProducts } from "@/lib/catalog";
+import { initialProductVariant } from "@/lib/product-variants";
 import { SITE_URL, jsonLd, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
@@ -61,16 +62,21 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const paletteProducts: PaletteProduct[] = (await getAllProducts()).map((p) => ({
-    variantId: p.variantId,
-    handle: p.handle,
-    title: p.title,
-    type: p.type,
-    momentos: p.momentos,
-    deportes: p.deportes,
-    price: p.price,
-    image: p.images[0] ?? null,
-  }));
+  const paletteProducts: PaletteProduct[] = (await getAllProducts()).map((p) => {
+    const variant = initialProductVariant(p.variants);
+    return {
+      variantId: p.variantId,
+      variantTitle: variant?.title,
+      hasMultipleVariants: p.variants.length > 1,
+      handle: p.handle,
+      title: p.title,
+      type: p.type,
+      momentos: p.momentos,
+      deportes: p.deportes,
+      price: p.price,
+      image: variant?.image ?? p.images[0] ?? null,
+    };
+  });
 
   return (
     <html

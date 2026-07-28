@@ -7,6 +7,28 @@
 export type ProductType = "geles" | "bebidas" | "barras" | "kits";
 export type Momento = "antes" | "durante" | "despues";
 
+export interface ProductOptionValue {
+  name: string;
+  value: string;
+}
+
+export interface ProductOption {
+  name: string;
+  values: string[];
+}
+
+export interface ProductVariant {
+  /** Shopify GID. Es null únicamente cuando se usa el catálogo local. */
+  id: string | null;
+  title: string;
+  options: ProductOptionValue[];
+  price: number;
+  regularPrice: number;
+  onSale: boolean;
+  inStock: boolean;
+  image: string | null;
+}
+
 export interface Product {
   id: string;
   variantId: string | null;
@@ -23,6 +45,8 @@ export interface Product {
   shortDescriptionHtml: string;
   descriptionHtml: string;
   images: string[];
+  options: ProductOption[];
+  variants: ProductVariant[];
 }
 
 export const TYPE_LABELS: Record<ProductType, string> = {

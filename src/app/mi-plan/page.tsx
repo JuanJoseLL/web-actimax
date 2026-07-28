@@ -7,6 +7,7 @@ import {
   PLAN_PACK_HANDLES,
   type PlanSport,
 } from "@/lib/mi-plan";
+import { initialProductVariant } from "@/lib/product-variants";
 
 export const metadata: Metadata = {
   title: "Mi Plan Actimax — Nutrición para tu próximo reto",
@@ -61,17 +62,21 @@ async function PlanContent({ searchParams }: { searchParams: SearchParams }) {
     parseSport(params.deporte),
     parseDistance(params.distancia),
   );
-  const packs: PlanPack[] = (await getProducts([...PLAN_PACK_HANDLES])).map((product) => ({
-    variantId: product.variantId,
-    handle: product.handle,
-    title: product.title,
-    price: product.price,
-    regularPrice: product.regularPrice,
-    onSale: product.onSale,
-    inStock: product.inStock,
-    excerpt: product.excerpt,
-    image: product.images[0] ?? null,
-  }));
+  const packs: PlanPack[] = (await getProducts([...PLAN_PACK_HANDLES])).map((product) => {
+    const variant = initialProductVariant(product.variants);
+    return {
+      variantId: product.variantId,
+      variantTitle: variant?.title,
+      handle: product.handle,
+      title: product.title,
+      price: product.price,
+      regularPrice: product.regularPrice,
+      onSale: product.onSale,
+      inStock: product.inStock,
+      excerpt: product.excerpt,
+      image: variant?.image ?? product.images[0] ?? null,
+    };
+  });
 
   return <ActimaxPlanBuilder initialInput={initialInput} packs={packs} />;
 }

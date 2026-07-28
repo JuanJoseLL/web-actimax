@@ -15,7 +15,7 @@ import {
   getProduct,
   typeLabel,
 } from "@/lib/catalog";
-import { formatCOP } from "@/lib/format";
+import { canonicalProductPath } from "@/lib/product-paths";
 import { SITE_URL, breadcrumbJsonLd, jsonLd, productJsonLd, productUrl } from "@/lib/seo";
 
 export async function generateStaticParams() {
@@ -34,10 +34,11 @@ export async function generateMetadata({
   return {
     title: `${product.title} — Actimax`,
     description: product.excerpt,
-    alternates: { canonical: `/productos/${product.handle}/` },
+    alternates: { canonical: canonicalProductPath(product.handle) },
     openGraph: {
       title: `${product.title} — Actimax`,
       description: product.excerpt,
+      url: canonicalProductPath(product.handle),
       images:
         product.images.length > 0 ? [{ url: product.images[0], alt: product.title }] : [],
     },
@@ -111,17 +112,6 @@ export default async function ProductPage({
             {product.title}
           </h1>
 
-          <div className="mt-5 flex items-baseline gap-3">
-            <p className="font-mono text-3xl font-bold tabular-nums">
-              {formatCOP(product.price)}
-            </p>
-            {product.onSale ? (
-              <p className="font-mono text-base tabular-nums text-tinta/40 line-through">
-                {formatCOP(product.regularPrice)}
-              </p>
-            ) : null}
-          </div>
-
           {product.momentos.length > 0 || product.deportes.length > 0 ? (
             <div className="mt-5 flex flex-wrap gap-2">
               {product.momentos.map((m) => (
@@ -160,9 +150,13 @@ export default async function ProductPage({
                 handle: product.handle,
                 title: product.title,
                 price: product.price,
+                regularPrice: product.regularPrice,
                 image: product.images[0] ?? null,
+                options: product.options,
+                variants: product.variants,
               }}
               inStock={product.inStock}
+              showPrice
             />
             <p className="mt-3 font-mono text-[11px] uppercase tracking-wide text-tinta/50">
               Envíos a toda Colombia · Checkout seguro con Shopify

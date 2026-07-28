@@ -31,8 +31,10 @@ import {
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
+import { cartLineId } from "@/lib/cart";
 import { formatCOP } from "@/lib/format";
 import { scoreMatch } from "@/lib/palette-search";
+import { canonicalProductPath } from "@/lib/product-paths";
 import {
   DEPORTE_LABELS,
   MOMENTO_LABELS,
@@ -45,6 +47,8 @@ import { useIsMac } from "@/lib/useIsMac";
 /** Datos mínimos de un producto para buscarlo desde la paleta. */
 export interface PaletteProduct {
   variantId: string | null;
+  variantTitle?: string;
+  hasMultipleVariants: boolean;
   handle: string;
   title: string;
   type: ProductType | null;
@@ -178,14 +182,16 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
 
   const addToCart = useCallback(
     (product: PaletteProduct, quantity: number) => {
+      const lineId = cartLineId(product);
       const total =
-        (items.find((i) => i.handle === product.handle)?.qty ?? 0) + quantity;
+        (items.find((item) => cartLineId(item) === lineId)?.qty ?? 0) +
+        quantity;
       add(product, quantity);
       setPending(null);
       toast.success(product.title, {
         /* Un toast por producto, compartido con AddToCartButton: agregar de
            a uno actualiza el aviso en vez de apilar cuatro iguales. */
-        id: `cart-${product.handle}`,
+        id: `cart-${lineId}`,
         description: `${total} × ${formatCOP(product.price)} · en tu carrito`,
         action: {
           label: "Ver carrito",
@@ -228,6 +234,13 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
       /* Sobre un momento o una ruta no hay nada que sumar: se deja pasar la
          tecla para que cmdk siga haciendo lo suyo (ir al primero/último). */
       if (product === undefined) return;
+
+      if (product.hasMultipleVariants) {
+        if (e.key !== "Enter") return;
+        e.preventDefault();
+        run(() => router.push(canonicalProductPath(product.handle)));
+        return;
+      }
       e.preventDefault();
 
       if (e.key === "Enter") {
@@ -241,7 +254,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
           : { handle: product.handle, qty: Math.min(MAX_QTY, next) },
       );
     },
-    [addToCart, byHandle, count, goToCheckout, qtyFor],
+    [addToCart, byHandle, count, goToCheckout, qtyFor, router, run],
   );
 
   const pendingProduct =
@@ -293,7 +306,9 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
 
           <CommandGroup heading="Productos" className={GROUP_STYLE}>
             {products.map((product) => {
-              const qty = qtyFor(product.handle);
+              const qty = product.hasMultipleVariants
+                ? 1
+                : qtyFor(product.handle);
               return (
                 <CommandItem
                   key={product.handle}
@@ -305,7 +320,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
                     ...product.deportes.map((d) => DEPORTE_LABELS[d] ?? d),
                   ]}
                   onSelect={() =>
-                    run(() => router.push(`/productos/${product.handle}`))
+                    run(() => router.push(canonicalProductPath(product.handle)))
                   }
                 >
                   <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-sm bg-muted">
@@ -327,7 +342,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
                       {typeLabel(product.type)}
                     </span>
                   </span>
-                  {qty > 1 ? (
+                  {!product.hasMultipleVariants && qty > 1 ? (
                     <span className="rounded-sm bg-amarillo px-1.5 font-mono text-[11px] font-bold tabular-nums text-tinta">
                       ×{qty}
                     </span>
@@ -338,19 +353,39 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
                   <Button
                     type="button"
                     variant="outline"
-                    size="icon-xs"
+                    size={product.hasMultipleVariants ? "xs" : "icon-xs"}
                     /* Fuera del tab: la lista se recorre con flechas, y con un
                        botón por fila el Tab abandonaba el campo de búsqueda. */
                     tabIndex={-1}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      addToCart(product, qty);
+                      if (product.hasMultipleVariants) {
+                        run(() =>
+                          router.push(canonicalProductPath(product.handle)),
+                        );
+                      } else {
+                        addToCart(product, qty);
+                      }
                     }}
-                    aria-label={`Agregar ${qty} × ${product.title} al carrito`}
-                    className="size-11 shrink-0 rounded-sm text-muted-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground sm:size-6"
+                    aria-label={
+                      product.hasMultipleVariants
+                        ? `Elegir variante de ${product.title}`
+                        : `Agregar ${qty} × ${product.title} al carrito`
+                    }
+                    className={
+                      product.hasMultipleVariants
+                        ? "h-11 shrink-0 rounded-sm px-2 text-muted-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground sm:h-6"
+                        : "size-11 shrink-0 rounded-sm text-muted-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground sm:size-6"
+                    }
                   >
-                    <PlusIcon className="size-3.5" />
+                    {product.hasMultipleVariants ? (
+                      <span className="font-mono text-[9px] font-bold uppercase">
+                        Elegir
+                      </span>
+                    ) : (
+                      <PlusIcon className="size-3.5" />
+                    )}
                   </Button>
                 </CommandItem>
               );

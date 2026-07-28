@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatCOP } from "@/lib/format";
+import { canonicalProductPath } from "@/lib/product-paths";
 
 const SPORT_LABELS: Record<string, string> = {
   running: "Running",
@@ -28,6 +29,7 @@ const SPORT_LABELS: Record<string, string> = {
 
 export interface ComparablePack {
   variantId: string | null;
+  variantTitle?: string;
   handle: string;
   title: string;
   price: number;
@@ -120,10 +122,10 @@ function PackSummary({ pack }: { pack: ComparablePack }) {
         </div>
         <div className="grid grid-cols-2 gap-2">
           <Button asChild variant="outline" size="sm">
-            <Link href={`/productos/${pack.handle}`}>Ver detalle</Link>
+            <Link href={canonicalProductPath(pack.handle)}>Ver detalle</Link>
           </Button>
           <AddToCartButton
-            product={{ variantId: pack.variantId, handle: pack.handle, title: pack.title, price: pack.price, image: pack.image }}
+            product={{ variantId: pack.variantId, variantTitle: pack.variantTitle, handle: pack.handle, title: pack.title, price: pack.price, image: pack.image }}
             disabled={!pack.inStock}
           />
         </div>

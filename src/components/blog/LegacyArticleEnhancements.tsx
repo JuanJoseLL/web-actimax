@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
+import { canonicalProductPath } from "@/lib/product-paths";
 
 const PACK_LINKS: Record<string, { href: string; label: string }> = {
-  "10k": { href: "/productos/energy-pack-de-10k/", label: "Ver Energy Pack 10K" },
-  "15k": { href: "/productos/energy-pack-15k/", label: "Ver Energy Pack 15K" },
-  "21k": { href: "/productos/energy-pack-media-maraton-21k/", label: "Ver Energy Pack 21K" },
-  "42k": { href: "/productos/energy-pack-maraton-42k/", label: "Ver Energy Pack Maratón" },
+  "10k": { href: canonicalProductPath("energy-pack-de-10k"), label: "Ver Energy Pack 10K" },
+  "15k": { href: canonicalProductPath("energy-pack-15k"), label: "Ver Energy Pack 15K" },
+  "21k": { href: canonicalProductPath("energy-pack-media-maraton-21k"), label: "Ver Energy Pack 21K" },
+  "42k": { href: canonicalProductPath("energy-pack-maraton-42k"), label: "Ver Energy Pack Maratón" },
   otro: { href: "/productos/?tipo=geles", label: "Explorar geles energéticos" },
 };
 

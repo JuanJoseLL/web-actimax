@@ -9,10 +9,12 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import { cartLineId } from "@/lib/cart";
 
 /** Datos mínimos de un producto para mostrarlo en el carrito. */
 export interface CartLine {
   variantId: string | null;
+  variantTitle?: string;
   handle: string;
   title: string;
   price: number;
@@ -32,8 +34,8 @@ interface CartContextValue {
   isCheckingOut: boolean;
   checkoutError: string | null;
   add: (line: CartLine, qty?: number) => void;
-  setQty: (handle: string, qty: number) => void;
-  remove: (handle: string) => void;
+  setQty: (lineId: string, qty: number) => void;
+  remove: (lineId: string) => void;
   clear: () => void;
   open: () => void;
   close: () => void;
@@ -74,6 +76,7 @@ function isCartItem(value: unknown): value is CartItem {
   const item = value as Record<string, unknown>;
   return (
     (item.variantId === null || typeof item.variantId === "string") &&
+    (item.variantTitle === undefined || typeof item.variantTitle === "string") &&
     typeof item.handle === "string" &&
     typeof item.title === "string" &&
     typeof item.price === "number" &&
@@ -119,26 +122,27 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const add = useCallback((line: CartLine, qty = 1) => {
     updateItems((prev) => {
-      const existing = prev.find((i) => i.handle === line.handle);
+      const lineId = cartLineId(line);
+      const existing = prev.find((item) => cartLineId(item) === lineId);
       if (existing !== undefined) {
         return prev.map((i) =>
-          i.handle === line.handle ? { ...i, ...line, qty: i.qty + qty } : i,
+          cartLineId(i) === lineId ? { ...i, ...line, qty: i.qty + qty } : i,
         );
       }
       return [...prev, { ...line, qty }];
     });
   }, [updateItems]);
 
-  const setQty = useCallback((handle: string, qty: number) => {
+  const setQty = useCallback((lineId: string, qty: number) => {
     updateItems((prev) =>
       qty <= 0
-        ? prev.filter((i) => i.handle !== handle)
-        : prev.map((i) => (i.handle === handle ? { ...i, qty } : i)),
+        ? prev.filter((i) => cartLineId(i) !== lineId)
+        : prev.map((i) => (cartLineId(i) === lineId ? { ...i, qty } : i)),
     );
   }, [updateItems]);
 
-  const remove = useCallback((handle: string) => {
-    updateItems((prev) => prev.filter((i) => i.handle !== handle));
+  const remove = useCallback((lineId: string) => {
+    updateItems((prev) => prev.filter((i) => cartLineId(i) !== lineId));
   }, [updateItems]);
 
   const clear = useCallback(() => updateItems(() => []), [updateItems]);

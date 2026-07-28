@@ -1,4 +1,9 @@
 import type { NextConfig } from "next";
+import legacyUrlRedirects from "./src/data/legacy-url-redirects.json";
+import {
+  legacyProductRewrites,
+  productAliasRedirects,
+} from "./src/lib/product-paths";
 
 const nextConfig: NextConfig = {
   // WordPress publicaba todas las URL con slash final; conservarlo evita
@@ -13,6 +18,12 @@ const nextConfig: NextConfig = {
       // Respaldo temporal mientras los artículos se copian a Shopify.
       { protocol: "https", hostname: "actimax.com.co" },
     ],
+  },
+  async redirects() {
+    return [...legacyUrlRedirects, ...productAliasRedirects];
+  },
+  async rewrites() {
+    return legacyProductRewrites;
   },
 };
 

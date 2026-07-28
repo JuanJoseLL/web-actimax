@@ -2,16 +2,34 @@ import Image from "next/image";
 import Link from "next/link";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { typeLabel, type Product } from "@/lib/catalog";
 import { formatCOP } from "@/lib/format";
+import { canonicalProductPath } from "@/lib/product-paths";
+import {
+  initialProductVariant,
+  selectableProductOptions,
+} from "@/lib/product-variants";
 
 export function ProductCard({ product }: { product: Product }) {
+  const productPath = canonicalProductPath(product.handle);
+  const variant = initialProductVariant(product.variants);
+  const hasMultipleVariants = product.variants.length > 1;
+  const firstOption = selectableProductOptions(
+    product.options,
+    product.variants,
+  )[0];
+  const chooseLabel =
+    firstOption?.name.toLocaleLowerCase("es").includes("sabor") === true
+      ? "Elegir sabor"
+      : "Elegir opciones";
+
   return (
     <article className="group h-full">
       <Card className="h-full gap-0 bg-card py-0 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
         <Link
-          href={`/productos/${product.handle}`}
+          href={productPath}
           className="relative block aspect-square overflow-hidden bg-muted"
         >
           {product.images[0] !== undefined ? (
@@ -40,7 +58,7 @@ export function ProductCard({ product }: { product: Product }) {
           <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
             {typeLabel(product.type)}
           </p>
-          <Link href={`/productos/${product.handle}`} className="mt-1 hover:underline">
+          <Link href={productPath} className="mt-1 hover:underline">
             <h3 className="line-clamp-2 text-sm font-semibold leading-snug">
               {product.title}
             </h3>
@@ -57,16 +75,23 @@ export function ProductCard({ product }: { product: Product }) {
               {formatCOP(product.price)}
             </p>
           </div>
-          <AddToCartButton
-            product={{
-              variantId: product.variantId,
-              handle: product.handle,
-              title: product.title,
-              price: product.price,
-              image: product.images[0] ?? null,
-            }}
-            disabled={!product.inStock}
-          />
+          {hasMultipleVariants ? (
+            <Button asChild variant="race" size="sm" className="w-full font-mono text-xs sm:w-auto">
+              <Link href={productPath}>{chooseLabel}</Link>
+            </Button>
+          ) : (
+            <AddToCartButton
+              product={{
+                variantId: product.variantId,
+                variantTitle: variant?.title,
+                handle: product.handle,
+                title: product.title,
+                price: product.price,
+                image: variant?.image ?? product.images[0] ?? null,
+              }}
+              disabled={!product.inStock}
+            />
+          )}
         </CardFooter>
       </Card>
     </article>

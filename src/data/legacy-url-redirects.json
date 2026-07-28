@@ -1,0 +1,127 @@
+[
+  {
+    "source": "/blog/ciclismo/page/:page(\\d+)/",
+    "destination": "/blog/ciclismo/",
+    "permanent": true
+  },
+  {
+    "source": "/blog/nutricion/page/:page(\\d+)/",
+    "destination": "/blog/nutricion/",
+    "permanent": true
+  },
+  {
+    "source": "/blog/page/:page(\\d+)/",
+    "destination": "/blog/",
+    "permanent": true
+  },
+  {
+    "source": "/blog/running/page/:page(\\d+)/",
+    "destination": "/blog/running/",
+    "permanent": true
+  },
+  {
+    "source": "/blog/tips-para-el-ejercicio/page/:page(\\d+)/",
+    "destination": "/blog/tips-para-el-ejercicio/",
+    "permanent": true
+  },
+  {
+    "source": "/category-sitemap.xml",
+    "destination": "/sitemap.xml",
+    "permanent": true
+  },
+  {
+    "source": "/deportistas-sitemap.xml",
+    "destination": "/sitemap.xml",
+    "permanent": true
+  },
+  {
+    "source": "/page-sitemap.xml",
+    "destination": "/sitemap.xml",
+    "permanent": true
+  },
+  {
+    "source": "/page/:page(\\d+)/",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/post-sitemap.xml",
+    "destination": "/sitemap.xml",
+    "permanent": true
+  },
+  {
+    "source": "/product_cat-sitemap.xml",
+    "destination": "/sitemap.xml",
+    "permanent": true
+  },
+  {
+    "source": "/product-sitemap.xml",
+    "destination": "/sitemap.xml",
+    "permanent": true
+  },
+  {
+    "source": "/producto/gel-actimax-caja-x8-copia/",
+    "destination": "/productos/geles-energeticos/gel-energetico-24-con-cafeina/",
+    "permanent": true
+  },
+  {
+    "source": "/producto/gel-actimax/",
+    "destination": "/productos/geles-energeticos/gel-energetico-actimax-caja-x8-con-cafeina/",
+    "permanent": true
+  },
+  {
+    "source": "/producto/recovery-en-tarro/",
+    "destination": "/productos/bebidas-deportivas/recovery-tarro-400gr/",
+    "permanent": true
+  },
+  {
+    "source": "/producto/recovery-pro-tarro-400gr/",
+    "destination": "/productos/bebidas-deportivas/recovery-pro-tarro-400gr/",
+    "permanent": true
+  },
+  {
+    "source": "/productos/bebidas-deportivas/bebida-deportiva-elite-con-cafeina-tarro-de-500gr/",
+    "destination": "/productos/bebidas-deportivas/bebida-deportiva-elite-con-cafeina-500gr/",
+    "permanent": true
+  },
+  {
+    "source": "/productos/durante/gel-energetico-actimax-sachets-x24-con-cafeina/",
+    "destination": "/productos/geles-energeticos/gel-energetico-24-con-cafeina/",
+    "permanent": true
+  },
+  {
+    "source": "/productos/durante/gl-energetico-actimax-sachets-x24-con-cafeina/",
+    "destination": "/productos/geles-energeticos/gel-energetico-24-con-cafeina/",
+    "permanent": true
+  },
+  {
+    "source": "/productos/energy-pack/energy-pack-actimax-para-triatlon-media-distancia/",
+    "destination": "/productos/energy-pack/triatlon-media-distancia/",
+    "permanent": true
+  },
+  {
+    "source": "/productos/energy-pack/energy-pack-triatlon-media-distancia/",
+    "destination": "/productos/energy-pack/triatlon-media-distancia/",
+    "permanent": true
+  },
+  {
+    "source": "/single-product/",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/sitemap_index.xml",
+    "destination": "/sitemap.xml",
+    "permanent": true
+  },
+  {
+    "source": "/tienda/",
+    "destination": "/productos/",
+    "permanent": true
+  },
+  {
+    "source": "/tips-de-nutricion-para-subir-al-alto-de-letras-en-bicicleta/",
+    "destination": "/blog/tips-de-nutricion-para-subir-al-alto-de-letras-en-bicicleta/",
+    "permanent": true
+  }
+]

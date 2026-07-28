@@ -17,7 +17,21 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { ENVIO_GRATIS_UMBRAL } from "@/lib/envio";
+import { cartLineId } from "@/lib/cart";
 import { formatCOP } from "@/lib/format";
+import { canonicalProductPath } from "@/lib/product-paths";
+
+function displayVariantTitle(title: string | undefined): string | null {
+  if (title === undefined || title.trim().toLowerCase() === "default title") {
+    return null;
+  }
+  return title;
+}
+
+function cartLineLabel(title: string, variantTitle: string | undefined): string {
+  const variant = displayVariantTitle(variantTitle);
+  return variant === null ? title : `${title}, ${variant}`;
+}
 
 /** Barra de progreso hacia el envío gratis, al estilo ruta de carrera. */
 function EnvioGratisMeta({ subtotal }: { subtotal: number }) {
@@ -119,11 +133,11 @@ export function CartDrawer() {
             <ul className="flex-1 overflow-y-auto overscroll-contain px-4 sm:px-5">
               {items.map((item) => (
                 <li
-                  key={item.handle}
+                  key={cartLineId(item)}
                   className="grid grid-cols-[4rem_minmax(0,1fr)] gap-3 border-b border-dashed border-border py-4"
                 >
                   <Link
-                    href={`/productos/${item.handle}`}
+                    href={canonicalProductPath(item.handle)}
                     onClick={handleClose}
                     className="relative size-16 shrink-0 overflow-hidden rounded-md bg-muted"
                   >
@@ -141,6 +155,11 @@ export function CartDrawer() {
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="line-clamp-2 text-sm font-semibold leading-snug">{item.title}</p>
+                        {displayVariantTitle(item.variantTitle) !== null ? (
+                          <p className="mt-0.5 text-xs text-muted-foreground">
+                            {item.variantTitle}
+                          </p>
+                        ) : null}
                         <p className="mt-1 font-mono text-xs tabular-nums text-muted-foreground">
                           {formatCOP(item.price)} c/u
                         </p>
@@ -152,17 +171,17 @@ export function CartDrawer() {
                     <div className="mt-3 flex items-center justify-between gap-2">
                       <QuantitySelector
                         value={item.qty}
-                        onChange={(qty) => setQty(item.handle, qty)}
+                        onChange={(qty) => setQty(cartLineId(item), qty)}
                         min={0}
-                        label={`cantidad de ${item.title}`}
+                        label={`cantidad de ${cartLineLabel(item.title, item.variantTitle)}`}
                       />
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon-sm"
-                        onClick={() => remove(item.handle)}
+                        onClick={() => remove(cartLineId(item))}
                         className="text-muted-foreground hover:text-destructive"
-                        aria-label={`Eliminar ${item.title}`}
+                        aria-label={`Eliminar ${cartLineLabel(item.title, item.variantTitle)}`}
                       >
                         <Trash2Icon />
                       </Button>
