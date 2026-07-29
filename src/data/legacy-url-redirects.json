@@ -30,8 +30,43 @@
     "permanent": true
   },
   {
+    "source": "/como-comprar/",
+    "destination": "/preguntas-frecuentes/",
+    "permanent": true
+  },
+  {
+    "source": "/combo-recarga-total-actimax/",
+    "destination": "/productos/natacion/combo-recarga-total/",
+    "permanent": true
+  },
+  {
+    "source": "/contacto/",
+    "destination": "/preguntas-frecuentes/",
+    "permanent": true
+  },
+  {
     "source": "/deportistas-sitemap.xml",
     "destination": "/sitemap.xml",
+    "permanent": true
+  },
+  {
+    "source": "/deportistas/:path*",
+    "destination": "/#club",
+    "permanent": true
+  },
+  {
+    "source": "/formula-actimax/",
+    "destination": "/#metodo",
+    "permanent": true
+  },
+  {
+    "source": "/landing-dia-del-padre/",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/nuestra-historia/",
+    "destination": "/#historia",
     "permanent": true
   },
   {
@@ -42,6 +77,11 @@
   {
     "source": "/page/:page(\\d+)/",
     "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/politicas-devolucion-privacidad/",
+    "destination": "/preguntas-frecuentes/",
     "permanent": true
   },
   {
@@ -80,8 +120,93 @@
     "permanent": true
   },
   {
+    "source": "/productos/:categoria/page/:page(\\d+)/",
+    "destination": "/productos/",
+    "permanent": true
+  },
+  {
+    "source": "/productos/antes/",
+    "destination": "/productos/?momento=antes",
+    "permanent": true
+  },
+  {
+    "source": "/productos/barras-de-proteina/",
+    "destination": "/productos/?tipo=barras",
+    "permanent": true
+  },
+  {
+    "source": "/productos/bebidas-deportivas/",
+    "destination": "/productos/?tipo=bebidas",
+    "permanent": true
+  },
+  {
     "source": "/productos/bebidas-deportivas/bebida-deportiva-elite-con-cafeina-tarro-de-500gr/",
     "destination": "/productos/bebidas-deportivas/bebida-deportiva-elite-con-cafeina-500gr/",
+    "permanent": true
+  },
+  {
+    "source": "/productos/bebidas-isotonicas-barranquilla/",
+    "destination": "/productos/?tipo=bebidas",
+    "permanent": true
+  },
+  {
+    "source": "/productos/bebidas-isotonicas-bogota/",
+    "destination": "/productos/?tipo=bebidas",
+    "permanent": true
+  },
+  {
+    "source": "/productos/bebidas-isotonicas-bucaramanga/",
+    "destination": "/productos/?tipo=bebidas",
+    "permanent": true
+  },
+  {
+    "source": "/productos/bebidas-isotonicas-cali/",
+    "destination": "/productos/?tipo=bebidas",
+    "permanent": true
+  },
+  {
+    "source": "/productos/bebidas-isotonicas-cartagena/",
+    "destination": "/productos/?tipo=bebidas",
+    "permanent": true
+  },
+  {
+    "source": "/productos/bebidas-isotonicas-medellin/",
+    "destination": "/productos/?tipo=bebidas",
+    "permanent": true
+  },
+  {
+    "source": "/productos/bebidas-isotonicas-pereira/",
+    "destination": "/productos/?tipo=bebidas",
+    "permanent": true
+  },
+  {
+    "source": "/productos/bebidas-isotonicas/",
+    "destination": "/productos/?tipo=bebidas",
+    "permanent": true
+  },
+  {
+    "source": "/productos/bebidas-rehidratantes/",
+    "destination": "/productos/?tipo=bebidas",
+    "permanent": true
+  },
+  {
+    "source": "/productos/ciclismo/",
+    "destination": "/productos/?deporte=ciclismo",
+    "permanent": true
+  },
+  {
+    "source": "/productos/credit/",
+    "destination": "/productos/",
+    "permanent": true
+  },
+  {
+    "source": "/productos/despues/",
+    "destination": "/productos/?momento=despues",
+    "permanent": true
+  },
+  {
+    "source": "/productos/durante/",
+    "destination": "/productos/?momento=durante",
     "permanent": true
   },
   {
@@ -95,6 +220,11 @@
     "permanent": true
   },
   {
+    "source": "/productos/energy-pack/",
+    "destination": "/productos/?tipo=kits",
+    "permanent": true
+  },
+  {
     "source": "/productos/energy-pack/energy-pack-actimax-para-triatlon-media-distancia/",
     "destination": "/productos/energy-pack/triatlon-media-distancia/",
     "permanent": true
@@ -102,6 +232,61 @@
   {
     "source": "/productos/energy-pack/energy-pack-triatlon-media-distancia/",
     "destination": "/productos/energy-pack/triatlon-media-distancia/",
+    "permanent": true
+  },
+  {
+    "source": "/productos/futbol/",
+    "destination": "/productos/?deporte=futbol",
+    "permanent": true
+  },
+  {
+    "source": "/productos/geles-energeticos/",
+    "destination": "/productos/?tipo=geles",
+    "permanent": true
+  },
+  {
+    "source": "/productos/gym/",
+    "destination": "/productos/?deporte=gym",
+    "permanent": true
+  },
+  {
+    "source": "/productos/natacion/",
+    "destination": "/productos/?deporte=natacion",
+    "permanent": true
+  },
+  {
+    "source": "/productos/nutricion-deportiva-medellin/",
+    "destination": "/productos/",
+    "permanent": true
+  },
+  {
+    "source": "/productos/offer/",
+    "destination": "/productos/",
+    "permanent": true
+  },
+  {
+    "source": "/productos/running/",
+    "destination": "/productos/?deporte=running",
+    "permanent": true
+  },
+  {
+    "source": "/productos/sin-categorizar/",
+    "destination": "/productos/",
+    "permanent": true
+  },
+  {
+    "source": "/productos/triatlon/",
+    "destination": "/productos/?deporte=triatlon",
+    "permanent": true
+  },
+  {
+    "source": "/runner-experience/",
+    "destination": "/#club",
+    "permanent": true
+  },
+  {
+    "source": "/sedes/",
+    "destination": "/#mayoristas",
     "permanent": true
   },
   {
@@ -115,13 +300,28 @@
     "permanent": true
   },
   {
+    "source": "/test/",
+    "destination": "/",
+    "permanent": true
+  },
+  {
     "source": "/tienda/",
     "destination": "/productos/",
     "permanent": true
   },
   {
+    "source": "/tiendas-actimax/",
+    "destination": "/#mayoristas",
+    "permanent": true
+  },
+  {
     "source": "/tips-de-nutricion-para-subir-al-alto-de-letras-en-bicicleta/",
     "destination": "/blog/tips-de-nutricion-para-subir-al-alto-de-letras-en-bicicleta/",
+    "permanent": true
+  },
+  {
+    "source": "/ventas-mayoristas/",
+    "destination": "/#mayoristas",
     "permanent": true
   }
 ]

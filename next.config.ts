@@ -3,6 +3,7 @@ import legacyUrlRedirects from "./src/data/legacy-url-redirects.json";
 import {
   legacyProductRewrites,
   productAliasRedirects,
+  wordpressIdRedirects,
 } from "./src/lib/product-paths";
 
 const nextConfig: NextConfig = {
@@ -18,7 +19,7 @@ const nextConfig: NextConfig = {
     ],
   },
   async redirects() {
-    return [...legacyUrlRedirects, ...productAliasRedirects];
+    return [...legacyUrlRedirects, ...productAliasRedirects, ...wordpressIdRedirects];
   },
   async rewrites() {
     return legacyProductRewrites;

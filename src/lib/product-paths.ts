@@ -39,3 +39,17 @@ export const productAliasRedirects = identities
     destination: identity.legacyCanonicalPath,
     permanent: true,
   }));
+
+/** WordPress enlazaba productos por ID (`/?p=123`, también con `post_type`). */
+export const wordpressIdRedirects = identities.map((identity) => ({
+  source: "/",
+  has: [
+    {
+      type: "query" as const,
+      key: "p",
+      value: String(identity.wordpressId),
+    },
+  ],
+  destination: identity.legacyCanonicalPath,
+  permanent: true,
+}));
