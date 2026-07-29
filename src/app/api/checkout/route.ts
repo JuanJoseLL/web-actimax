@@ -5,7 +5,7 @@ const STOREFRONT_TOKEN = process.env.SHOPIFY_STOREFRONT_TOKEN;
 const API_VERSION = "2026-01";
 
 const CART_CREATE_MUTATION = /* GraphQL */ `
-  mutation CartCreate($input: CartInput!) {
+  mutation CartCreate($input: CartInput!) @inContext(language: ES, country: CO) {
     cartCreate(input: $input) {
       cart {
         checkoutUrl
@@ -107,7 +107,13 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({ checkoutUrl });
+    // El permalink del carrito ignora el idioma del contexto y cae en el locale
+    // primario de la tienda (inglés); solo el parámetro `locale` fuerza el
+    // checkout en español con formato de pesos colombiano.
+    const localizedUrl = new URL(checkoutUrl);
+    localizedUrl.searchParams.set("locale", "es-CO");
+
+    return NextResponse.json({ checkoutUrl: localizedUrl.toString() });
   } catch (error) {
     console.error("No se pudo crear el carrito de Shopify.", error);
     return NextResponse.json({ error: "No se pudo conectar con Shopify." }, { status: 502 });
