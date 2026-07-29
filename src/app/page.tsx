@@ -3,8 +3,11 @@ import Link from "next/link";
 import { cacheLife, cacheTag } from "next/cache";
 import {
   ArrowRightIcon,
+  ArrowUpRightIcon,
+  BikeIcon,
   CheckCircle2Icon,
   ChevronRightIcon,
+  FootprintsIcon,
   PackageIcon,
   SparklesIcon,
   UsersRoundIcon,
@@ -481,6 +484,31 @@ async function BestSellersSection() {
   );
 }
 
+const STRAVA_CLUBS = [
+  {
+    name: "Actimax Ciclismo",
+    discipline: "Club de ciclismo",
+    detail: "Rodadas, rutas y el lote de siempre.",
+    href: "https://www.strava.com/clubs/Actimax_ciclismo",
+    icon: BikeIcon,
+  },
+  {
+    name: "Actimax Running",
+    discipline: "Club de running",
+    detail: "Entrenos, carreras y ritmo compartido.",
+    href: "https://www.strava.com/clubs/Actimax_running",
+    icon: FootprintsIcon,
+  },
+];
+
+function StravaMark({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169" />
+    </svg>
+  );
+}
+
 function ClubSection() {
   return (
     <section id="club" className="club-section scroll-mt-24 overflow-hidden text-white">
@@ -495,53 +523,57 @@ function ClubSection() {
             <span className="block text-amarillo">Se entrena.</span>
           </h2>
           <p className="mt-7 max-w-2xl text-lg font-medium leading-relaxed text-white/68">
-            Pertenecer empieza cuando eliges una meta y sales a buscarla. Aquí
-            encuentras estrategia, historias honestas y el combustible para no
-            detenerte cuando el camino se pone interesante.
+            Sin carné, sin cuota y sin letra pequeña: la puerta del club es
+            Strava. Ahí publicamos las salidas, se suman los kilómetros y
+            conoces al lote. Elige tu disciplina —o entra a las dos— y nos
+            vemos en la ruta.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild variant="raceSun" size="lg" className="h-auto px-8 py-4 text-lg">
-              <Link href="/productos">
-                Entrar al club
-                <ArrowRightIcon data-icon="inline-end" />
-              </Link>
-            </Button>
-            <Button asChild variant="raceOutline" size="lg" className="h-auto px-8 py-4 text-lg">
-              <Link href="/blog">Leer historias</Link>
-            </Button>
-          </div>
-        </div>
-
-        <div className="member-card reveal relative mx-auto w-full max-w-lg overflow-hidden border border-white/20 p-6 sm:p-8">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="font-display text-4xl font-extrabold uppercase italic leading-none">
-                Actimax<span className="text-amarillo">.</span>
-              </p>
-              <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.2em] text-white/45">
-                Member of the movement
-              </p>
-            </div>
-            <span className="grid size-12 place-items-center rounded-full border border-amarillo/50 font-mono text-[10px] font-bold text-amarillo">
-              20+
-            </span>
-          </div>
-          <p className="mt-24 font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
-            Próxima meta
-          </p>
-          <p className="mt-2 font-display text-5xl font-extrabold uppercase italic leading-none sm:text-6xl">
-            La que te reta.
-          </p>
-          <div className="mt-8 grid gap-3 border-t border-white/15 pt-6 sm:grid-cols-2">
+          <div className="mt-10 grid max-w-2xl gap-x-8 gap-y-3 border-t border-white/15 pt-7 sm:grid-cols-2">
             {["Planes para cada distancia", "Consejos que sí puedes usar", "Productos hechos para competir", "Una comunidad que no para"].map(
               (benefit) => (
-                <p key={benefit} className="flex items-start gap-2 text-xs leading-relaxed text-white/65">
+                <p key={benefit} className="flex items-start gap-2.5 text-sm leading-relaxed text-white/65">
                   <CheckCircle2Icon className="mt-0.5 size-4 shrink-0 text-amarillo" />
                   {benefit}
                 </p>
               ),
             )}
           </div>
+        </div>
+
+        <div className="reveal mx-auto flex w-full max-w-lg flex-col gap-5">
+          {STRAVA_CLUBS.map(({ icon: Icon, ...club }) => (
+            <a
+              key={club.name}
+              href={club.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="club-carnet group relative overflow-hidden border border-white/20 p-6 outline-none focus-visible:border-amarillo focus-visible:ring-3 focus-visible:ring-amarillo/40 sm:p-8"
+            >
+              <div className="flex items-start justify-between">
+                <Icon className="size-8 text-amarillo" />
+                <StravaMark className="size-5 text-[#fc5200]" />
+              </div>
+              <p className="mt-10 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">
+                {club.discipline}
+              </p>
+              <p className="mt-2 font-display text-4xl font-extrabold uppercase italic leading-none sm:text-5xl">
+                {club.name}
+                <span className="text-amarillo">.</span>
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-white/60">
+                {club.detail}
+              </p>
+              <div className="mt-7 flex items-center justify-between gap-4 border-t border-white/15 pt-4">
+                <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] text-amarillo">
+                  Unirse en Strava
+                  <ArrowUpRightIcon className="size-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/40">
+                  Gratis
+                </span>
+              </div>
+            </a>
+          ))}
         </div>
       </div>
     </section>
