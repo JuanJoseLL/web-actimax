@@ -18,6 +18,7 @@ const appRoutes = new Set([
   "/productos/",
   "/blog/",
   "/preguntas-frecuentes/",
+  "/politicas-devolucion-privacidad/",
   "/mi-plan/",
   "/sitemap.xml",
 ]);

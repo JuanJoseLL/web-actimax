@@ -80,11 +80,6 @@
     "permanent": true
   },
   {
-    "source": "/politicas-devolucion-privacidad/",
-    "destination": "/preguntas-frecuentes/",
-    "permanent": true
-  },
-  {
     "source": "/post-sitemap.xml",
     "destination": "/sitemap.xml",
     "permanent": true
