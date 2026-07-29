@@ -7,6 +7,7 @@ import { QuantitySelector } from "@/components/QuantitySelector";
 import { useCart } from "@/components/cart/CartProvider";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import {
   Sheet,
@@ -78,6 +79,8 @@ export function CartDrawer() {
     isCheckingOut,
     checkoutError,
     clearCheckoutError,
+    cedula,
+    setCedula,
   } = useCart();
 
   const handleClose = () => {
@@ -203,6 +206,27 @@ export function CartDrawer() {
                   ? "Envío gratis aplicado al finalizar la compra."
                   : "Envío calculado al finalizar la compra."}
               </p>
+              <div className="mt-2">
+                <label
+                  htmlFor="cedula-comprador"
+                  className="font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-foreground"
+                >
+                  Cédula de quien compra
+                </label>
+                <Input
+                  id="cedula-comprador"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  required
+                  placeholder="Ej: 1035467890"
+                  value={cedula}
+                  onChange={(event) => setCedula(event.target.value)}
+                  className="mt-1.5 font-mono tabular-nums"
+                />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  La necesitamos para tu factura y la guía de envío.
+                </p>
+              </div>
               <Button
                 type="button"
                 variant="raceSun"

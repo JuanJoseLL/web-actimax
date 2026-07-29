@@ -10,6 +10,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import { cartLineId } from "@/lib/cart";
+import { isValidCedula, normalizeCedula } from "@/lib/cedula";
 
 /** Datos mínimos de un producto para mostrarlo en el carrito. */
 export interface CartLine {
@@ -42,11 +43,15 @@ interface CartContextValue {
   /** Vive en el provider, no en el cajón: la paleta también lo dispara. */
   checkout: () => Promise<void>;
   clearCheckoutError: () => void;
+  /** Cédula de quien compra: Shopify no la pide en el checkout, va como atributo. */
+  cedula: string;
+  setCedula: (value: string) => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
 
 const STORAGE_KEY = "actimax-cart-v3";
+const CEDULA_STORAGE_KEY = "actimax-cedula";
 const CHANGE_EVENT = "actimax-cart-change";
 let fallbackCart = "[]";
 
@@ -102,6 +107,24 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [cedula, setCedulaState] = useState("");
+
+  useEffect(() => {
+    try {
+      setCedulaState(window.localStorage.getItem(CEDULA_STORAGE_KEY) ?? "");
+    } catch {
+      // almacenamiento no disponible: el campo simplemente inicia vacío
+    }
+  }, []);
+
+  const setCedula = useCallback((value: string) => {
+    setCedulaState(value);
+    try {
+      window.localStorage.setItem(CEDULA_STORAGE_KEY, value);
+    } catch {
+      // almacenamiento no disponible: se conserva solo en memoria
+    }
+  }, []);
 
   const updateItems = useCallback((recipe: (items: CartItem[]) => CartItem[]) => {
     try {
@@ -175,6 +198,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       );
       return;
     }
+    if (!isValidCedula(cedula)) {
+      /* La paleta también dispara el checkout: se abre el cajón para que el
+         campo de cédula quede a la vista junto al error. */
+      setCheckoutError("Ingresa tu cédula (solo números, de 6 a 10 dígitos) para continuar.");
+      setIsOpen(true);
+      return;
+    }
 
     setIsCheckingOut(true);
     try {
@@ -186,6 +216,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             merchandiseId: item.variantId,
             quantity: item.qty,
           })),
+          cedula: normalizeCedula(cedula),
         }),
       });
       const result: unknown = await response.json();
@@ -207,7 +238,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       );
       setIsCheckingOut(false);
     }
-  }, [isCheckingOut, items]);
+  }, [isCheckingOut, items, cedula]);
 
   const value = useMemo<CartContextValue>(() => {
     const count = items.reduce((acc, i) => acc + i.qty, 0);
@@ -227,6 +258,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       close,
       checkout,
       clearCheckoutError,
+      cedula,
+      setCedula,
     };
   }, [
     items,
@@ -241,6 +274,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     close,
     checkout,
     clearCheckoutError,
+    cedula,
+    setCedula,
   ]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

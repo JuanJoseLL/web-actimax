@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isValidCedula, normalizeCedula } from "@/lib/cedula";
 
 const STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const STOREFRONT_TOKEN = process.env.SHOPIFY_STOREFRONT_TOKEN;
@@ -69,6 +70,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "El carrito no contiene productos válidos." }, { status: 400 });
   }
 
+  const rawCedula = (body as { cedula?: unknown }).cedula;
+  if (typeof rawCedula !== "string" || !isValidCedula(rawCedula)) {
+    return NextResponse.json(
+      { error: "Ingresa una cédula válida (solo números, de 6 a 10 dígitos)." },
+      { status: 400 },
+    );
+  }
+  const cedula = normalizeCedula(rawCedula);
+
   try {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -84,7 +94,12 @@ export async function POST(request: Request) {
       headers,
       body: JSON.stringify({
         query: CART_CREATE_MUTATION,
-        variables: { input: { lines } },
+        variables: {
+          input: {
+            lines,
+            attributes: [{ key: "Cédula", value: cedula }],
+          },
+        },
       }),
       cache: "no-store",
     });
