@@ -1,0 +1,751 @@
+{
+  "sourceStore": "actimax-demo.myshopify.com",
+  "targetStore": "actimax-hzfavz8j.myshopify.com",
+  "products": {
+    "protein-bar-caja-x18": {
+      "sourceId": "gid://shopify/Product/9770172055782",
+      "targetId": "gid://shopify/Product/15227252342829",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Protein-Bar-Actimax-barra-de-proteina.webp?v=1785286081",
+          "alt": "Barra de Proteína Protein Bar – Caja x 18"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Protein-Bar-nuggets-de-proteina-con-trocitos-de-chocolate.webp?v=1785286081",
+          "alt": "Barra de Proteína Protein Bar – Caja x 18"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Protein-Bar-Actimax.webp?v=1785286081",
+          "alt": "Barra de Proteína Protein Bar – Caja x 18"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Tabla-nutricional-Protein-Bar.webp?v=1785286081",
+          "alt": "Barra de Proteína Protein Bar – Caja x 18"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Protein-Bar-ciclismo-deporte.webp?v=1785286081",
+          "alt": "Barra de Proteína Protein Bar – Caja x 18"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:02.529Z"
+    },
+    "recovery-tarro-400gr": {
+      "sourceId": "gid://shopify/Product/9787388002534",
+      "targetId": "gid://shopify/Product/15227252506669",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Tarro-400gr.png?v=1785286085",
+          "alt": "Bebida de Recuperación Recovery - Tarro de 400 gr 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Actimax-tarro.jpg?v=1785286084",
+          "alt": "Bebida de Recuperación Recovery - Tarro de 400 gr 2"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Tarro.jpg?v=1785286085",
+          "alt": "Bebida de Recuperación Recovery - Tarro de 400 gr 3"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:05.418Z"
+    },
+    "recovery-pro-caja-x12": {
+      "sourceId": "gid://shopify/Product/9770171924710",
+      "targetId": "gid://shopify/Product/15227252670509",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Pro-Caja-x12-600x600-1.webp?v=1785286088",
+          "alt": "Bebida de Recuperación Recovery Pro – Caja x 12 sobres"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery_pro_actimax_caja_1.jpg?v=1785286087",
+          "alt": "Bebida de Recuperación Recovery Pro – Caja x 12 sobres"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery_pro_actimax_caja_2.jpg?v=1785286087",
+          "alt": "Bebida de Recuperación Recovery Pro – Caja x 12 sobres"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Pro-Sachet.jpg?v=1785286088",
+          "alt": "Bebida de Recuperación Recovery Pro – Caja x 12 sobres"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:08.886Z"
+    },
+    "recovery-pro-tarro-400gr": {
+      "sourceId": "gid://shopify/Product/9770171957478",
+      "targetId": "gid://shopify/Product/15227252801581",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Pro-Tarro-400gr.png?v=1785286091",
+          "alt": "Bebida de Recuperación Recovery Pro – Tarro de 400 gr"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-recovery_pro_tarro_1.jpg?v=1785286091",
+          "alt": "Bebida de Recuperación Recovery Pro – Tarro de 400 gr"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-recovery_pro_tarro_2.jpg?v=1785286091",
+          "alt": "Bebida de Recuperación Recovery Pro – Tarro de 400 gr"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Pro-Tarro-final.jpg?v=1785286091",
+          "alt": "Bebida de Recuperación Recovery Pro – Tarro de 400 gr"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:12.345Z"
+    },
+    "bebida-deportiva-cero-calorias-actimax": {
+      "sourceId": "gid://shopify/Product/9787387838694",
+      "targetId": "gid://shopify/Product/15227252965421",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Bebida-Cero-Calorias-Actimax.png?v=1785286094",
+          "alt": "Bebida Deportiva Cero Calorías - Caja x 20 sobres 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-deportiva-actimax.jpg?v=1785286094",
+          "alt": "Bebida Deportiva Cero Calorías - Caja x 20 sobres 2"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Bebida-0-calorias-sachet.jpg?v=1785286094",
+          "alt": "Bebida Deportiva Cero Calorías - Caja x 20 sobres 3"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:15.321Z"
+    },
+    "bebida-deportiva-elite-con-cafeina-tarro-de-500gr": {
+      "sourceId": "gid://shopify/Product/9770172023014",
+      "targetId": "gid://shopify/Product/15227253162029",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Bebida-Deportiva-elite-con-Cafeina-Tarro-de-500gr.png?v=1785286097",
+          "alt": "Bebida Deportiva Élite – Tarro de 500 gr con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-bebida_deportiva_elite_actimax_2.jpg?v=1785286097",
+          "alt": "Bebida Deportiva Élite – Tarro de 500 gr con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-bebida_deportiva_elite_actimax.jpg?v=1785286097",
+          "alt": "Bebida Deportiva Élite – Tarro de 500 gr con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-tarro-con-cafeina-tabla-nutricional.jpg?v=1785286097",
+          "alt": "Bebida Deportiva Élite – Tarro de 500 gr con Cafeína"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:18.897Z"
+    },
+    "bebida-deportiva-elite-tarro-500gr": {
+      "sourceId": "gid://shopify/Product/9787387773158",
+      "targetId": "gid://shopify/Product/15227253325869",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Bebida-Elite-Actimax-500gr.png?v=1785286101",
+          "alt": "Bebida Élite - Tarro de 500 gr sin Cafeína 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-bebida_elite_actimax_2.jpg?v=1785286101",
+          "alt": "Bebida Élite - Tarro de 500 gr sin Cafeína 2"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-bebida_elite_actimax_1.jpg?v=1785286101",
+          "alt": "Bebida Élite - Tarro de 500 gr sin Cafeína 3"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-sin-cafeina-tarro-tabla-nutricional.jpg?v=1785286101",
+          "alt": "Bebida Élite - Tarro de 500 gr sin Cafeína 4"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:21.937Z"
+    },
+    "pre-race-caja-x12": {
+      "sourceId": "gid://shopify/Product/9770172088550",
+      "targetId": "gid://shopify/Product/15227253522477",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Pre-Race-Caja-Actimax-600x600-1.webp?v=1785286104",
+          "alt": "Bebida Pre Race – Caja x 12 sobres"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre_race_actimax_caja_2.jpg?v=1785286104",
+          "alt": "Bebida Pre Race – Caja x 12 sobres"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre_race_actimax_caja_1.webp?v=1785286104",
+          "alt": "Bebida Pre Race – Caja x 12 sobres"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre_race_actimax_caja.jpg?v=1785286104",
+          "alt": "Bebida Pre Race – Caja x 12 sobres"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre-race-sachet-tabla-nutricional.jpg?v=1785286104",
+          "alt": "Bebida Pre Race – Caja x 12 sobres"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:25.358Z"
+    },
+    "pre-race-en-tarro-400gr": {
+      "sourceId": "gid://shopify/Product/9770171891942",
+      "targetId": "gid://shopify/Product/15227253653549",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Pre-Race-en-Tarro-400gr.png?v=1785286107",
+          "alt": "Bebida Pre Race – Tarro de 500 gr"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-pre_race_actimax_tarro.jpg?v=1785286107",
+          "alt": "Bebida Pre Race – Tarro de 500 gr"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Pre-Race.jpg?v=1785286107",
+          "alt": "Bebida Pre Race – Tarro de 500 gr"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:28.873Z"
+    },
+    "combo-recarga-total": {
+      "sourceId": "gid://shopify/Product/9787388461286",
+      "targetId": "gid://shopify/Product/15227253784621",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1.-Combo-Recarga-Total-Actimax-Gel-energetico-y-barra-de-proteina.png?v=1785286111",
+          "alt": "Combo Recarga Total 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2.-Barra-de-proteina-Protein-Bar.jpg?v=1785286111",
+          "alt": "Combo Recarga Total 2"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/4.-Calendario.png?v=1785286111",
+          "alt": "Combo Recarga Total 3"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/3.-Gel-energetico-Actimax-90-g.jpg?v=1785286111",
+          "alt": "Combo Recarga Total 4"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:31.737Z"
+    },
+    "energy-gel-caja-x24": {
+      "sourceId": "gid://shopify/Product/9787387936998",
+      "targetId": "gid://shopify/Product/15227254964269",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Gel-Caja-x24.png?v=1785286114",
+          "alt": "Energy Gel - Caja x 24 geles 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-energy_gel_actimax.jpg?v=1785286114",
+          "alt": "Energy Gel - Caja x 24 geles 2"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-energy_gel_actimax.jpg?v=1785286114",
+          "alt": "Energy Gel - Caja x 24 geles 3"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/3-energy_gel_actimax.jpg?v=1785286114",
+          "alt": "Energy Gel - Caja x 24 geles 4"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/4-energy_gel_actimax.jpg?v=1785286114",
+          "alt": "Energy Gel - Caja x 24 geles 5"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/energy-gel-tabla-nutricional.jpg?v=1785286114",
+          "alt": "Energy Gel - Caja x 24 geles 6"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:34.678Z"
+    },
+    "energy-pack-de-10k": {
+      "sourceId": "gid://shopify/Product/9770171597030",
+      "targetId": "gid://shopify/Product/15227255095341",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-10K.webp?v=1785286117",
+          "alt": "Energy Pack 10K"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Gel-Actimax.jpg?v=1785286117",
+          "alt": "Energy Pack 10K"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Infografia-de-10K-Recomendaciones-de-uso-para-el-portal-web.webp?v=1785286117",
+          "alt": "Energy Pack 10K"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:38.201Z"
+    },
+    "energy-pack-15k": {
+      "sourceId": "gid://shopify/Product/9770171531494",
+      "targetId": "gid://shopify/Product/15227255226413",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-15K-Actimax-Running.webp?v=1785286120",
+          "alt": "Energy Pack 15K"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Infografia-Recomendaciones-de-uso-Energy-Pack-15K.webp?v=1785286121",
+          "alt": "Energy Pack 15K"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/3.-Geles-energe_E2_95_A0uticos-Actimax-30-g.webp?v=1785286120",
+          "alt": "Energy Pack 15K"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:41.684Z"
+    },
+    "energy-pack-21k-sub-130": {
+      "sourceId": "gid://shopify/Product/9787388297446",
+      "targetId": "gid://shopify/Product/15227255455789",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Packs-21K-Sub.png?v=1785286123",
+          "alt": "Energy Pack 21K Sub 1:30 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/ezgif-6-8c1cff28e8.jpg?v=1785286124",
+          "alt": "Energy Pack 21K Sub 1:30 2"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Gel-Actimax_9585d3aa-213d-40cd-b0a9-8f8f93ef2ef1.jpg?v=1785286124",
+          "alt": "Energy Pack 21K Sub 1:30 3"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:44.590Z"
+    },
+    "energy-pack-42k-sub-3": {
+      "sourceId": "gid://shopify/Product/9770171564262",
+      "targetId": "gid://shopify/Product/15227255586861",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-pack-42K-sub-3-running.webp?v=1785286126",
+          "alt": "Energy Pack 42K Sub 3"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Infografia-Energy-Packs-Sub-42K.webp?v=1785286126",
+          "alt": "Energy Pack 42K Sub 3"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Infografia-42K-2-0000.jpg?v=1785286127",
+          "alt": "Energy Pack 42K Sub 3"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:47.904Z"
+    },
+    "energy-pack-actimax-para-triatlon-media-distancia": {
+      "sourceId": "gid://shopify/Product/9770171826406",
+      "targetId": "gid://shopify/Product/15227255914541",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-triatlon-media-distancia-Actimax.webp?v=1785286130",
+          "alt": "Energy Pack Actimax para Triatlón Media Distancia"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:51.247Z"
+    },
+    "energy-pack-black-friday": {
+      "sourceId": "gid://shopify/Product/9787388199142",
+      "targetId": "gid://shopify/Product/15227256176685",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/energy_pack_actimax_bebidas_para_antes_durante_y_despues_de_entrenar.png?v=1785286133",
+          "alt": "Energy Pack Elite 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1.-recovery_pro_tarro_1.jpg?v=1785286133",
+          "alt": "Energy Pack Elite 2"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/energy_pack_actimax2.jpg?v=1785286133",
+          "alt": "Energy Pack Elite 3"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/energy_pack_actimax4.jpg?v=1785286133",
+          "alt": "Energy Pack Elite 4"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/energy_pack_actimax5.jpg?v=1785286133",
+          "alt": "Energy Pack Elite 5"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:54.174Z"
+    },
+    "energy-pack-gladiadores": {
+      "sourceId": "gid://shopify/Product/9787388264678",
+      "targetId": "gid://shopify/Product/15227256373293",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-Actimax-Gladiadores-Off-Road.png?v=1785286136",
+          "alt": "Energy Pack Gladiadores 1"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:48:57.008Z"
+    },
+    "energy-pack-gran-fondo": {
+      "sourceId": "gid://shopify/Product/9770171662566",
+      "targetId": "gid://shopify/Product/15227256471597",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-Gran-Fondo-ciclismo.webp?v=1785286139",
+          "alt": "Energy Pack Gran Fondo"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-Gran-Fondo-Ciclismo-Kit-de-nutricion-para-Gran-Fondo-1.webp?v=1785286139",
+          "alt": "Energy Pack Gran Fondo"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-Gran-Fondo-Ciclismo-Kit-de-nutricion-para-Gran-Fondo-3.webp?v=1785286139",
+          "alt": "Energy Pack Gran Fondo"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-Gran-Fondo-Ciclismo-Kit-de-nutricion-para-Gran-Fondo-2.webp?v=1785286139",
+          "alt": "Energy Pack Gran Fondo"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:00.380Z"
+    },
+    "energy-pack-maraton-42k": {
+      "sourceId": "gid://shopify/Product/9770171728102",
+      "targetId": "gid://shopify/Product/15227256668205",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-42K.webp?v=1785286143",
+          "alt": "Energy Pack Maratón 42K"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-42K-Geles-energeeticos-Actimax.jpg?v=1785286142",
+          "alt": "Energy Pack Maratón 42K"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Infografia-de-42K-Recomendaciones-de-uso-para-el-portal-web.webp?v=1785286142",
+          "alt": "Energy Pack Maratón 42K"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:03.733Z"
+    },
+    "energy-pack-maraton-42k-running": {
+      "sourceId": "gid://shopify/Product/9787388756198",
+      "targetId": "gid://shopify/Product/15227256799277",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-maraton-running-42K.webp?v=1785286146",
+          "alt": "Energy Pack Maratón Running 42K 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Infografia-Energy-Pack-42K-2026.webp?v=1785286146",
+          "alt": "Energy Pack Maratón Running 42K 2"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Gel-energetico-maraton.webp?v=1785286146",
+          "alt": "Energy Pack Maratón Running 42K 3"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:06.595Z"
+    },
+    "energy-pack-media-maraton-21k": {
+      "sourceId": "gid://shopify/Product/9770171695334",
+      "targetId": "gid://shopify/Product/15227256995885",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-21K.webp?v=1785286148",
+          "alt": "Energy Pack Media Maratón 21K"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-21K-Geles-energeeticos-Actimax.jpg?v=1785286149",
+          "alt": "Energy Pack Media Maratón 21K"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recomendaciones-de-uso-de-los-Energy-Packs-21K-Infografia.webp?v=1785286149",
+          "alt": "Energy Pack Media Maratón 21K"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:10.110Z"
+    },
+    "energy-pack-media-maraton-running-21k": {
+      "sourceId": "gid://shopify/Product/9787388690662",
+      "targetId": "gid://shopify/Product/15227257126957",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-Media-Maraton-21K.webp?v=1785286152",
+          "alt": "Energy Pack Media Maratón Running 21K 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Infografia-Energy-Pack-21K.webp?v=1785286152",
+          "alt": "Energy Pack Media Maratón Running 21K 2"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Gel-energetico-para-correr.webp?v=1785286152",
+          "alt": "Energy Pack Media Maratón Running 21K 3"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:12.980Z"
+    },
+    "energy-pack-powerman-distancia-clasica": {
+      "sourceId": "gid://shopify/Product/9787388494054",
+      "targetId": "gid://shopify/Product/15227257258029",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/11.-Energy-Pack-Powerman-Distancia-clasica.webp?v=1785286155",
+          "alt": "Energy Pack Powerman - Distancia clásica 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/12.-Energy-Pack-Powerman-Distancia-clasica-Recomendaciones-de-uso.webp?v=1785286155",
+          "alt": "Energy Pack Powerman - Distancia clásica 2"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:15.863Z"
+    },
+    "energy-pack-powerman-distancia-corta": {
+      "sourceId": "gid://shopify/Product/9787388559590",
+      "targetId": "gid://shopify/Product/15227257389101",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/21.-Energy-Pack-distancia-corta-Powerman.webp?v=1785286158",
+          "alt": "Energy Pack Powerman - Distancia corta 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/22.-Energy-Pack-distancia-corta-Powerman-recomendaciones-de-uso.webp?v=1785286158",
+          "alt": "Energy Pack Powerman - Distancia corta 2"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:18.693Z"
+    },
+    "energy-pack-powerman-distancia-super-corta": {
+      "sourceId": "gid://shopify/Product/9787388625126",
+      "targetId": "gid://shopify/Product/15227257487405",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/31.-Energy-Pack-distancia-super-corta-Powerman.webp?v=1785286160",
+          "alt": "Energy Pack Powerman - Distancia súper corta 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/32.-Energy-Pack-distancia-super-corta-Powerman-recomendaciones-de-uso.webp?v=1785286161",
+          "alt": "Energy Pack Powerman - Distancia súper corta 2"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:21.519Z"
+    },
+    "energy-pack-pura-candela": {
+      "sourceId": "gid://shopify/Product/9787388231910",
+      "targetId": "gid://shopify/Product/15227257618477",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Pack-Liga-Zona-5-Actimax.png?v=1785286163",
+          "alt": "Energy Pack Pura Candela 1"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:24.324Z"
+    },
+    "gl-energetico-actimax-sachets-x24-con-cafeina": {
+      "sourceId": "gid://shopify/Product/9770172121318",
+      "targetId": "gid://shopify/Product/15227257749549",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-actimax-con-cafeina.png?v=1785286167",
+          "alt": "Gel Energético – Caja x 24 sachets con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/5-gel_energetico_con_cafeina_30_gr.jpg?v=1785286166",
+          "alt": "Gel Energético – Caja x 24 sachets con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-gel_energetico_con_cafeina_30_gr.jpg?v=1785286166",
+          "alt": "Gel Energético – Caja x 24 sachets con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-gel_energetico_con_cafeina_30_gr.jpg?v=1785286166",
+          "alt": "Gel Energético – Caja x 24 sachets con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/4-gel_energetico_con_cafeina_30_gr.jpg?v=1785286166",
+          "alt": "Gel Energético – Caja x 24 sachets con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/3-gel_energetico_con_cafeina_30_gr.jpg?v=1785286166",
+          "alt": "Gel Energético – Caja x 24 sachets con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-fresa-cafeina-tabla-nutricional.jpg?v=1785286166",
+          "alt": "Gel Energético – Caja x 24 sachets con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-mango-cafeina-tabla-nutricional.jpg?v=1785286166",
+          "alt": "Gel Energético – Caja x 24 sachets con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-manzana-verde-cafeina-tabla-nutricional.jpg?v=1785286166",
+          "alt": "Gel Energético – Caja x 24 sachets con Cafeína"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:27.821Z"
+    },
+    "gel-energetico-sachets-x24-sin-cafeina": {
+      "sourceId": "gid://shopify/Product/9770171793638",
+      "targetId": "gid://shopify/Product/15227257978925",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-actimax-sin-cafeina.png?v=1785286170",
+          "alt": "Gel Energético – Caja x 24 sachets sin Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-gel_energetico_sin_cafeina_30_gr.jpg?v=1785286170",
+          "alt": "Gel Energético – Caja x 24 sachets sin Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-gel_energetico_sin_cafeina_30_gr-2.jpg?v=1785286170",
+          "alt": "Gel Energético – Caja x 24 sachets sin Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/3-gel_energetico_sin_cafeina_30_gr-3.jpg?v=1785286170",
+          "alt": "Gel Energético – Caja x 24 sachets sin Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-fresa-banano-sin-cafeina-tabla-nutricional.jpg?v=1785286170",
+          "alt": "Gel Energético – Caja x 24 sachets sin Cafeína"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:31.437Z"
+    },
+    "gel-energetico-actimax-caja-x8-con-cafeina": {
+      "sourceId": "gid://shopify/Product/9770171760870",
+      "targetId": "gid://shopify/Product/15227258175533",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-actimax-con-cafeina-90.png?v=1785286173",
+          "alt": "Gel Energético – Caja x 8 geles con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-gel_energetico_con_cafeina_90gr_2.jpg?v=1785286173",
+          "alt": "Gel Energético – Caja x 8 geles con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/3-gel_energetico_con_cafeina_90gr_4.jpg?v=1785286173",
+          "alt": "Gel Energético – Caja x 8 geles con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-gel_energetico_con_cafeina_90gr_3.jpg?v=1785286173",
+          "alt": "Gel Energético – Caja x 8 geles con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-mango-cafeina-tabla-nutricional.jpg?v=1785286173",
+          "alt": "Gel Energético – Caja x 8 geles con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-manzana-verde-cafeina-tabla-nutricional.jpg?v=1785286173",
+          "alt": "Gel Energético – Caja x 8 geles con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-fresa-cafeina-tabla-nutricional.jpg?v=1785286173",
+          "alt": "Gel Energético – Caja x 8 geles con Cafeína"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:34.940Z"
+    },
+    "gel-energetico-actimax-caja-x8": {
+      "sourceId": "gid://shopify/Product/9770171990246",
+      "targetId": "gid://shopify/Product/15227258306605",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Gel-Energetico-Actimax-Caja-x8-sin-cafeina.png?v=1785286177",
+          "alt": "Gel Energético – Caja x 8 geles sin cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-fresa-banano-sin-cafeina-tabla-nutricional.jpg?v=1785286177",
+          "alt": "Gel Energético – Caja x 8 geles sin cafeína"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:38.340Z"
+    },
+    "hydrapack-250": {
+      "sourceId": "gid://shopify/Product/9787388362982",
+      "targetId": "gid://shopify/Product/15227258503213",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Sobre-de-Bebida-elite-Actimax-con-1-termo-plegable.png?v=1785286181",
+          "alt": "Hydrapack 250 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Bebida-elite-en-sobres-2.jpg?v=1785286181",
+          "alt": "Hydrapack 250 2"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Bebida-elite-en-sobres.jpg?v=1785286181",
+          "alt": "Hydrapack 250 3"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Termo-plegable-Actimax-1.jpg?v=1785286181",
+          "alt": "Hydrapack 250 4"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:41.567Z"
+    },
+    "hydrapack-500": {
+      "sourceId": "gid://shopify/Product/9787388395750",
+      "targetId": "gid://shopify/Product/15227258634285",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Hydrapack-Actimax-termo-y-sachets-de-bebida-elite.png?v=1785286183",
+          "alt": "Hydrapack 500 1"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Bebida-Elite-en-sobres-2-1.jpg?v=1785286184",
+          "alt": "Hydrapack 500 2"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Termo-plegable-Actimax-3.jpg?v=1785286183",
+          "alt": "Hydrapack 500 3"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Termo-plegable-Actimax-4.jpg?v=1785286184",
+          "alt": "Hydrapack 500 4"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Termo-plegable-Actimax-6.jpg?v=1785286184",
+          "alt": "Hydrapack 500 5"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:44.434Z"
+    },
+    "kit-de-nutricion-alto-de-letras": {
+      "sourceId": "gid://shopify/Product/9770171859174",
+      "targetId": "gid://shopify/Product/15227259191341",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Kit-de-Letras-Actimax-Kit-de-nutricion-ciclismo.webp?v=1785286186",
+          "alt": "Kit de nutrición Alto de Letras"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:47.724Z"
+    },
+    "pack-sachets-bebida-elite-cafeina": {
+      "sourceId": "gid://shopify/Product/9770171629798",
+      "targetId": "gid://shopify/Product/15227259387949",
+      "media": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Pack-x20-sachets-Bebida-Deportiva-Elite-con-Cafeina.png?v=1785286190",
+          "alt": "Pack x20 sachets Bebida Deportiva Élite con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida_deportiva_elite.jpg?v=1785286190",
+          "alt": "Pack x20 sachets Bebida Deportiva Élite con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida_deportiva_sin-cafeina.jpg?v=1785286190",
+          "alt": "Pack x20 sachets Bebida Deportiva Élite con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida_deportiva_elite-actimax.jpg?v=1785286190",
+          "alt": "Pack x20 sachets Bebida Deportiva Élite con Cafeína"
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Bebida-elite-sachet-tabla-nutricional.jpg?v=1785286190",
+          "alt": "Pack x20 sachets Bebida Deportiva Élite con Cafeína"
+        }
+      ],
+      "migratedAt": "2026-07-29T00:49:51.178Z"
+    }
+  }
+}

@@ -11,7 +11,12 @@ const BLOG_PATHS_FILE = path.join(ROOT, "src/data/blog-paths.json");
 const CATALOG_FILE = path.join(ROOT, "src/data/catalog.json");
 const IMAGE_REDIRECTS_FILE = path.join(ROOT, "src/data/legacy-image-redirects.json");
 const MANIFEST_FILE = path.join(IMPORT_DIR, "blog-migration-manifest.json");
-const STATE_FILE = path.join(IMPORT_DIR, "blog-migration-state.json");
+const STATE_FILE = process.env.SHOPIFY_BLOG_MIGRATION_STATE_FILE
+  ? path.resolve(ROOT, process.env.SHOPIFY_BLOG_MIGRATION_STATE_FILE)
+  : path.join(IMPORT_DIR, "blog-migration-state.json");
+const SOURCE_STATE_FILE = process.env.SHOPIFY_BLOG_SOURCE_STATE_FILE
+  ? path.resolve(ROOT, process.env.SHOPIFY_BLOG_SOURCE_STATE_FILE)
+  : null;
 const NATIVE_REDIRECTS_FILE = path.join(IMPORT_DIR, "shopify-native-blog-redirects.csv");
 
 const WP_BASE_URL = (process.env.WP_BASE_URL ?? "https://actimax.com.co").replace(/\/$/, "");
@@ -541,6 +546,11 @@ async function findOrCreateBlog() {
 async function readState() {
   try {
     const state = JSON.parse(await readFile(STATE_FILE, "utf8"));
+    if (state.storeDomain && state.storeDomain !== STORE_DOMAIN) {
+      throw new Error(
+        `Migration state belongs to ${state.storeDomain}, not ${STORE_DOMAIN}. Use a separate SHOPIFY_BLOG_MIGRATION_STATE_FILE.`,
+      );
+    }
     return { images: {}, articles: {}, ...state };
   } catch (error) {
     if (error.code === "ENOENT") return { images: {}, articles: {} };
@@ -549,7 +559,15 @@ async function readState() {
 }
 
 async function writeState(state) {
-  await writeFile(STATE_FILE, `${JSON.stringify(state, null, 2)}\n`);
+  await writeFile(
+    STATE_FILE,
+    `${JSON.stringify({ ...state, storeDomain: STORE_DOMAIN }, null, 2)}\n`,
+  );
+}
+
+async function readSourceState() {
+  if (!SOURCE_STATE_FILE) return null;
+  return JSON.parse(await readFile(SOURCE_STATE_FILE, "utf8"));
 }
 
 function safeFilename(source, prefix = "actimax-blog") {
@@ -816,21 +834,45 @@ async function upsertArticles(source, blog, state) {
   }
 }
 
-async function readCatalogImages() {
+async function readCatalogImages(state = null) {
   const catalog = JSON.parse(await readFile(CATALOG_FILE, "utf8"));
+  const migratedUrls = new Set(
+    Object.values(state?.images ?? {}).map((image) => image?.url).filter(Boolean),
+  );
+  const migratedPaths = new Set([...migratedUrls].map((url) => new URL(url).pathname));
   const sources = [
-    ...new Set(catalog.flatMap((product) => product.images ?? []).filter(isWordPressImage)),
+    ...new Set(
+      catalog
+        .flatMap((product) => product.images ?? [])
+        .filter(
+          (source) =>
+            /^https?:\/\//i.test(source) &&
+            !migratedUrls.has(source) &&
+            !migratedPaths.has(new URL(source).pathname),
+        ),
+    ),
   ];
   return { catalog, sources };
 }
 
-async function rewriteCatalogImages(catalog, state) {
+async function rewriteCatalogImages(catalog, state, sourceState = null) {
+  const previousUrls = new Map();
+  const previousPaths = new Map();
+  for (const [source, previous] of Object.entries(sourceState?.images ?? {})) {
+    const destination = state.images[source]?.url;
+    if (!previous?.url || !destination) continue;
+    previousUrls.set(previous.url, destination);
+    previousPaths.set(new URL(previous.url).pathname, destination);
+  }
   let rewritten = 0;
   for (const product of catalog) {
     product.images = (product.images ?? []).map((source) => {
-      if (!isWordPressImage(source)) return source;
-      const destination = state.images[source]?.url;
-      if (!destination) throw new Error(`Missing migrated catalog image for ${source}`);
+      const destination = isWordPressImage(source)
+        ? state.images[source]?.url
+        : state.images[source]?.url ??
+          previousUrls.get(source) ??
+          (/^https?:\/\//i.test(source) ? previousPaths.get(new URL(source).pathname) : undefined);
+      if (!destination) return source;
       rewritten += 1;
       return destination;
     });
@@ -857,19 +899,30 @@ async function importToShopify() {
   }
   await getAdminToken();
   const { source, inspection } = await prepare();
-  const { catalog, sources: catalogImages } = await readCatalogImages();
-  const externalImages = [...new Set([...inspection.externalImages, ...catalogImages])];
   const state = await readState();
+  const { catalog, sources: catalogImages } = await readCatalogImages(state);
+  const externalImages = [...new Set([...inspection.externalImages, ...catalogImages])];
+  const sourceState = await readSourceState();
   const blog = await findOrCreateBlog();
   console.log(`Shopify blog: ${blog.title} (${blog.handle})`);
   await uploadExternalImages(externalImages, state);
   await uploadDataImages(inspection.dataImages, state);
   await upsertArticles(source, blog, state);
-  const rewrittenCatalogImages = await rewriteCatalogImages(catalog, state);
+  const rewrittenCatalogImages = await rewriteCatalogImages(catalog, state, sourceState);
   await writeLegacyImageRedirects(state);
   console.log(
     `Import complete: ${source.posts.length} articles, ${externalImages.length + inspection.dataImages.size} images, and ${rewrittenCatalogImages} catalog URLs rewritten.`,
   );
+}
+
+async function rewriteCatalogFromState() {
+  const { catalog } = await readCatalogImages();
+  const state = await readState();
+  const sourceState = await readSourceState();
+  if (!sourceState) throw new Error("SHOPIFY_BLOG_SOURCE_STATE_FILE is required.");
+  const rewritten = await rewriteCatalogImages(catalog, state, sourceState);
+  await writeLegacyImageRedirects(state);
+  console.log(`Rewrote ${rewritten} catalog image URLs from migration state.`);
 }
 
 async function storefrontGraphql(query) {
@@ -964,7 +1017,8 @@ try {
   if (command === "prepare") await prepare();
   else if (command === "import") await importToShopify();
   else if (command === "verify") await verify();
-  else throw new Error(`Unknown command "${command}". Use prepare, import, or verify.`);
+  else if (command === "rewrite-catalog") await rewriteCatalogFromState();
+  else throw new Error(`Unknown command "${command}". Use prepare, import, verify, or rewrite-catalog.`);
 } catch (error) {
   console.error(error instanceof Error ? error.message : error);
   process.exitCode = 1;

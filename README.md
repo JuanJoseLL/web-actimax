@@ -55,21 +55,27 @@ persona no técnica) con este front en Next.js:
 
 ## Estado del catálogo
 
-La migración de WooCommerce se completó el 28 de julio de 2026:
+La migración definitiva a la tienda Client transfer de Colombia se completó el
+28 de julio de 2026:
 
-- 19 productos existentes conservaron sus GID, publicaciones, precios e
-  inventario.
-- 10 productos variables recuperaron sus sabores; la variante original heredó
-  el primer sabor y conservó su inventario.
-- 16 productos nuevos quedaron como borradores en Shopify. El storefront sirve
-  sus URL y contenido desde el respaldo local, pero no permite comprarlos.
-- El catálogo final contiene 35 productos y 59 variantes verificadas.
+- La tienda de producción es `actimax-hzfavz8j.myshopify.com`; la anterior
+  `actimax-demo.myshopify.com` queda únicamente como fuente y entorno de prueba.
+- El catálogo contiene 35 productos activos, 59 variantes y 170 unidades en la
+  ubicación Actimax Envigado.
+- Los 35 productos están publicados en el canal Headless; los 19 productos que
+  ya estaban habilitados comercialmente también conservan sus publicaciones de
+  Online Store y POS.
+- Las 125 imágenes de producto, las imágenes del respaldo local y las 81
+  entradas del blog fueron copiadas a la nueva tienda sin depender del CDN de
+  la tienda Dev.
 - El GTIN `7709990576603` no se asignó porque aparece en los productos de origen
   `524`, `22458` y `22468`; debe resolverse antes de completar esos códigos.
 
-Para activar uno de los 16 borradores, configura primero el inventario de todas
-sus variantes en Shopify, cambia su estado a activo y publícalo en el canal que
-usa la Storefront API. No vuelvas a importar el CSV histórico de productos.
+No vuelvas a importar el CSV histórico de productos. La tienda Client transfer
+es la fuente oficial para el trabajo diario. Los comandos `shopify:migrate` y
+`shopify:verify` son exclusivamente de recuperación histórica y exigen declarar
+explícitamente `SOURCE_SHOPIFY_STORE_DOMAIN` y
+`TARGET_SHOPIFY_STORE_DOMAIN`; no configures la tienda Dev en `.env.local`.
 
 ## URL de productos
 
@@ -91,24 +97,29 @@ Configura estas variables en `.env.local` y también en el proveedor de
 despliegue:
 
 ```bash
-SHOPIFY_STORE_DOMAIN=tu-tienda.myshopify.com
-SHOPIFY_STOREFRONT_TOKEN=tu_token_storefront
+SHOPIFY_STORE_DOMAIN=actimax-hzfavz8j.myshopify.com
+SHOPIFY_STOREFRONT_TOKEN=token_publico_de_actimax_headless
 SHOPIFY_BLOG_HANDLE=blog
 ```
+
+`SHOPIFY_CLIENT_ID` y `SHOPIFY_CLIENT_SECRET` pertenecen a la integración
+administrativa instalada en la tienda Actimax. Se usan únicamente en scripts de
+migración y mantenimiento; no se despliegan al frontend.
 
 Los productos deben estar activos y publicados en el canal asociado a la
 Storefront API. Cuando un producto tiene varias variantes, la página exige
 seleccionar una opción disponible y envía su GID exacto al checkout.
 
-Para recorrer el pago sin cobrar en una tienda de desarrollo:
+Para recorrer el pago sin cobrar mientras la Client transfer store sigue bajo
+la organización del Partner:
 
 1. Ve a **Shopify Admin → Configuración → Pagos**.
 2. Agrega y activa **(for testing) Bogus Gateway**. Si hay otro proveedor de
    tarjeta activo, desactívalo primero cuando Shopify lo solicite.
-3. Ve a **Tienda online → Preferencias → Protección con contraseña**, define
-   la contraseña de la tienda y guárdala. No es la contraseña de tu cuenta de
-   administrador: Shopify no permite desactivar esta pantalla en una tienda de
-   desarrollo.
+3. Ve a **Tienda online → Acceso a la tienda → Protección con contraseña**,
+   define la contraseña y guárdala. No es la contraseña de tu cuenta de
+   administrador: Shopify no permite desactivar esta pantalla antes de la
+   transferencia y activación del plan.
 4. Desde esta web, agrega un producto y pulsa **Finalizar compra**. La primera
    vez, Shopify solicita la contraseña y después abre la portada de su tema;
    es una limitación de las tiendas de desarrollo. Vuelve a esta web y pulsa

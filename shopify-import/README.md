@@ -3,7 +3,7 @@
 El storefront conserva las URL publicas de WordPress aunque Shopify guarde los
 articulos internamente en `/blogs/blog/...`:
 
-- 70 articulos siguen disponibles en `/blog/{slug}/`.
+- 72 articulos siguen disponibles en `/blog/{slug}/`.
 - Los 9 articulos historicos publicados en la raiz siguen en `/{slug}/`.
 - Las categorias siguen disponibles en `/blog/{categoria}/`.
 - Las imagenes antiguas bajo `/wp-content/uploads/...` redirigen a Shopify CDN.
