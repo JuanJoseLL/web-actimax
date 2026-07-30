@@ -18,6 +18,20 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cdn.shopify.com" },
     ],
   },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          // Nada de esta tienda se muestra dentro de iframes de terceros:
+          // bloquearlos impide superponer controles ajenos sobre el botón
+          // de pago (clickjacking).
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [...legacyUrlRedirects, ...productAliasRedirects, ...wordpressIdRedirects];
   },
