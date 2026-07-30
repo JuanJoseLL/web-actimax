@@ -8,18 +8,17 @@ import {
   type PlanSport,
 } from "@/lib/mi-plan";
 import { initialProductVariant } from "@/lib/product-variants";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Mi Plan Actimax — Nutrición para tu próximo reto",
   description:
     "Crea un plan orientativo de nutrición e hidratación para running, ciclismo o triatlón y encuentra el Energy Pack Actimax más cercano a tu reto.",
-  alternates: { canonical: "/mi-plan/" },
-  openGraph: {
-    title: "Mi Plan Actimax — Tu meta tiene un plan",
-    description:
-      "Define distancia, tiempo, clima y tolerancia para construir una estrategia antes, durante y después.",
-  },
-};
+  path: "/mi-plan/",
+  ogTitle: "Mi Plan Actimax — Tu meta tiene un plan",
+  ogDescription:
+    "Define distancia, tiempo, clima y tolerancia para construir una estrategia antes, durante y después.",
+});
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 

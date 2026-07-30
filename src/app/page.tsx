@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { cacheLife, cacheTag } from "next/cache";
@@ -20,6 +21,10 @@ import { formatPostDate, getAllBlogPosts } from "@/lib/blog";
 import { getAllProducts, getProducts } from "@/lib/catalog";
 import { formatCOP } from "@/lib/format";
 import { canonicalProductPath } from "@/lib/product-paths";
+
+/* Título, descripción y Open Graph vienen del layout raíz; el canonical
+   defiende el home de duplicados por query (?utm_*, ?fbclid, …). */
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default async function Home() {
   "use cache";

@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import { PackComparator, type ComparablePack } from "@/components/PackComparator";
 import { getAllProducts } from "@/lib/catalog";
 import { initialProductVariant } from "@/lib/product-variants";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Comparar Energy Packs — Actimax",
-  description: "Compara Energy Packs Actimax y encuentra una estrategia de nutrición para tu próximo reto.",
-};
+  description:
+    "Compara Energy Packs Actimax y encuentra una estrategia de nutrición para tu próximo reto.",
+  path: "/productos/comparar/",
+});
 
 export default async function CompararPacksPage() {
   const packs: ComparablePack[] = (await getAllProducts())

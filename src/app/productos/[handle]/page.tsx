@@ -16,7 +16,14 @@ import {
   typeLabel,
 } from "@/lib/catalog";
 import { canonicalProductPath } from "@/lib/product-paths";
-import { SITE_URL, breadcrumbJsonLd, jsonLd, productJsonLd, productUrl } from "@/lib/seo";
+import {
+  DEFAULT_OG_IMAGE,
+  SITE_URL,
+  breadcrumbJsonLd,
+  jsonLd,
+  productJsonLd,
+  productUrl,
+} from "@/lib/seo";
 
 export async function generateStaticParams() {
   const products = await getAllProducts();
@@ -40,7 +47,9 @@ export async function generateMetadata({
       description: product.excerpt,
       url: canonicalProductPath(product.handle),
       images:
-        product.images.length > 0 ? [{ url: product.images[0], alt: product.title }] : [],
+        product.images.length > 0
+          ? [{ url: product.images[0], alt: product.title }]
+          : [DEFAULT_OG_IMAGE],
     },
   };
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import { BlogListing } from "@/components/blog/BlogListing";
+import { pageMetadata } from "@/lib/seo";
 import {
   BLOG_CACHE_LIFE,
   POSTS_PER_PAGE,
@@ -35,12 +36,12 @@ export async function generateMetadata({
   const page = parsePage((await params).numero);
   if (page === undefined) return { title: "Página no encontrada | Actimax" };
 
-  return {
+  return pageMetadata({
     title: `Blog de nutrición deportiva — página ${page} | Actimax`,
     description:
       "Consejos de nutrición deportiva: geles, hidratación y recuperación para corredores, ciclistas y triatletas.",
-    alternates: { canonical: `/blog/pagina/${page}/` },
-  };
+    path: `/blog/pagina/${page}/`,
+  });
 }
 
 export default async function BlogPaginaPage({

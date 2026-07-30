@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { BlogListing } from "@/components/blog/BlogListing";
 import { BLOG_CACHE_LIFE, getBlogPostsPage } from "@/lib/blog";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Blog de nutrición deportiva y actividad física | Actimax",
   description:
     "Consejos de nutrición deportiva: geles, hidratación y recuperación para corredores, ciclistas y triatletas.",
-  alternates: { canonical: "/blog/" },
-};
+  path: "/blog/",
+});
 
 export default async function BlogPage() {
   "use cache";

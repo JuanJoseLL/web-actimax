@@ -3,14 +3,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { FAQ_ITEMS } from "@/data/faq";
-import { SITE_URL, breadcrumbJsonLd, faqJsonLd, jsonLd } from "@/lib/seo";
+import { SITE_URL, breadcrumbJsonLd, faqJsonLd, jsonLd, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Preguntas frecuentes: geles energéticos y nutrición deportiva — Actimax",
   description:
     "Qué es un gel energético, cuándo tomarlo, con o sin cafeína, qué usar antes, durante y después de entrenar y dónde comprar nutrición deportiva en Colombia.",
-  alternates: { canonical: "/preguntas-frecuentes/" },
-};
+  path: "/preguntas-frecuentes/",
+});
 
 export default function FaqPage() {
   return (

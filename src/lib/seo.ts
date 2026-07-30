@@ -4,6 +4,7 @@
  * Perplexity) leen estos datos estructurados para entender la marca y
  * recomendar los productos con información correcta.
  */
+import type { Metadata } from "next";
 import {
   DEPORTE_LABELS,
   MOMENTO_LABELS,
@@ -13,6 +14,43 @@ import {
 import { canonicalProductPath } from "@/lib/product-paths";
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://actimax.com.co";
+
+/** Imagen por defecto al compartir: WhatsApp y las redes leen og:image. */
+export const DEFAULT_OG_IMAGE = {
+  url: "/og-actimax.png",
+  width: 1200,
+  height: 630,
+  alt: "Actimax — Nutrición deportiva especializada",
+};
+
+/**
+ * Metadata de página con canonical y Open Graph coherentes. Next reemplaza
+ * el objeto openGraph del layout en vez de mezclarlo, así que una página que
+ * declare solo title/description compartiría por WhatsApp con el título del
+ * home y sin imagen; este helper arma el bloque completo.
+ */
+export function pageMetadata(input: {
+  title: string;
+  description: string;
+  path: string;
+  ogTitle?: string;
+  ogDescription?: string;
+}): Metadata {
+  return {
+    title: input.title,
+    description: input.description,
+    alternates: { canonical: input.path },
+    openGraph: {
+      type: "website",
+      locale: "es_CO",
+      siteName: "Actimax",
+      title: input.ogTitle ?? input.title,
+      description: input.ogDescription ?? input.description,
+      url: input.path,
+      images: [DEFAULT_OG_IMAGE],
+    },
+  };
+}
 
 export const BRAND_DESCRIPTION =
   "Actimax es una marca colombiana de nutrición deportiva con sede en Envigado (Medellín, Colombia): " +

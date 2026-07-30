@@ -13,22 +13,30 @@ import {
   isMomento,
   isProductType,
 } from "@/lib/catalog";
-import { itemListJsonLd, jsonLd } from "@/lib/seo";
-
-export const metadata: Metadata = {
-  title: "Geles energéticos, bebidas y barras — Catálogo Actimax",
-  description:
-    "Catálogo de nutrición deportiva colombiana: geles energéticos con y sin cafeína, bebidas de hidratación y recuperación, barras de proteína y Energy Packs por distancia. Envíos a toda Colombia.",
-  alternates: { canonical: "/productos/" },
-};
+import { itemListJsonLd, jsonLd, pageMetadata } from "@/lib/seo";
+import type { Momento, ProductType } from "@/lib/taxonomia";
 
 interface Filters {
-  tipo?: string;
-  momento?: string;
+  tipo?: ProductType;
+  momento?: Momento;
   deporte?: string;
 }
 
 type SearchParams = Promise<{ tipo?: string; momento?: string; deporte?: string }>;
+
+/** Ignora valores fuera de la taxonomía: /productos/?tipo=basura ≡ /productos/. */
+async function resolveFilters(searchParams: SearchParams): Promise<Filters> {
+  const params = await searchParams;
+  return {
+    tipo: params.tipo !== undefined && isProductType(params.tipo) ? params.tipo : undefined,
+    momento:
+      params.momento !== undefined && isMomento(params.momento) ? params.momento : undefined,
+    deporte:
+      params.deporte !== undefined && params.deporte in DEPORTE_LABELS
+        ? params.deporte
+        : undefined,
+  };
+}
 
 function filterUrl(current: Filters, patch: Partial<Filters>): string {
   const next = { ...current, ...patch };
@@ -37,7 +45,57 @@ function filterUrl(current: Filters, patch: Partial<Filters>): string {
   if (next.momento !== undefined) params.set("momento", next.momento);
   if (next.deporte !== undefined) params.set("deporte", next.deporte);
   const qs = params.toString();
-  return qs === "" ? "/productos" : `/productos?${qs}`;
+  return qs === "" ? "/productos/" : `/productos/?${qs}`;
+}
+
+/* Las landings viejas de categoría y de ciudad (geles-energeticos,
+   bebidas-isotonicas-bogota, …) redirigen a estas vistas filtradas; cada una
+   necesita canonical, título y descripción propios para no consolidarse
+   todas en /productos/ y perder lo que rankeaban. */
+const TYPE_DESCRIPTIONS: Record<ProductType, string> = {
+  geles:
+    "Geles energéticos colombianos con y sin cafeína para running, ciclismo y triatlón. Compra en línea con envíos a Bogotá, Medellín, Cali y toda Colombia.",
+  bebidas:
+    "Bebidas deportivas e isotónicas de hidratación, pre-entreno y recuperación hechas en Colombia. Envíos a Bogotá, Medellín, Cali, Barranquilla y todo el país.",
+  barras:
+    "Barras de proteína para recuperar después del ejercicio, hechas en Colombia. Compra en línea con envíos a todo el país.",
+  kits: "Energy Packs armados por distancia: 10K, 15K, 21K, 42K, Gran Fondo y triatlón. Nutrición deportiva colombiana con envíos a todo el país.",
+};
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}): Promise<Metadata> {
+  const filters = await resolveFilters(searchParams);
+  const { tipo, momento, deporte } = filters;
+
+  if (tipo === undefined && momento === undefined && deporte === undefined) {
+    return pageMetadata({
+      title: "Geles energéticos, bebidas y barras — Catálogo Actimax",
+      description:
+        "Catálogo de nutrición deportiva colombiana: geles energéticos con y sin cafeína, bebidas de hidratación y recuperación, barras de proteína y Energy Packs por distancia. Envíos a toda Colombia.",
+      path: "/productos/",
+    });
+  }
+
+  const head = tipo !== undefined ? TYPE_LABELS[tipo] : "Nutrición deportiva";
+  const momentoPart =
+    momento !== undefined ? ` para ${MOMENTO_LABELS[momento].toLowerCase()} del esfuerzo` : "";
+  const deportePart =
+    deporte !== undefined
+      ? momento !== undefined
+        ? ` · ${DEPORTE_LABELS[deporte]}`
+        : ` para ${DEPORTE_LABELS[deporte].toLowerCase()}`
+      : "";
+
+  const title = `${head}${momentoPart}${deportePart} — Catálogo Actimax`;
+  const description =
+    tipo !== undefined && momento === undefined && deporte === undefined
+      ? TYPE_DESCRIPTIONS[tipo]
+      : `${head}${momentoPart}${deportePart} de Actimax: nutrición deportiva hecha en Colombia, con envíos a todo el país.`;
+
+  return pageMetadata({ title, description, path: filterUrl(filters, {}) });
 }
 
 function Chip({
@@ -105,13 +163,8 @@ function CatalogSkeleton() {
 }
 
 async function CatalogContent({ searchParams }: { searchParams: SearchParams }) {
-  const params = await searchParams;
-  const tipo = params.tipo !== undefined && isProductType(params.tipo) ? params.tipo : undefined;
-  const momento = params.momento !== undefined && isMomento(params.momento) ? params.momento : undefined;
-  const deporte =
-    params.deporte !== undefined && params.deporte in DEPORTE_LABELS ? params.deporte : undefined;
-
-  const current: Filters = { tipo, momento, deporte };
+  const current = await resolveFilters(searchParams);
+  const { tipo, momento, deporte } = current;
 
   const products = await getAllProducts();
   const filtered = products.filter(
@@ -204,7 +257,7 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
             No hay productos con esa combinación
           </p>
           <Button asChild variant="race" size="lg" className="mt-6">
-            <Link href="/productos">Quitar filtros</Link>
+            <Link href="/productos/">Quitar filtros</Link>
           </Button>
         </div>
       ) : (
@@ -218,7 +271,7 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
       {hasFilters && filtered.length > 0 ? (
         <div className="mt-12 text-center">
           <Link
-            href="/productos"
+            href="/productos/"
             className="font-mono text-xs font-semibold uppercase tracking-wider text-azul underline-offset-4 hover:underline"
           >
             Quitar filtros y ver todo →

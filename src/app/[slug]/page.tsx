@@ -9,6 +9,7 @@ import {
   getRootBlogPostSlugs,
   isRootBlogPost,
 } from "@/lib/blog";
+import { DEFAULT_OG_IMAGE } from "@/lib/seo";
 
 export function generateStaticParams() {
   return getRootBlogPostSlugs().map((slug) => ({ slug }));
@@ -35,7 +36,10 @@ export async function generateMetadata({
       title: post.seoTitle ?? post.title,
       description: post.seoDescription ?? post.excerpt,
       publishedTime: post.date,
-      images: post.image !== null ? [{ url: post.image.url, alt: post.image.altText ?? post.title }] : [],
+      images:
+        post.image !== null
+          ? [{ url: post.image.url, alt: post.image.altText ?? post.title }]
+          : [DEFAULT_OG_IMAGE],
     },
   };
 }

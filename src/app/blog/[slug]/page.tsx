@@ -11,6 +11,7 @@ import {
   getBlogPost,
   isRootBlogPost,
 } from "@/lib/blog";
+import { DEFAULT_OG_IMAGE, pageMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const posts = (await getAllBlogPosts()).filter((post) => !isRootBlogPost(post));
@@ -32,11 +33,11 @@ export async function generateMetadata({
   const { slug } = await params;
   const category = getBlogCategory(slug);
   if (category !== undefined) {
-    return {
+    return pageMetadata({
       title: `${category.name} | Blog Actimax`,
       description: `Artículos de ${category.name.toLocaleLowerCase("es-CO")} para deportistas.`,
-      alternates: { canonical: category.path },
-    };
+      path: category.path,
+    });
   }
 
   const post = await getBlogPost(slug);
@@ -50,7 +51,10 @@ export async function generateMetadata({
         title: post.seoTitle ?? post.title,
         description: post.seoDescription ?? post.excerpt,
         publishedTime: post.date,
-        images: post.image !== null ? [{ url: post.image.url, alt: post.image.altText ?? post.title }] : [],
+        images:
+          post.image !== null
+            ? [{ url: post.image.url, alt: post.image.altText ?? post.title }]
+            : [DEFAULT_OG_IMAGE],
       },
     };
   }

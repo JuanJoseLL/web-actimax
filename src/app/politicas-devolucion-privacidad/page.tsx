@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { getStorePolicies } from "@/lib/policies";
-import { SITE_URL, breadcrumbJsonLd, jsonLd } from "@/lib/seo";
+import { SITE_URL, breadcrumbJsonLd, jsonLd, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Políticas de devolución, privacidad y envíos — Actimax",
   description:
     "Condiciones de devolución y cambios, tratamiento de datos personales y política de envíos de Actimax: envío gratis desde $120.000 en Colombia.",
-  alternates: { canonical: "/politicas-devolucion-privacidad/" },
-};
+  path: "/politicas-devolucion-privacidad/",
+});
 
 const SECTION_LABELS: Record<string, string> = {
   devolucion: "Devoluciones y cambios",
