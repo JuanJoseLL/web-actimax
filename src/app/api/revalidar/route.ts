@@ -15,6 +15,9 @@ import { NextResponse } from "next/server";
  * el blog depende del GET manual o de la revalidación periódica. La firma se
  * valida con el client secret de la app (webhooks creados vía Admin API) o
  * con SHOPIFY_WEBHOOK_SECRET (webhooks creados desde el panel).
+ *
+ * La URL del webhook debe llevar barra final (/api/revalidar/): Next responde
+ * 308 sin ella y Shopify no sigue redirects — el envío contaría como fallido.
  */
 
 function tagsForTopic(topic: string): string[] {
