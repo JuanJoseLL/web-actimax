@@ -15,9 +15,15 @@ import { canonicalProductPath } from "@/lib/product-paths";
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://actimax.com.co";
 
-/** Imagen por defecto al compartir: WhatsApp y las redes leen og:image. */
+/**
+ * Imagen por defecto al compartir: WhatsApp y las redes leen og:image.
+ * Va en el CDN de Shopify porque una ruta relativa se resolvería contra
+ * actimax.com.co (metadataBase), que hasta el cutover de DNS sigue siendo
+ * el sitio viejo — la imagen daría 404 y WhatsApp la descartaría. El
+ * original vive en public/og-actimax.png.
+ */
 export const DEFAULT_OG_IMAGE = {
-  url: "/og-actimax.png",
+  url: "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/actimax-og.png?v=1785454311",
   width: 1200,
   height: 630,
   alt: "Actimax — Nutrición deportiva especializada",
