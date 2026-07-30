@@ -1,15 +1,30 @@
 import { NextResponse } from "next/server";
 import { isValidCedula, normalizeCedula } from "@/lib/cedula";
+import { findShortedLines, type CheckoutLine } from "@/lib/checkout-lines";
 
 const STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const STOREFRONT_TOKEN = process.env.SHOPIFY_STOREFRONT_TOKEN;
 const API_VERSION = "2026-01";
 
+/* Se piden las líneas del carrito creado porque Shopify no reporta el stock
+   insuficiente como userError: descarta o recorta la línea y devuelve un
+   checkoutUrl válido; hay que comparar lo devuelto contra lo pedido. */
 const CART_CREATE_MUTATION = /* GraphQL */ `
   mutation CartCreate($input: CartInput!) @inContext(language: ES, country: CO) {
     cartCreate(input: $input) {
       cart {
+        id
         checkoutUrl
+        lines(first: 250) {
+          nodes {
+            quantity
+            merchandise {
+              ... on ProductVariant {
+                id
+              }
+            }
+          }
+        }
       }
       userErrors {
         message
@@ -18,15 +33,16 @@ const CART_CREATE_MUTATION = /* GraphQL */ `
   }
 `;
 
-interface CheckoutLine {
-  merchandiseId: string;
-  quantity: number;
-}
-
 interface CartCreateResponse {
   data?: {
     cartCreate?: {
-      cart: { checkoutUrl: string } | null;
+      cart: {
+        id: string;
+        checkoutUrl: string;
+        lines: {
+          nodes: Array<{ quantity: number; merchandise: { id?: string } }>;
+        };
+      } | null;
       userErrors: Array<{ message: string }>;
     };
   };
@@ -102,6 +118,7 @@ export async function POST(request: Request) {
         },
       }),
       cache: "no-store",
+      signal: AbortSignal.timeout(8000),
     });
 
     if (!response.ok) {
@@ -111,9 +128,9 @@ export async function POST(request: Request) {
 
     const result: CartCreateResponse = await response.json();
     const cartResult = result.data?.cartCreate;
-    const checkoutUrl = cartResult?.cart?.checkoutUrl;
+    const cart = cartResult?.cart;
 
-    if (checkoutUrl === undefined) {
+    if (cart === null || cart === undefined) {
       const message = cartResult?.userErrors[0]?.message ?? result.errors?.[0]?.message;
       console.error("Shopify no devolvió una URL de checkout.", message);
       return NextResponse.json(
@@ -122,13 +139,27 @@ export async function POST(request: Request) {
       );
     }
 
+    const grantedLines: CheckoutLine[] = cart.lines.nodes
+      .filter((node) => typeof node.merchandise.id === "string")
+      .map((node) => ({ merchandiseId: node.merchandise.id as string, quantity: node.quantity }));
+    const shorted = findShortedLines(lines, grantedLines);
+    if (shorted.length > 0) {
+      return NextResponse.json(
+        {
+          error: "Algunos productos del carrito ya no están disponibles en la cantidad pedida.",
+          shorted,
+        },
+        { status: 409 },
+      );
+    }
+
     // El permalink del carrito ignora el idioma del contexto y cae en el locale
     // primario de la tienda (inglés); solo el parámetro `locale` fuerza el
     // checkout en español con formato de pesos colombiano.
-    const localizedUrl = new URL(checkoutUrl);
+    const localizedUrl = new URL(cart.checkoutUrl);
     localizedUrl.searchParams.set("locale", "es-CO");
 
-    return NextResponse.json({ checkoutUrl: localizedUrl.toString() });
+    return NextResponse.json({ checkoutUrl: localizedUrl.toString(), cartId: cart.id });
   } catch (error) {
     console.error("No se pudo crear el carrito de Shopify.", error);
     return NextResponse.json({ error: "No se pudo conectar con Shopify." }, { status: 502 });

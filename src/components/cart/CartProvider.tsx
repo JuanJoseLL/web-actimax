@@ -11,6 +11,7 @@ import {
 } from "react";
 import { cartLineId } from "@/lib/cart";
 import { isValidCedula, normalizeCedula } from "@/lib/cedula";
+import { isShortedLine, shortedCartMessage } from "@/lib/checkout-lines";
 
 /** Datos mínimos de un producto para mostrarlo en el carrito. */
 export interface CartLine {
@@ -52,6 +53,7 @@ const CartContext = createContext<CartContextValue | null>(null);
 
 const STORAGE_KEY = "actimax-cart-v3";
 const CEDULA_STORAGE_KEY = "actimax-cedula";
+const PENDING_CHECKOUT_KEY = "actimax-checkout-pendiente";
 const CHANGE_EVENT = "actimax-cart-change";
 let fallbackCart = "[]";
 
@@ -184,6 +186,47 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("pageshow", onPageShow);
   }, []);
 
+  /* Shopify elimina el carrito cuando la compra se completa: si el carrito
+     que dejamos pendiente al ir al checkout ya no existe, el pedido se pagó
+     y el carrito local se vacía. Si sigue existiendo, el cliente abandonó el
+     checkout y sus productos se conservan. */
+  useEffect(() => {
+    const verifyPendingCheckout = () => {
+      let pending: string | null;
+      try {
+        pending = window.localStorage.getItem(PENDING_CHECKOUT_KEY);
+      } catch {
+        return;
+      }
+      if (pending === null) return;
+      fetch(`/api/checkout/estado/?cart=${encodeURIComponent(pending)}`)
+        .then((response) => (response.ok ? (response.json() as Promise<unknown>) : null))
+        .then((data) => {
+          if (
+            typeof data === "object" &&
+            data !== null &&
+            (data as { existe?: unknown }).existe === false
+          ) {
+            try {
+              window.localStorage.removeItem(PENDING_CHECKOUT_KEY);
+            } catch {
+              // sin almacenamiento: se reintentará en la próxima visita
+            }
+            clear();
+          }
+        })
+        .catch(() => {
+          // sin conexión: se reintentará en la próxima visita
+        });
+    };
+    verifyPendingCheckout();
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) verifyPendingCheckout();
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, [clear]);
+
   const checkout = useCallback(async () => {
     if (isCheckingOut) return;
     setCheckoutError(null);
@@ -220,16 +263,35 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }),
       });
       const result: unknown = await response.json();
-      const checkoutUrl =
-        typeof result === "object" && result !== null && "checkoutUrl" in result
-          ? (result as { checkoutUrl?: unknown }).checkoutUrl
-          : undefined;
+      const resultObj =
+        typeof result === "object" && result !== null
+          ? (result as Record<string, unknown>)
+          : {};
+      const checkoutUrl = resultObj.checkoutUrl;
       if (!response.ok || typeof checkoutUrl !== "string") {
-        const message =
-          typeof result === "object" && result !== null && "error" in result
-            ? (result as { error?: unknown }).error
-            : undefined;
+        /* Inventario insuficiente: Shopify descartó o recortó líneas y la
+           ruta abortó en vez de redirigir a un checkout distinto al carrito. */
+        if (response.status === 409 && Array.isArray(resultObj.shorted)) {
+          const shorted = resultObj.shorted.filter(isShortedLine);
+          if (shorted.length > 0) {
+            throw new Error(
+              shortedCartMessage(
+                shorted,
+                (merchandiseId) =>
+                  items.find((item) => item.variantId === merchandiseId)?.title,
+              ),
+            );
+          }
+        }
+        const message = resultObj.error;
         throw new Error(typeof message === "string" ? message : "No se pudo iniciar el pago.");
+      }
+      if (typeof resultObj.cartId === "string") {
+        try {
+          window.localStorage.setItem(PENDING_CHECKOUT_KEY, resultObj.cartId);
+        } catch {
+          // sin almacenamiento no habrá limpieza post-compra, nada más
+        }
       }
       window.location.assign(checkoutUrl);
     } catch (error) {

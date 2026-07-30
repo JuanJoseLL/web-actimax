@@ -9,7 +9,7 @@ import { Header } from "@/components/Header";
 import { Toaster } from "@/components/ui/sonner";
 import { getAllProducts } from "@/lib/catalog";
 import { initialProductVariant } from "@/lib/product-variants";
-import { SITE_URL, jsonLd, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
+import { DEFAULT_OG_IMAGE, SITE_URL, jsonLd, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 const archivo = Archivo({
@@ -50,11 +50,19 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_CO",
     siteName: "Actimax",
+    url: "/",
     title: "Actimax — Geles energéticos y nutrición deportiva de Colombia",
     description:
       "Geles energéticos, bebidas deportivas, barras de proteína y Energy Packs por distancia. Hecho en Colombia, con envíos a todo el país.",
+    images: [DEFAULT_OG_IMAGE],
   },
-  icons: { icon: "/favicon-192.png" },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/favicon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default async function RootLayout({
@@ -75,6 +83,7 @@ export default async function RootLayout({
       deportes: p.deportes,
       price: p.price,
       image: variant?.image ?? p.images[0] ?? null,
+      inStock: variant?.inStock ?? p.inStock,
     };
   });
 

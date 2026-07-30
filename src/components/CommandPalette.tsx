@@ -56,6 +56,7 @@ export interface PaletteProduct {
   deportes: string[];
   price: number;
   image: string | null;
+  inStock: boolean;
 }
 
 /** Cantidad preparada con el teclado, anclada al producto que la recibió. */
@@ -182,6 +183,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
 
   const addToCart = useCallback(
     (product: PaletteProduct, quantity: number) => {
+      if (!product.inStock) return;
       const lineId = cartLineId(product);
       const total =
         (items.find((item) => cartLineId(item) === lineId)?.qty ?? 0) +
@@ -235,7 +237,9 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
          tecla para que cmdk siga haciendo lo suyo (ir al primero/último). */
       if (product === undefined) return;
 
-      if (product.hasMultipleVariants) {
+      /* Con variantes hay que elegir en la página; agotado no se agrega:
+         en ambos casos Enter lleva a la página del producto. */
+      if (product.hasMultipleVariants || !product.inStock) {
         if (e.key !== "Enter") return;
         e.preventDefault();
         run(() => router.push(canonicalProductPath(product.handle)));
@@ -350,6 +354,11 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
                   <span className="font-mono text-xs tabular-nums text-muted-foreground">
                     {formatCOP(product.price)}
                   </span>
+                  {!product.inStock && !product.hasMultipleVariants ? (
+                    <span className="flex h-11 shrink-0 items-center rounded-sm border border-input px-2 font-mono text-[9px] font-bold uppercase text-muted-foreground sm:h-6">
+                      Agotado
+                    </span>
+                  ) : (
                   <Button
                     type="button"
                     variant="outline"
@@ -387,6 +396,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
                       <PlusIcon className="size-3.5" />
                     )}
                   </Button>
+                  )}
                 </CommandItem>
               );
             })}
