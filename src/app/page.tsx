@@ -525,7 +525,7 @@ function ClubSection() {
           <p className="mt-7 max-w-2xl text-lg font-medium leading-relaxed text-white/68">
             Sin carné, sin cuota y sin letra pequeña: la puerta del club es
             Strava. Ahí publicamos las salidas, se suman los kilómetros y
-            conoces al lote. Elige tu disciplina —o entra a las dos— y nos
+            conoces al lote. Elige tu disciplina, o entra a las dos, y nos
             vemos en la ruta.
           </p>
           <div className="mt-10 grid max-w-2xl gap-x-8 gap-y-3 border-t border-white/15 pt-7 sm:grid-cols-2">
