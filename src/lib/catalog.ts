@@ -1,5 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 import localCatalog from "@/data/catalog.json";
+import { descriptionFields } from "./description";
 import {
   DEPORTE_LABELS,
   isMomento,
@@ -89,14 +90,6 @@ interface ShopifyProductNode {
   };
 }
 
-const RECOMENDACIONES_MARKER = /<h3>\s*Recomendaciones de uso\s*<\/h3>|<p>\s*<b>\s*Recomendaciones de uso/i;
-
-function stripTags(htmlStr: string): string {
-  return htmlStr
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
 
 function prices(
   priceValue: string | number,
@@ -113,12 +106,6 @@ function prices(
 }
 
 function mapShopifyProduct(node: ShopifyProductNode): Product {
-  const body = node.descriptionHtml ?? "";
-  const match = body.match(RECOMENDACIONES_MARKER);
-  const splitAt = match?.index ?? -1;
-  const shortDescriptionHtml = splitAt >= 0 ? body.slice(0, splitAt) : body;
-  const descriptionHtml = splitAt >= 0 ? body.slice(splitAt) : "";
-
   const variants: ProductVariant[] = node.variants.nodes.map((variant) => ({
     id: variant.id,
     title: variant.title,
@@ -146,9 +133,7 @@ function mapShopifyProduct(node: ShopifyProductNode): Product {
     regularPrice,
     onSale: variant?.onSale ?? false,
     inStock: variant?.inStock ?? node.availableForSale,
-    excerpt: stripTags(shortDescriptionHtml).slice(0, 280),
-    shortDescriptionHtml,
-    descriptionHtml,
+    ...descriptionFields(node.descriptionHtml ?? ""),
     images: node.images.nodes.map((img) => img.url),
     options: node.options,
     variants,
@@ -207,7 +192,7 @@ interface LocalVariant {
   image?: string | null;
 }
 
-interface LocalProduct extends Omit<Product, "id" | "variantId" | "type" | "momentos" | "options" | "variants"> {
+interface LocalProduct extends Omit<Product, "id" | "variantId" | "type" | "momentos" | "options" | "variants" | "descriptionKind"> {
   id: number;
   type: string;
   momentos: string[];
@@ -254,6 +239,9 @@ function localProducts(): Product[] {
 
     return {
       ...p,
+      /* El JSON local guarda la partición vieja (solo por marcador);
+         re-partir el cuerpo completo aplica las mismas reglas que Shopify. */
+      ...descriptionFields(p.shortDescriptionHtml + p.descriptionHtml),
       id: String(p.id),
       variantId: variant?.id ?? null,
       type: isProductType(p.type) ? p.type : null,

@@ -180,10 +180,12 @@ export default async function ProductPage({
         <section className="mt-16 max-w-3xl">
           <Separator className="mb-8" />
           <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-azul">
-            Guía de uso
+            {product.descriptionKind === "recomendaciones" ? "Guía de uso" : "Ficha del producto"}
           </p>
           <h2 className="mt-2 font-display text-3xl font-extrabold uppercase italic">
-            Recomendaciones de uso
+            {product.descriptionKind === "recomendaciones"
+              ? "Recomendaciones de uso"
+              : "Descripción detallada"}
           </h2>
           <div
             className="prose-actimax mt-5 text-sm text-tinta/80"

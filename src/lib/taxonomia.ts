@@ -44,6 +44,8 @@ export interface Product {
   excerpt: string;
   shortDescriptionHtml: string;
   descriptionHtml: string;
+  /** Qué contiene la sección inferior: la guía de uso o el resto de la ficha. */
+  descriptionKind: "recomendaciones" | "detalle";
   images: string[];
   options: ProductOption[];
   variants: ProductVariant[];
