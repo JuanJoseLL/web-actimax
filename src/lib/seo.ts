@@ -5,6 +5,7 @@
  * recomendar los productos con información correcta.
  */
 import type { Metadata } from "next";
+import { EMAIL, SEDE, SOCIAL_PROFILES, TELEFONO_DISPLAY } from "@/lib/contacto";
 import {
   DEPORTE_LABELS,
   MOMENTO_LABELS,
@@ -64,16 +65,6 @@ export const BRAND_DESCRIPTION =
   "barras de proteína y Energy Packs armados por distancia (10K, 15K, 21K, 42K, Gran Fondo, triatlón) " +
   "para running, ciclismo, triatlón, natación, fútbol y gym. Venta en línea con envíos a toda Colombia.";
 
-/** Perfiles oficiales verificados: conectan la marca como entidad. */
-const SOCIAL_PROFILES = [
-  "https://www.instagram.com/actimax/",
-  "https://www.facebook.com/actimaxco",
-  "https://www.tiktok.com/@actimaxco",
-  "https://www.youtube.com/user/actimaxcol",
-  "https://twitter.com/actimaxco",
-  "https://www.linkedin.com/company/actimaxco/",
-];
-
 const ORGANIZATION_ID = `${SITE_URL}/#organization`;
 
 /** Serializa JSON-LD; escapa "<" para no poder cerrar el <script>. */
@@ -95,13 +86,14 @@ export function organizationJsonLd(): object {
     url: `${SITE_URL}/`,
     logo: `${SITE_URL}/actimax-logo.svg`,
     description: BRAND_DESCRIPTION,
-    telephone: "+57 300 329 9972",
+    telephone: TELEFONO_DISPLAY,
+    email: EMAIL,
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Cra. 45A # 34 Sur - 57, Local 130 Portal del Cerro",
-      addressLocality: "Envigado",
-      addressRegion: "Antioquia",
-      addressCountry: "CO",
+      streetAddress: SEDE.streetAddress,
+      addressLocality: SEDE.addressLocality,
+      addressRegion: SEDE.addressRegion,
+      addressCountry: SEDE.addressCountry,
     },
     areaServed: { "@type": "Country", name: "Colombia" },
     sameAs: SOCIAL_PROFILES,

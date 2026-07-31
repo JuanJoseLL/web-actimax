@@ -1,5 +1,22 @@
 import Link from "next/link";
+import type { ComponentType } from "react";
+import { MailIcon, MapPinIcon, PhoneIcon } from "lucide-react";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  TikTokIcon,
+  WhatsAppIcon,
+  YouTubeIcon,
+} from "@/components/BrandIcons";
 import { Separator } from "@/components/ui/separator";
+import {
+  EMAIL,
+  REDES_VISIBLES,
+  SEDE,
+  TELEFONO_DISPLAY,
+  TELEFONO_E164,
+  whatsappUrl,
+} from "@/lib/contacto";
 
 const COLUMNS = [
   {
@@ -25,7 +42,7 @@ const COLUMNS = [
     links: [
       { label: "Nuestra historia", href: "/#historia" },
       { label: "Actimax Club", href: "/#club" },
-      { label: "Historias y estrategia", href: "/blog" },
+      { label: "Blog", href: "/blog" },
       { label: "Preguntas frecuentes", href: "/preguntas-frecuentes" },
       { label: "Mi cuenta", href: "/mi-cuenta/" },
       { label: "Políticas de la tienda", href: "/politicas-devolucion-privacidad" },
@@ -34,10 +51,24 @@ const COLUMNS = [
   },
 ];
 
+/* Las URLs viven en contacto.ts (única fuente); aquí solo el ícono. */
+const SOCIAL_ICONS: Record<
+  (typeof REDES_VISIBLES)[number]["nombre"],
+  ComponentType<{ className?: string }>
+> = {
+  Instagram: InstagramIcon,
+  Facebook: FacebookIcon,
+  TikTok: TikTokIcon,
+  YouTube: YouTubeIcon,
+};
+
+const CONTACT_ROW_STYLE =
+  "flex items-start gap-2.5 py-3 text-sm text-white/75 transition-colors hover:text-amarillo md:py-0";
+
 export function Footer() {
   return (
     <footer className="section-noche text-white">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-8">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-3 lg:px-8 xl:grid-cols-[1.35fr_1fr_1fr_1fr_1.15fr]">
         <div>
           <p className="font-display text-4xl font-extrabold uppercase italic leading-none tracking-wide">
             Actimax<span className="text-amarillo">.</span>
@@ -49,6 +80,24 @@ export function Footer() {
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-white/35">
             Antes · Durante · Después
           </p>
+          <ul className="mt-6 flex items-center gap-2">
+            {REDES_VISIBLES.map(({ nombre, href }) => {
+              const Icon = SOCIAL_ICONS[nombre];
+              return (
+                <li key={nombre}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Actimax en ${nombre}`}
+                    className="grid size-10 place-items-center rounded-full border border-white/20 text-white/70 transition-colors hover:border-amarillo hover:text-amarillo"
+                  >
+                    <Icon className="size-4.5" />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
         </div>
         {COLUMNS.map((col) => (
           <nav key={col.title} aria-label={col.title}>
@@ -69,6 +118,48 @@ export function Footer() {
             </ul>
           </nav>
         ))}
+        <div>
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-white/40">
+            Contacto
+          </p>
+          <ul className="mt-2 flex flex-col md:mt-4 md:gap-3">
+            <li>
+              <a
+                href={SEDE.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={CONTACT_ROW_STYLE}
+              >
+                <MapPinIcon aria-hidden className="mt-0.5 size-4 shrink-0 text-amarillo" />
+                <span>
+                  {SEDE.lineas.map((linea) => (
+                    <span key={linea} className="block">
+                      {linea}
+                    </span>
+                  ))}
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href={whatsappUrl("Hola Actimax, tengo una pregunta.")} target="_blank" rel="noopener noreferrer" className={CONTACT_ROW_STYLE}>
+                <WhatsAppIcon className="mt-0.5 size-4 shrink-0 text-amarillo" />
+                <span>WhatsApp: {TELEFONO_DISPLAY}</span>
+              </a>
+            </li>
+            <li>
+              <a href={`tel:${TELEFONO_E164}`} className={CONTACT_ROW_STYLE}>
+                <PhoneIcon aria-hidden className="mt-0.5 size-4 shrink-0 text-amarillo" />
+                <span>{TELEFONO_DISPLAY}</span>
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${EMAIL}`} className={CONTACT_ROW_STYLE}>
+                <MailIcon aria-hidden className="mt-0.5 size-4 shrink-0 text-amarillo" />
+                <span className="break-all">{EMAIL}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
       <Separator className="bg-white/10" />
       <div>

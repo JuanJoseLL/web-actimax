@@ -6,6 +6,7 @@ import { CartProvider } from "@/components/cart/CartProvider";
 import { CommandPalette, type PaletteProduct } from "@/components/CommandPalette";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { Toaster } from "@/components/ui/sonner";
 import { getAllProducts } from "@/lib/catalog";
 import { initialProductVariant } from "@/lib/product-variants";
@@ -105,9 +106,10 @@ export default async function RootLayout({
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <WhatsAppButton />
           <CartDrawer />
           <CommandPalette products={paletteProducts} />
-          <Toaster position="top-right" offset={{ top: 76 }} mobileOffset={{ top: 76 }} />
+          <Toaster position="top-right" offset={{ top: 108 }} mobileOffset={{ top: 108 }} />
         </CartProvider>
       </body>
     </html>

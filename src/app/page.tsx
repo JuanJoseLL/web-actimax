@@ -9,11 +9,14 @@ import {
   CheckCircle2Icon,
   ChevronRightIcon,
   FootprintsIcon,
+  LockIcon,
   PackageIcon,
   SparklesIcon,
+  TruckIcon,
   UsersRoundIcon,
 } from "lucide-react";
 import { FuelFinder } from "@/components/FuelFinder";
+import { NewsletterSection } from "@/components/NewsletterSection";
 import { ProductCard } from "@/components/ProductCard";
 import { Ticker } from "@/components/Ticker";
 import { Button } from "@/components/ui/button";
@@ -42,6 +45,7 @@ export default async function Home() {
       <BestSellersSection />
       <ClubSection />
       <JournalSection posts={posts} />
+      <NewsletterSection />
       <TeamSection />
     </>
   );
@@ -50,7 +54,7 @@ export default async function Home() {
 function Hero() {
   return (
     <section className="hero-evolved overflow-hidden text-white">
-      <div className="mx-auto grid max-w-[1440px] lg:min-h-[calc(100svh-67px)] lg:grid-cols-[1.05fr_0.95fr]">
+      <div className="mx-auto grid max-w-[1440px] lg:min-h-[calc(100svh-99px)] lg:grid-cols-[1.05fr_0.95fr]">
         <div className="relative z-10 flex flex-col justify-center px-4 py-12 sm:px-8 md:py-20 lg:px-14 xl:px-20">
           <div className="fade-up flex items-center gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.22em] text-amarillo">
             <span className="h-px w-8 bg-amarillo" />
@@ -70,8 +74,8 @@ function Hero() {
             className="fade-up mt-7 max-w-xl text-base font-medium leading-relaxed text-white/72 sm:text-lg"
             style={{ animationDelay: "0.16s" }}
           >
-            Entrenas para una versión de ti que todavía no conoces. Nosotros
-            diseñamos la nutrición para que la encuentres, kilómetro a kilómetro.
+            Nutrición deportiva para acompañarte antes, durante y después de
+            cada entreno. Geles, bebidas, barras y Energy Packs.
           </p>
 
           <div
@@ -80,15 +84,35 @@ function Hero() {
           >
             <Button asChild variant="raceSun" size="lg" className="h-auto px-8 py-4 text-lg">
               <Link href="/productos">
-                Comprar productos
+                Ver todos los productos
                 <ArrowRightIcon data-icon="inline-end" />
               </Link>
             </Button>
             <FuelFinder />
           </div>
 
+          <p
+            className="fade-up mt-7 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70"
+            style={{ animationDelay: "0.28s" }}
+          >
+            <span className="flex items-center gap-1.5">
+              <TruckIcon aria-hidden className="size-4 text-amarillo" />
+              Envíos a toda Colombia
+            </span>
+            <span aria-hidden className="text-white/30">·</span>
+            <span className="flex items-center gap-1.5">
+              <LockIcon aria-hidden className="size-4 text-amarillo" />
+              Pago seguro
+            </span>
+            <span aria-hidden className="text-white/30">·</span>
+            <span className="flex items-center gap-1.5">
+              <span aria-hidden>🇨🇴</span>
+              Hecho en Colombia
+            </span>
+          </p>
+
           <div
-            className="fade-up mt-10 grid max-w-2xl grid-cols-3 border-y border-white/15 py-4"
+            className="fade-up mt-9 grid max-w-2xl grid-cols-3 border-y border-white/15 py-4"
             style={{ animationDelay: "0.32s" }}
           >
             {[
@@ -167,7 +191,7 @@ const CHALLENGES = [
     handle: "energy-pack-maraton-42k",
     distance: "42K",
     eyebrow: "La historia que no se olvida",
-    promise: "Convierte meses en un solo día",
+    promise: "El kit del maratonista",
   },
   {
     handle: "energy-pack-gran-fondo",
@@ -182,7 +206,7 @@ async function ChallengeSection() {
   const byHandle = new Map(products.map((product) => [product.handle, product]));
 
   return (
-    <section id="retos" className="scroll-mt-24 bg-[#f4f2ec]">
+    <section id="retos" className="scroll-mt-28 bg-[#f4f2ec]">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
         <div className="reveal grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
@@ -286,7 +310,7 @@ async function ChallengeSection() {
 
 function StorySection() {
   return (
-    <section id="historia" className="scroll-mt-24 overflow-hidden bg-azul text-white">
+    <section id="historia" className="scroll-mt-28 overflow-hidden bg-azul text-white">
       <div className="mx-auto grid max-w-[1440px] lg:grid-cols-2">
         <div className="relative grid min-h-[480px] grid-cols-5 grid-rows-6 gap-3 p-4 sm:min-h-[620px] sm:p-7 lg:min-h-[820px] lg:p-10">
           <div className="relative col-span-5 row-span-4 overflow-hidden">
@@ -387,7 +411,7 @@ async function RitualSection() {
   const byHandle = new Map(products.map((product) => [product.handle, product]));
 
   return (
-    <section id="metodo" className="scroll-mt-24 bg-white">
+    <section id="metodo" className="scroll-mt-28 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
         <div className="reveal max-w-4xl">
           <p className="section-kicker">03 · El método Actimax</p>
@@ -411,7 +435,7 @@ async function RitualSection() {
                     {ritual.timing}
                   </span>
                 </div>
-                <div className="relative mt-8 grid aspect-[1.2] place-items-center overflow-hidden rounded-full bg-niebla transition-colors duration-300 group-hover:bg-amarillo">
+                <div className="relative mt-8 grid aspect-[1.2] place-items-center overflow-hidden rounded-full bg-niebla transition-colors duration-300 group-hover:bg-azul/10">
                   {product?.images[0] !== undefined ? (
                     <Image
                       src={product.images[0]}
@@ -516,7 +540,7 @@ function StravaMark({ className }: { className?: string }) {
 
 function ClubSection() {
   return (
-    <section id="club" className="club-section scroll-mt-24 overflow-hidden text-white">
+    <section id="club" className="club-section scroll-mt-28 overflow-hidden text-white">
       <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 md:py-28 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:px-8">
         <div className="reveal">
           <div className="flex items-center gap-3 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-amarillo">
@@ -524,8 +548,8 @@ function ClubSection() {
             Actimax Club · La meta nos reúne
           </div>
           <h2 className="mt-6 max-w-4xl font-display text-6xl font-extrabold uppercase italic leading-[0.82] tracking-tight sm:text-8xl lg:text-[7.6rem]">
-            El club no se compra.
-            <span className="block text-amarillo">Se entrena.</span>
+            Únete
+            <span className="block text-amarillo">al club.</span>
           </h2>
           <p className="mt-7 max-w-2xl text-lg font-medium leading-relaxed text-white/68">
             Sin carné, sin cuota y sin letra pequeña: la puerta del club es
@@ -587,11 +611,11 @@ function ClubSection() {
 
 function JournalSection({ posts }: { posts: Awaited<ReturnType<typeof getAllBlogPosts>> }) {
   return (
-    <section id="historias" className="scroll-mt-24 bg-white">
+    <section id="historias" className="scroll-mt-28 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
         <div className="reveal flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="section-kicker">05 · Historias y estrategia</p>
+            <p className="section-kicker">05 · Blog</p>
             <h2 className="mt-4 font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl">
               Lo que aprendemos en ruta.
             </h2>
@@ -600,19 +624,35 @@ function JournalSection({ posts }: { posts: Awaited<ReturnType<typeof getAllBlog
             href="/blog"
             className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-azul"
           >
-            Ver todas las historias <ArrowRightIcon className="size-4" />
+            Ver todo el blog <ArrowRightIcon className="size-4" />
           </Link>
         </div>
 
         <div className="mt-12 grid gap-px overflow-hidden border border-tinta/10 bg-tinta/10 md:grid-cols-3">
           {posts.map((post, index) => (
             <article key={post.slug} className="reveal group bg-white">
-              <Link href={post.path} className="flex min-h-[360px] flex-col p-6 sm:p-8">
+              <Link href={post.path} className="flex min-h-[360px] flex-col">
+                {/* La miniatura aligera el bloque de texto; el post local de
+                    respaldo no trae imagen y conserva el layout tipográfico. */}
+                {post.image !== null ? (
+                  <div className="relative aspect-[16/9] overflow-hidden bg-niebla">
+                    <Image
+                      src={post.image.url}
+                      alt={post.image.altText ?? post.title}
+                      fill
+                      sizes="(min-width: 768px) 33vw, 100vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                ) : null}
+                <div className="flex flex-1 flex-col p-6 sm:p-8">
                 <div className="flex items-center justify-between font-mono text-[10px] font-bold uppercase tracking-[0.17em]">
                   <span className="text-azul">{post.category}</span>
                   <span className="text-tinta/30">N.{String(index + 1).padStart(2, "0")}</span>
                 </div>
-                <h3 className="mt-10 font-display text-4xl font-bold uppercase italic leading-[0.98] transition-colors group-hover:text-azul">
+                <h3
+                  className={`${post.image !== null ? "mt-5" : "mt-10"} font-display text-4xl font-bold uppercase italic leading-[0.98] transition-colors group-hover:text-azul`}
+                >
                   {post.title}
                 </h3>
                 <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-tinta/58">
@@ -623,6 +663,7 @@ function JournalSection({ posts }: { posts: Awaited<ReturnType<typeof getAllBlog
                   <span className="grid size-9 place-items-center rounded-full border border-tinta/15 text-azul transition group-hover:border-azul group-hover:bg-azul group-hover:text-white">
                     <ArrowRightIcon className="size-4" />
                   </span>
+                </div>
                 </div>
               </Link>
             </article>
@@ -635,7 +676,7 @@ function JournalSection({ posts }: { posts: Awaited<ReturnType<typeof getAllBlog
 
 function TeamSection() {
   return (
-    <section id="mayoristas" className="scroll-mt-24 bg-amarillo text-tinta">
+    <section id="mayoristas" className="scroll-mt-28 bg-amarillo text-tinta">
       <div aria-hidden className="finish-line" />
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-14 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <div>

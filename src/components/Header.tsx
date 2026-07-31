@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ArrowRightIcon, MenuIcon, SearchIcon, ShoppingCartIcon, UserRoundIcon } from "lucide-react";
 import { useState } from "react";
 import { useIsMac } from "@/lib/useIsMac";
+import { ENVIO_GRATIS_UMBRAL } from "@/lib/envio";
+import { formatCOP } from "@/lib/format";
 import { useCart } from "@/components/cart/CartProvider";
 import { openCommandPalette } from "@/components/CommandPalette";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +25,6 @@ const NAV = [
   { label: "Comprar", href: "/productos" },
   { label: "Mi plan", href: "/mi-plan/" },
   { label: "El método", href: "/#metodo" },
-  { label: "Historias", href: "/#historias" },
   { label: "Blog", href: "/blog" },
   { label: "Club", href: "/#club" },
 ];
@@ -35,6 +36,14 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-background/92 shadow-[0_1px_0_rgba(10,17,40,0.08)] backdrop-blur-xl">
+      <p className="flex h-8 items-center justify-center gap-2 bg-azul px-3 text-center font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
+        <span className="truncate">
+          Envío gratis <span className="hidden sm:inline">por compras </span>desde{" "}
+          {formatCOP(ENVIO_GRATIS_UMBRAL)}
+        </span>
+        <span aria-hidden className="hidden text-amarillo sm:inline">·</span>
+        <span className="hidden sm:inline">Envíos a toda Colombia</span>
+      </p>
       <div
         aria-hidden
         className="h-[3px] bg-[linear-gradient(90deg,#002f87_0%,#0a50d0_62%,#ffd23c_100%)]"

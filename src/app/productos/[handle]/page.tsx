@@ -3,8 +3,8 @@ import { cacheLife, cacheTag } from "next/cache";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BuyBox } from "@/components/BuyBox";
-import { FuelPlan } from "@/components/FuelPlan";
 import { ImageGallery } from "@/components/ImageGallery";
+import { ProductFaq } from "@/components/ProductFaq";
 import { ProductCard } from "@/components/ProductCard";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -15,6 +15,7 @@ import {
   getProduct,
   typeLabel,
 } from "@/lib/catalog";
+import { productFaq } from "@/lib/product-faq";
 import { canonicalProductPath } from "@/lib/product-paths";
 import {
   DEFAULT_OG_IMAGE,
@@ -174,8 +175,6 @@ export default async function ProductPage({
         </div>
       </div>
 
-      <FuelPlan momentos={product.momentos} type={product.type} />
-
       {product.descriptionHtml !== "" ? (
         <section className="mt-16 max-w-3xl">
           <Separator className="mb-8" />
@@ -193,6 +192,8 @@ export default async function ProductPage({
           />
         </section>
       ) : null}
+
+      <ProductFaq items={productFaq(product)} />
 
       {related.length > 0 ? (
         <section className="mt-16">

@@ -73,7 +73,7 @@ export default async function PoliticasPage() {
 
           <div className="mt-10 flex flex-col gap-12">
             {policies.map((policy, index) => (
-              <section key={policy.anchor} id={policy.anchor} className="scroll-mt-24">
+              <section key={policy.anchor} id={policy.anchor} className="scroll-mt-28">
                 {index > 0 ? <Separator className="mb-10" /> : null}
                 <h2 className="font-display text-3xl font-extrabold uppercase italic leading-tight">
                   {SECTION_LABELS[policy.anchor] ?? policy.title}

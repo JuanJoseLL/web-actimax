@@ -570,7 +570,7 @@ export function ActimaxPlanBuilder({
           </CardContent>
         </Card>
 
-        <section ref={resultsRef} className="print-plain scroll-mt-24">
+        <section ref={resultsRef} className="print-plain scroll-mt-28">
           {plan === null ? (
             <div className="grid min-h-80 place-items-center border border-dashed border-tinta/20 bg-white/55 p-6 text-center sm:min-h-[440px] sm:p-8">
               <div className="max-w-md">

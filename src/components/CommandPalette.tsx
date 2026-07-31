@@ -35,6 +35,7 @@ import { cartLineId } from "@/lib/cart";
 import { formatCOP } from "@/lib/format";
 import { scoreMatch } from "@/lib/palette-search";
 import { canonicalProductPath } from "@/lib/product-paths";
+import { searchKeywords } from "@/lib/search-keywords";
 import {
   DEPORTE_LABELS,
   MOMENTO_LABELS,
@@ -322,6 +323,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
                     typeLabel(product.type),
                     ...product.momentos.map((m) => MOMENTO_LABELS[m]),
                     ...product.deportes.map((d) => DEPORTE_LABELS[d] ?? d),
+                    ...searchKeywords(product),
                   ]}
                   onSelect={() =>
                     run(() => router.push(canonicalProductPath(product.handle)))
