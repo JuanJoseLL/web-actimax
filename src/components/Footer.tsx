@@ -27,6 +27,7 @@ const COLUMNS = [
       { label: "Actimax Club", href: "/#club" },
       { label: "Historias y estrategia", href: "/blog" },
       { label: "Preguntas frecuentes", href: "/preguntas-frecuentes" },
+      { label: "Mi cuenta", href: "/mi-cuenta/" },
       { label: "Políticas de la tienda", href: "/politicas-devolucion-privacidad" },
       { label: "Equipos y tiendas", href: "/#mayoristas" },
     ],

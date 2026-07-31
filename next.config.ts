@@ -33,7 +33,20 @@ const nextConfig: NextConfig = {
     ];
   },
   async redirects() {
-    return [...legacyUrlRedirects, ...productAliasRedirects, ...wordpressIdRedirects];
+    return [
+      // La cuenta de clientes vive en las páginas alojadas de Shopify (login
+      // sin contraseña); /account en el dominio de la tienda redirige allí con
+      // locale=es. /mi-cuenta/ era la URL de WooCommerce. No es permanent por
+      // si las cuentas pasan a servirse bajo un dominio propio tras el corte.
+      {
+        source: "/mi-cuenta/:path*",
+        destination: `https://${process.env.SHOPIFY_STORE_DOMAIN ?? "actimax-hzfavz8j.myshopify.com"}/account`,
+        permanent: false,
+      },
+      ...legacyUrlRedirects,
+      ...productAliasRedirects,
+      ...wordpressIdRedirects,
+    ];
   },
   async rewrites() {
     return legacyProductRewrites;

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRightIcon, MenuIcon, SearchIcon, ShoppingCartIcon } from "lucide-react";
+import { ArrowRightIcon, MenuIcon, SearchIcon, ShoppingCartIcon, UserRoundIcon } from "lucide-react";
 import { useState } from "react";
 import { useIsMac } from "@/lib/useIsMac";
 import { useCart } from "@/components/cart/CartProvider";
@@ -98,6 +98,13 @@ export function Header() {
               Mi próximo reto
               <ArrowRightIcon data-icon="inline-end" />
             </Link>
+          </Button>
+          <Button asChild variant="ghost" size="icon" aria-label="Mi cuenta">
+            {/* <a> plano: /mi-cuenta/ redirige fuera del sitio (cuentas de
+                Shopify) y no tiene sentido que next/link lo prefetchee. */}
+            <a href="/mi-cuenta/">
+              <UserRoundIcon />
+            </a>
           </Button>
           <Button
             type="button"
