@@ -15,8 +15,10 @@ import {
   getProduct,
   typeLabel,
 } from "@/lib/catalog";
+import { ProductReviews } from "@/components/ProductReviews";
 import { productFaq } from "@/lib/product-faq";
 import { canonicalProductPath } from "@/lib/product-paths";
+import { getProductReviews } from "@/lib/reviews";
 import {
   DEFAULT_OG_IMAGE,
   SITE_URL,
@@ -68,6 +70,7 @@ export default async function ProductPage({
   const product = await getProduct(handle);
   if (product === undefined) notFound();
 
+  const reviews = getProductReviews(product.handle);
   const all = await getAllProducts();
   const related = all
     .filter(
@@ -82,7 +85,7 @@ export default async function ProductPage({
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: jsonLd(productJsonLd(product)) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(productJsonLd(product, reviews)) }}
       />
       <script
         type="application/ld+json"
@@ -192,6 +195,8 @@ export default async function ProductPage({
           />
         </section>
       ) : null}
+
+      <ProductReviews reviews={reviews} />
 
       <ProductFaq items={productFaq(product)} />
 

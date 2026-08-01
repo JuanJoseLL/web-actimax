@@ -93,3 +93,42 @@ describe("productFaq contra el catálogo real", () => {
     }
   });
 });
+
+describe("fusión de FAQs reales con las generadas", () => {
+  const base: Product = {
+    ...productos[0],
+    handle: "producto-prueba",
+    title: "Pre Race",
+    type: "bebidas",
+    momentos: ["antes"],
+    deportes: [],
+    faqs: [
+      { question: "¿Qué es Pre Race Actimax?", answer: "Es un alimento deportivo pre-entreno." },
+      { question: "¿Cómo se prepara Pre Race?", answer: "Mezcla 36 gr en 250 ml de agua." },
+      { question: "¿Aprovecho la oferta por tiempo limitado?", answer: "Solo por esta semana." },
+      { question: "¿Qué es Pre Race Actimax?", answer: "Repetida: no debe salir dos veces." },
+    ],
+  };
+
+  it("pone primero las reales, sin promos ni repetidas", () => {
+    const faqs = productFaq(base);
+    expect(faqs[0].question).toBe("¿Qué es Pre Race Actimax?");
+    expect(faqs[0].answer).toBe("Es un alimento deportivo pre-entreno.");
+    expect(faqs[1].question).toBe("¿Cómo se prepara Pre Race?");
+    const preguntas = faqs.map((f) => f.question);
+    expect(preguntas.filter((q) => q === "¿Qué es Pre Race Actimax?")).toHaveLength(1);
+    expect(preguntas.join(" ")).not.toMatch(/oferta/i);
+  });
+
+  it("silencia las plantillas cuyo tema ya cubren las reales, no las demás", () => {
+    const preguntas = productFaq(base).map((f) => f.question);
+    expect(preguntas).not.toContain("¿Qué es Pre Race y para qué sirve?");
+    expect(preguntas).not.toContain("¿Cuándo y cómo se toma Pre Race?");
+    expect(preguntas).toContain("¿Hacen envíos a toda Colombia y cómo se paga?");
+  });
+
+  it("sin FAQs reales, las plantillas quedan como estaban", () => {
+    const faqs = productFaq({ ...base, faqs: [] });
+    expect(faqs.map((f) => f.question)).toContain("¿Cuándo y cómo se toma Pre Race?");
+  });
+});

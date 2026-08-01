@@ -49,8 +49,8 @@ export function NewsletterSection() {
         <div className="reveal">
           <p className="section-kicker section-kicker-dark">06 · Suscríbete</p>
           <h2 className="mt-4 max-w-2xl font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-6xl lg:text-7xl">
-            Entrena también
-            <span className="block text-amarillo">tu bandeja de entrada.</span>
+            Únete a la comunidad
+            <span className="block text-amarillo">que entrena para llegar más lejos.</span>
           </h2>
           <p className="mt-6 max-w-xl text-lg font-medium leading-relaxed text-white/70">
             Suscríbete al blog de Actimax: estrategia de nutrición, planes por

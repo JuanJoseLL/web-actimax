@@ -368,6 +368,30 @@ html {
   font-weight: 600;
   color: var(--color-tinta);
 }
+/* Subtítulos de la ficha ("Sabores de…", "Información nutricional…"):
+   mismo lenguaje display de los títulos de sección, a escala de ficha. */
+.prose-actimax h2,
+.prose-actimax h3,
+.prose-actimax h4 {
+  margin: 2rem 0 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-style: italic;
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: var(--color-tinta);
+}
+.prose-actimax h2 {
+  font-size: 1.375rem;
+}
+.prose-actimax h3,
+.prose-actimax h4 {
+  font-size: 1.125rem;
+}
+.prose-actimax h2:first-child,
+.prose-actimax h3:first-child {
+  margin-top: 0;
+}
 
 .prose-blog h2,
 .prose-blog h3,

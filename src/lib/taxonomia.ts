@@ -4,6 +4,8 @@
  * cliente como la paleta de búsqueda.
  */
 
+import type { FaqItem } from "../data/faq";
+
 export type ProductType = "geles" | "bebidas" | "barras" | "kits";
 export type Momento = "antes" | "durante" | "despues";
 
@@ -46,6 +48,8 @@ export interface Product {
   descriptionHtml: string;
   /** Qué contiene la sección inferior: la guía de uso o el resto de la ficha. */
   descriptionKind: "recomendaciones" | "detalle";
+  /** Q/A reales extraídas del bloque "Preguntas Frecuentes" de la descripción. */
+  faqs: FaqItem[];
   images: string[];
   options: ProductOption[];
   variants: ProductVariant[];

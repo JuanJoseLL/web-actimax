@@ -13,6 +13,7 @@ import {
   type Product,
 } from "@/lib/taxonomia";
 import { canonicalProductPath } from "@/lib/product-paths";
+import { reviewsAverage, type ProductReview } from "@/lib/reviews";
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://actimax.com.co";
 
@@ -112,11 +113,36 @@ export function webSiteJsonLd(): object {
   };
 }
 
-export function productJsonLd(product: Product): object {
+export function productJsonLd(product: Product, reviews: ProductReview[] = []): object {
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.title,
+    /* Estrellas en los resultados de búsqueda: reseñas reales migradas de
+       la tienda anterior (misma marca, mismos productos). */
+    ...(reviews.length > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: reviewsAverage(reviews),
+            reviewCount: reviews.length,
+            bestRating: 5,
+            worstRating: 1,
+          },
+          review: reviews.slice(0, 10).map((review) => ({
+            "@type": "Review",
+            author: { "@type": "Person", name: review.reviewer },
+            datePublished: review.date.slice(0, 10),
+            reviewBody: review.text,
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: review.rating,
+              bestRating: 5,
+              worstRating: 1,
+            },
+          })),
+        }
+      : {}),
     description: product.excerpt,
     image: product.images,
     url: productUrl(product.handle),

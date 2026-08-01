@@ -192,7 +192,7 @@ interface LocalVariant {
   image?: string | null;
 }
 
-interface LocalProduct extends Omit<Product, "id" | "variantId" | "type" | "momentos" | "options" | "variants" | "descriptionKind"> {
+interface LocalProduct extends Omit<Product, "id" | "variantId" | "type" | "momentos" | "options" | "variants" | "descriptionKind" | "faqs"> {
   id: number;
   type: string;
   momentos: string[];
@@ -267,20 +267,18 @@ export async function getAllProducts(): Promise<Product[]> {
   cacheLife({ stale: 30, revalidate: 30, expire: 86400 });
 
   const fromShopify = await fetchShopifyProducts();
-  const fallback = localProducts();
   if (fromShopify === null) {
     /* Respaldo local: que no quede cacheado mucho tiempo, reintenta pronto.
        Next se queda con el mínimo de cada campo entre todas las llamadas a
        cacheLife del mismo scope, así que esta segunda solo puede acortar la
        ventana de arriba, nunca alargarla. */
     cacheLife({ stale: 10, revalidate: 10, expire: 60 });
-    return fallback;
+    return localProducts();
   }
-  const liveHandles = new Set(fromShopify.map((product) => product.handle));
-  return [
-    ...fromShopify,
-    ...fallback.filter((product) => !liveHandles.has(product.handle)),
-  ];
+  /* Shopify es la fuente de verdad: lo que la tienda despublique (borradores,
+     productos retirados) desaparece también de acá. Mezclar el catálogo local
+     por handle revivía justo esos productos despublicados. */
+  return fromShopify;
 }
 
 export async function getProduct(handle: string): Promise<Product | undefined> {

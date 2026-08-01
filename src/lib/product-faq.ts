@@ -115,6 +115,35 @@ function itemsDeLista(html: string): string[] {
   );
 }
 
+/* Temas donde una FAQ real de la descripción deja obsoleta a la generada:
+   si el cliente ya preguntó "¿cómo se prepara?" no publicamos además la
+   plantilla "¿cuándo y cómo se toma?". */
+function cubiertaPorExtraidas(generada: string, extraidas: FaqItem[]): boolean {
+  const alguna = (re: RegExp) => extraidas.some((f) => re.test(normalize(f.question)));
+  const q = normalize(generada);
+  if (q.includes("cafeina")) return alguna(/cafeina/);
+  if (q.startsWith("¿que es")) return alguna(/¿que (es|contiene)\b/);
+  if (q.startsWith("¿cuando y como se toma")) {
+    return alguna(
+      /cuando (debo|se debe|tomar|usar|consumir|se toma|se usa|se consume)|como se (prepara|toma|usa|consume)|como (preparo|debo tomar)/,
+    );
+  }
+  if (q.includes("sirve para")) return alguna(/¿(a )?quien(es)?\b/);
+  return false;
+}
+
+/** FAQs reales del producto: sin promos caducables ni preguntas repetidas. */
+function faqsExtraidas(product: Product): FaqItem[] {
+  const vistas = new Set<string>();
+  return product.faqs.filter((f) => {
+    if (PROMO_PATTERN.test(`${f.question} ${f.answer}`)) return false;
+    const clave = normalize(f.question);
+    if (vistas.has(clave)) return false;
+    vistas.add(clave);
+    return true;
+  });
+}
+
 export function productFaq(product: Product): FaqItem[] {
   const items: FaqItem[] = [];
   const title = product.title;
@@ -194,5 +223,11 @@ export function productFaq(product: Product): FaqItem[] {
 
   items.push(...(EXTRA_FAQS[product.handle] ?? []));
 
-  return items;
+  /* Primero las Q/A reales que escribió la marca en Woo; de las generadas
+     solo sobreviven las que aportan un tema que aquellas no cubren. */
+  const extraidas = faqsExtraidas(product);
+  return [
+    ...extraidas,
+    ...items.filter((item) => !cubiertaPorExtraidas(item.question, extraidas)),
+  ];
 }

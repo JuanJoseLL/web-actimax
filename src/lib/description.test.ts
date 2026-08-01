@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { descriptionFields, splitDescription, stripTags } from "./description";
+import { descriptionFields, extractFaqs, promoteLabelHeadings, splitDescription, stripTags } from "./description";
 
 const parrafo = (chars: number) => `<p>${"palabra ".repeat(Math.ceil(chars / 8))}</p>`;
 
@@ -70,5 +70,88 @@ describe("descriptionFields", () => {
   it("saca el excerpt del cuerpo completo cuando la intro queda vacía", () => {
     const body = `<h2>Descripción detallada:</h2><p>Bebida para atletas.</p>`;
     expect(descriptionFields(body).excerpt).toContain("Bebida para atletas.");
+  });
+});
+
+describe("extractFaqs", () => {
+  it("separa el bloque de texto suelto con <p> alternando pregunta/respuesta", () => {
+    const body =
+      `<ul><li>Sin conservantes.</li></ul>\n` +
+      `Preguntas Frecuentes <p>¿Cuántas porciones trae?<br> El tarro trae 400 gr y rinde para 12 vasos<br> ¿Qué contiene?</p>\n` +
+      `<p>Una matriz proteica de alto valor biológico.</p>`;
+    const { body: sinFaqs, faqs } = extractFaqs(body);
+    expect(sinFaqs).toBe(`<ul><li>Sin conservantes.</li></ul>\n`);
+    expect(faqs).toEqual([
+      { question: "¿Cuántas porciones trae?", answer: "El tarro trae 400 gr y rinde para 12 vasos." },
+      { question: "¿Qué contiene?", answer: "Una matriz proteica de alto valor biológico." },
+    ]);
+  });
+
+  it("entiende el acordeón viejo de Woo: <h2> + <a> por pregunta", () => {
+    const body =
+      `<p>Intro.</p>\r\n<h2>Preguntas Frecuentes</h2>\r\n` +
+      `<a rel="noopener noreferrer">¿Cómo se prepara?</a>\r\n\r\nSe coloca una porción en agua.\r\n` +
+      `<a rel="noopener noreferrer">¿Qué es?</a>\r\n\r\nEs una bebida especializada.`;
+    const { body: sinFaqs, faqs } = extractFaqs(body);
+    expect(sinFaqs).toBe(`<p>Intro.</p>\r\n`);
+    expect(faqs.map((f) => f.question)).toEqual(["¿Cómo se prepara?", "¿Qué es?"]);
+  });
+
+  it("no toca una mención de pasada sin preguntas reales", () => {
+    const body = `<p>Consulta nuestras preguntas frecuentes en la página de ayuda.</p><p>Más texto del producto.</p>`;
+    expect(extractFaqs(body)).toEqual({ body, faqs: [] });
+  });
+
+  it("cierra las respuestas sin punto final y colapsa puntos dobles", () => {
+    const body = `Preguntas Frecuentes <p>¿Cuántas trae?</p><p>Doce unidades</p><p>¿Sirve para maratón?</p><p>Sí, claro..</p>`;
+    const { faqs } = extractFaqs(body);
+    expect(faqs.map((f) => f.answer)).toEqual(["Doce unidades.", "Sí, claro."]);
+  });
+});
+
+describe("promoteLabelHeadings", () => {
+  it("promueve los cuatro formatos de etiqueta a <h3>", () => {
+    expect(
+      promoteLabelHeadings(`</p>\n<strong>Sabores de Pre Race:</strong> <p>Fresa.</p>`),
+    ).toBe(`</p>\n<h3>Sabores de Pre Race</h3> <p>Fresa.</p>`);
+    expect(
+      promoteLabelHeadings(`<p>Uso.</p>\n<p>Descripción detallada del gel:</p>`),
+    ).toBe(`<p>Uso.</p>\n<h3>Descripción detallada del gel</h3>`);
+    expect(
+      promoteLabelHeadings(`</p>\nSabores del gel: <p>Fresa, manzana.</p>`),
+    ).toBe(`</p>\n<h3>Sabores del gel</h3><p>Fresa, manzana.</p>`);
+    expect(
+      promoteLabelHeadings(`<h2><strong>Información nutricional del Energy Gel:</strong></h2>`),
+    ).toBe(`<h3>Información nutricional del Energy Gel</h3>`);
+  });
+
+  it("baja a párrafo el contenido pegado a la etiqueta", () => {
+    expect(
+      promoteLabelHeadings(`<h2>\n<strong>Información nutricional de la Bebida: </strong>2 cucharadas en 500 ml.</h2>`),
+    ).toBe(`<h3>Información nutricional de la Bebida</h3><p>2 cucharadas en 500 ml.</p>`);
+    expect(
+      promoteLabelHeadings(`</ul>\nInformación nutricional de la Bebida: 1 sachet en 500 ml.\n<p>Sigue.</p>`),
+    ).toBe(`</ul>\n<h3>Información nutricional de la Bebida</h3><p>1 sachet en 500 ml.</p><p>Sigue.</p>`);
+  });
+
+  it("no incrusta un h3 dentro de un párrafo con más contenido", () => {
+    const body = `<p><strong>Sabores de la bebida:</strong> naranja y uva son los favoritos.</p>`;
+    expect(promoteLabelHeadings(body)).toBe(body);
+  });
+});
+
+describe("descriptionFields con la ficha completa", () => {
+  it("quita el bloque FAQ, promueve etiquetas y no duplica 'Recomendaciones de uso'", () => {
+    const body =
+      `<p>Intro corta del producto.</p>` +
+      `<h3>Recomendaciones de uso</h3>` +
+      `<strong>Sabores de Recovery:</strong> <p>Vainilla.</p>` +
+      `<p>Dias Horas Minutos Segundos</p>` +
+      `Preguntas Frecuentes <p>¿Cuántas porciones trae?</p><p>Doce.</p>`;
+    const f = descriptionFields(body);
+    expect(f.shortDescriptionHtml).toBe(`<p>Intro corta del producto.</p>`);
+    expect(f.descriptionKind).toBe("recomendaciones");
+    expect(f.descriptionHtml).toBe(`<h3>Sabores de Recovery</h3> <p>Vainilla.</p>`);
+    expect(f.faqs).toEqual([{ question: "¿Cuántas porciones trae?", answer: "Doce." }]);
   });
 });
