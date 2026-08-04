@@ -55,7 +55,9 @@ const STORAGE_KEY = "actimax-cart-v3";
 const CEDULA_STORAGE_KEY = "actimax-cedula";
 const PENDING_CHECKOUT_KEY = "actimax-checkout-pendiente";
 const CHANGE_EVENT = "actimax-cart-change";
+const CEDULA_CHANGE_EVENT = "actimax-cedula-change";
 let fallbackCart = "[]";
+let fallbackCedula = "";
 
 function subscribeToCart(onStoreChange: () => void) {
   window.addEventListener("storage", onStoreChange);
@@ -76,6 +78,27 @@ function getCartSnapshot() {
 
 function getServerCartSnapshot() {
   return "[]";
+}
+
+function subscribeToCedula(onStoreChange: () => void) {
+  window.addEventListener("storage", onStoreChange);
+  window.addEventListener(CEDULA_CHANGE_EVENT, onStoreChange);
+  return () => {
+    window.removeEventListener("storage", onStoreChange);
+    window.removeEventListener(CEDULA_CHANGE_EVENT, onStoreChange);
+  };
+}
+
+function getCedulaSnapshot() {
+  try {
+    return window.localStorage.getItem(CEDULA_STORAGE_KEY) ?? "";
+  } catch {
+    return fallbackCedula;
+  }
+}
+
+function getServerCedulaSnapshot() {
+  return "";
 }
 
 function isCartItem(value: unknown): value is CartItem {
@@ -109,23 +132,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
-  const [cedula, setCedulaState] = useState("");
-
-  useEffect(() => {
-    try {
-      setCedulaState(window.localStorage.getItem(CEDULA_STORAGE_KEY) ?? "");
-    } catch {
-      // almacenamiento no disponible: el campo simplemente inicia vacío
-    }
-  }, []);
+  const cedula = useSyncExternalStore(
+    subscribeToCedula,
+    getCedulaSnapshot,
+    getServerCedulaSnapshot,
+  );
 
   const setCedula = useCallback((value: string) => {
-    setCedulaState(value);
     try {
       window.localStorage.setItem(CEDULA_STORAGE_KEY, value);
     } catch {
-      // almacenamiento no disponible: se conserva solo en memoria
+      fallbackCedula = value;
     }
+    window.dispatchEvent(new Event(CEDULA_CHANGE_EVENT));
   }, []);
 
   const updateItems = useCallback((recipe: (items: CartItem[]) => CartItem[]) => {

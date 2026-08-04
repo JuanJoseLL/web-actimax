@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Archivo, Barlow_Condensed, Chivo_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { CartProvider } from "@/components/cart/CartProvider";
@@ -66,28 +67,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const paletteProducts: PaletteProduct[] = (await getAllProducts()).map((p) => {
-    const variant = initialProductVariant(p.variants);
-    return {
-      variantId: p.variantId,
-      variantTitle: variant?.title,
-      hasMultipleVariants: p.variants.length > 1,
-      handle: p.handle,
-      title: p.title,
-      type: p.type,
-      momentos: p.momentos,
-      deportes: p.deportes,
-      price: p.price,
-      image: variant?.image ?? p.images[0] ?? null,
-      inStock: variant?.inStock ?? p.inStock,
-    };
-  });
-
   return (
     <html
       lang="es"
@@ -108,10 +92,33 @@ export default async function RootLayout({
           <Footer />
           <WhatsAppButton />
           <CartDrawer />
-          <CommandPalette products={paletteProducts} />
+          <Suspense fallback={null}>
+            <StoreCommandPalette />
+          </Suspense>
           <Toaster position="top-right" offset={{ top: 108 }} mobileOffset={{ top: 108 }} />
         </CartProvider>
       </body>
     </html>
   );
+}
+
+async function StoreCommandPalette() {
+  const paletteProducts: PaletteProduct[] = (await getAllProducts()).map((p) => {
+    const variant = initialProductVariant(p.variants);
+    return {
+      variantId: p.variantId,
+      variantTitle: variant?.title,
+      hasMultipleVariants: p.variants.length > 1,
+      handle: p.handle,
+      title: p.title,
+      type: p.type,
+      momentos: p.momentos,
+      deportes: p.deportes,
+      price: p.price,
+      image: variant?.image ?? p.images[0] ?? null,
+      inStock: variant?.inStock ?? p.inStock,
+    };
+  });
+
+  return <CommandPalette products={paletteProducts} />;
 }

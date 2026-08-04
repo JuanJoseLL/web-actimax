@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   // Cache Components (PPR): shell estático instantáneo + datos cacheados
   cacheComponents: true,
+  // Prefetchea un único App Shell por ruta en vez de repetir el payload por
+  // cada enlace; los datos de params/searchParams se resuelven tras navegar.
+  partialPrefetching: true,
   images: {
     remotePatterns: [
       // Fotos de producto servidas por Shopify

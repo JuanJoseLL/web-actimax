@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
 import { BlogListing } from "@/components/blog/BlogListing";
+import { BlogPageSkeleton } from "@/components/blog/BlogPageSkeleton";
 import { pageMetadata } from "@/lib/seo";
 import {
   BLOG_CACHE_LIFE,
@@ -44,15 +46,21 @@ export async function generateMetadata({
   });
 }
 
-export default async function BlogPaginaPage({
+type BlogPageParams = Promise<{ numero: string }>;
+
+export default function BlogPaginaPage({
   params,
 }: {
-  params: Promise<{ numero: string }>;
+  params: BlogPageParams;
 }) {
-  "use cache";
-  cacheTag("blog");
-  cacheLife(BLOG_CACHE_LIFE);
+  return (
+    <Suspense fallback={<BlogPageSkeleton />}>
+      <BlogPaginaContent params={params} />
+    </Suspense>
+  );
+}
 
+async function BlogPaginaContent({ params }: { params: BlogPageParams }) {
   const page = parsePage((await params).numero);
   if (page === undefined || page === 0) notFound();
   if (page === 1) redirect("/blog/");

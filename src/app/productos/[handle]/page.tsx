@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { cacheLife, cacheTag } from "next/cache";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { BuyBox } from "@/components/BuyBox";
 import { ImageGallery } from "@/components/ImageGallery";
 import { ProductFaq } from "@/components/ProductFaq";
 import { ProductCard } from "@/components/ProductCard";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   DEPORTE_LABELS,
   MOMENTO_LABELS,
@@ -57,15 +58,21 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProductPage({
+type ProductParams = Promise<{ handle: string }>;
+
+export default function ProductPage({
   params,
 }: {
-  params: Promise<{ handle: string }>;
+  params: ProductParams;
 }) {
-  "use cache";
-  cacheTag("catalog");
-  cacheLife({ stale: 30, revalidate: 30, expire: 86400 });
+  return (
+    <Suspense fallback={<ProductPageSkeleton />}>
+      <ProductPageContent params={params} />
+    </Suspense>
+  );
+}
 
+async function ProductPageContent({ params }: { params: ProductParams }) {
   const { handle } = await params;
   const product = await getProduct(handle);
   if (product === undefined) notFound();
@@ -213,6 +220,24 @@ export default async function ProductPage({
           </div>
         </section>
       ) : null}
+    </div>
+  );
+}
+
+function ProductPageSkeleton() {
+  return (
+    <div aria-hidden className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
+      <Skeleton className="mb-6 h-3 w-48" />
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14">
+        <Skeleton className="aspect-square w-full" />
+        <div className="py-2">
+          <Skeleton className="h-3 w-28" />
+          <Skeleton className="mt-4 h-12 w-4/5 sm:h-16" />
+          <Skeleton className="mt-6 h-5 w-2/3" />
+          <Skeleton className="mt-3 h-5 w-1/2" />
+          <Skeleton className="mt-8 h-12 w-full" />
+        </div>
+      </div>
     </div>
   );
 }

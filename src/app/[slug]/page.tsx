@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { BlogArticle } from "@/components/blog/BlogArticle";
+import { BlogPageSkeleton } from "@/components/blog/BlogPageSkeleton";
 import {
   BLOG_CACHE_LIFE,
   getAllBlogPosts,
@@ -44,15 +46,21 @@ export async function generateMetadata({
   };
 }
 
-export default async function LegacyRootBlogPost({
+type BlogParams = Promise<{ slug: string }>;
+
+export default function LegacyRootBlogPost({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: BlogParams;
 }) {
-  "use cache";
-  cacheTag("blog");
-  cacheLife(BLOG_CACHE_LIFE);
+  return (
+    <Suspense fallback={<BlogPageSkeleton />}>
+      <LegacyRootBlogPostContent params={params} />
+    </Suspense>
+  );
+}
 
+async function LegacyRootBlogPostContent({ params }: { params: BlogParams }) {
   const { slug } = await params;
   const post = await getBlogPost(slug);
   if (post === undefined || !isRootBlogPost(post)) notFound();

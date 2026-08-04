@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Badge } from "@/components/ui/badge";
@@ -129,11 +130,19 @@ export default function ProductosPage({
 }) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+      <Suspense fallback={null}>
+        <DynamicMetadataMarker />
+      </Suspense>
       <Suspense fallback={<CatalogSkeleton />}>
         <CatalogContent searchParams={searchParams} />
       </Suspense>
     </div>
   );
+}
+
+async function DynamicMetadataMarker() {
+  await connection();
+  return null;
 }
 
 function CatalogSkeleton() {

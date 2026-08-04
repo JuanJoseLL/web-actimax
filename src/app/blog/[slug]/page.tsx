@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { BlogArticle } from "@/components/blog/BlogArticle";
 import { BlogListing } from "@/components/blog/BlogListing";
+import { BlogPageSkeleton } from "@/components/blog/BlogPageSkeleton";
 import {
   BLOG_CACHE_LIFE,
   getAllBlogPosts,
@@ -61,15 +63,21 @@ export async function generateMetadata({
   return { title: "Entrada no encontrada | Actimax" };
 }
 
-export default async function BlogPostPage({
+type BlogParams = Promise<{ slug: string }>;
+
+export default function BlogPostPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: BlogParams;
 }) {
-  "use cache";
-  cacheTag("blog");
-  cacheLife(BLOG_CACHE_LIFE);
+  return (
+    <Suspense fallback={<BlogPageSkeleton />}>
+      <BlogPostContent params={params} />
+    </Suspense>
+  );
+}
 
+async function BlogPostContent({ params }: { params: BlogParams }) {
   const { slug } = await params;
   const category = getBlogCategory(slug);
   if (category !== undefined) {

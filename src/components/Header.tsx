@@ -111,6 +111,7 @@ export function Header() {
           <Button asChild variant="ghost" size="icon" aria-label="Mi cuenta">
             {/* <a> plano: /mi-cuenta/ redirige fuera del sitio (cuentas de
                 Shopify) y no tiene sentido que next/link lo prefetchee. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a href="/mi-cuenta/">
               <UserRoundIcon />
             </a>

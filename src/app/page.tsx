@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { cacheLife, cacheTag } from "next/cache";
+import { Suspense } from "react";
 import {
   ArrowRightIcon,
   ArrowUpRightIcon,
@@ -29,25 +29,44 @@ import { canonicalProductPath } from "@/lib/product-paths";
    defiende el home de duplicados por query (?utm_*, ?fbclid, …). */
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
-export default async function Home() {
-  "use cache";
-  cacheTag("blog", "catalog");
-  cacheLife({ stale: 60, revalidate: 60, expire: 86400 });
-
-  const posts = (await getAllBlogPosts()).slice(0, 3);
+export default function Home() {
   return (
     <>
       <Hero />
       <Ticker />
-      <ChallengeSection />
+      <Suspense fallback={<HomeSectionSkeleton className="bg-[#f4f2ec]" />}>
+        <ChallengeSection />
+      </Suspense>
       <StorySection />
-      <RitualSection />
-      <BestSellersSection />
+      <Suspense fallback={<HomeSectionSkeleton className="bg-white" />}>
+        <RitualSection />
+      </Suspense>
+      <Suspense fallback={<HomeSectionSkeleton className="bg-[#f4f2ec]" />}>
+        <BestSellersSection />
+      </Suspense>
       <ClubSection />
-      <JournalSection posts={posts} />
+      <Suspense fallback={<HomeSectionSkeleton className="bg-white" />}>
+        <JournalSection />
+      </Suspense>
       <NewsletterSection />
       <TeamSection />
     </>
+  );
+}
+
+function HomeSectionSkeleton({ className }: { className: string }) {
+  return (
+    <section aria-hidden className={className}>
+      <div className="mx-auto max-w-7xl animate-pulse px-4 py-16 sm:px-6 md:py-28 lg:px-8">
+        <div className="h-3 w-36 rounded bg-tinta/10" />
+        <div className="mt-5 h-16 max-w-2xl rounded bg-tinta/10 sm:h-20" />
+        <div className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((item) => (
+            <div key={item} className="aspect-square rounded bg-tinta/10" />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -609,7 +628,9 @@ function ClubSection() {
   );
 }
 
-function JournalSection({ posts }: { posts: Awaited<ReturnType<typeof getAllBlogPosts>> }) {
+async function JournalSection() {
+  const posts = (await getAllBlogPosts()).slice(0, 3);
+
   return (
     <section id="historias" className="scroll-mt-28 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
