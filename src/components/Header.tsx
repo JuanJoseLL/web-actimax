@@ -36,7 +36,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-background/92 shadow-[0_1px_0_rgba(10,17,40,0.08)] backdrop-blur-xl">
-      <p className="flex h-8 items-center justify-center gap-2 bg-azul px-3 text-center font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-white">
+      <p className="flex h-6 items-center justify-center gap-1.5 bg-azul px-3 text-center font-mono text-[9px] font-semibold uppercase leading-none tracking-[0.12em] text-white sm:text-[10px]">
         <span className="truncate">
           Envío gratis <span className="hidden sm:inline">por compras </span>desde{" "}
           {formatCOP(ENVIO_GRATIS_UMBRAL)}
@@ -46,7 +46,7 @@ export function Header() {
       </p>
       <div
         aria-hidden
-        className="h-[3px] bg-[linear-gradient(90deg,#002f87_0%,#0a50d0_62%,#ffd23c_100%)]"
+        className="h-0.5 bg-[linear-gradient(90deg,#002f87_0%,#0a50d0_62%,#ffd23c_100%)]"
       />
       <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-2 px-4 sm:gap-5 sm:px-6 lg:px-8">
         <Link href="/" className="shrink-0" aria-label="Actimax — inicio">
