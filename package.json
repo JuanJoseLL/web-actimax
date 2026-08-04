@@ -11,6 +11,7 @@
     "blog:prepare": "node --env-file-if-exists=.env.local scripts/migrate-wordpress-blog.mjs prepare",
     "blog:import": "node --env-file-if-exists=.env.local scripts/migrate-wordpress-blog.mjs import",
     "blog:verify": "node --env-file-if-exists=.env.local scripts/migrate-wordpress-blog.mjs verify",
+    "reviews:prepare": "node --env-file-if-exists=.env.local scripts/prepare-judgeme-reviews.mjs",
     "shopify:migrate": "node --env-file-if-exists=.env.local scripts/migrate-shopify-store.mjs migrate",
     "shopify:verify": "node --env-file-if-exists=.env.local scripts/migrate-shopify-store.mjs verify"
   },

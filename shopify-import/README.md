@@ -73,3 +73,9 @@ Antes de apuntar `actimax.com.co` al nuevo storefront:
 4. Mantener una copia del WordPress y sus medios durante al menos 90 dias.
 5. Enviar `https://actimax.com.co/sitemap.xml` a Google Search Console.
 6. Revisar errores 404, indexacion y Core Web Vitals durante las semanas siguientes.
+
+## Resenas de productos
+
+`pnpm reviews:prepare` consulta los productos publicados en Shopify y convierte
+`src/data/reviews.json` al formato de importacion de Judge.me. El resultado queda
+en `judgeme-reviews.csv`; las resenas de productos que ya no existen se omiten.

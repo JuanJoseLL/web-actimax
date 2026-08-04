@@ -118,8 +118,8 @@ export function productJsonLd(product: Product, reviews: ProductReview[] = []): 
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.title,
-    /* Estrellas en los resultados de búsqueda: reseñas reales migradas de
-       la tienda anterior (misma marca, mismos productos). */
+    /* Estrellas en búsqueda: reseñas reales administradas por Judge.me,
+       incluidas las históricas migradas de la tienda anterior. */
     ...(reviews.length > 0
       ? {
           aggregateRating: {

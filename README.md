@@ -100,6 +100,7 @@ despliegue:
 SHOPIFY_STORE_DOMAIN=actimax-hzfavz8j.myshopify.com
 SHOPIFY_STOREFRONT_TOKEN=token_publico_de_actimax_headless
 SHOPIFY_BLOG_HANDLE=blog
+JUDGEME_PUBLIC_TOKEN=token_publico_de_judge_me
 ```
 
 `SHOPIFY_CLIENT_ID` y `SHOPIFY_CLIENT_SECRET` pertenecen a la integración

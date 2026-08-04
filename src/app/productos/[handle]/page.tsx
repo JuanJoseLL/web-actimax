@@ -77,8 +77,10 @@ async function ProductPageContent({ params }: { params: ProductParams }) {
   const product = await getProduct(handle);
   if (product === undefined) notFound();
 
-  const reviews = getProductReviews(product.handle);
-  const all = await getAllProducts();
+  const [reviews, all] = await Promise.all([
+    getProductReviews(product.handle, product.id),
+    getAllProducts(),
+  ]);
   const related = all
     .filter(
       (p) =>
@@ -203,7 +205,11 @@ async function ProductPageContent({ params }: { params: ProductParams }) {
         </section>
       ) : null}
 
-      <ProductReviews reviews={reviews} />
+      <ProductReviews
+        reviews={reviews}
+        productHandle={product.handle}
+        productTitle={product.title}
+      />
 
       <ProductFaq items={productFaq(product)} />
 
