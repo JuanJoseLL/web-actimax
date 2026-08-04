@@ -1,0 +1,646 @@
+{
+  "store": "actimax-hzfavz8j.myshopify.com",
+  "products": {
+    "pre-race-caja-x12": {
+      "productId": "gid://shopify/Product/15227253522477",
+      "images": [
+        {
+          "file": "pre-race-sobre-actimax.webp",
+          "alt": "Sobre de Bebida Pre Race Actimax de 36 g",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre-race-sobre-actimax.webp?v=1785869639"
+        },
+        {
+          "file": "pre-race-sobre-antes-de-entrenar-actimax.webp",
+          "alt": "Corredor mostrando un sobre de Bebida Pre Race Actimax en la pista de atletismo",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre-race-sobre-antes-de-entrenar-actimax.webp?v=1785869639"
+        },
+        {
+          "file": "pre-race-sobre-bebida-pre-entreno-actimax.webp",
+          "alt": "Manos abriendo un sobre de Bebida Pre Race Actimax antes del entrenamiento",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre-race-sobre-bebida-pre-entreno-actimax.webp?v=1785869639"
+        },
+        {
+          "file": "pre-race-sobre-running-actimax.webp",
+          "alt": "Sobre de Bebida Pre Race Actimax junto a una zapatilla de running",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre-race-sobre-running-actimax.webp?v=1785869639"
+        }
+      ],
+      "kept": [
+        {
+          "name": "pre-race-sachet-tabla-nutricional.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre-race-sachet-tabla-nutricional.jpg?v=1785286104"
+        }
+      ],
+      "removed": [
+        {
+          "name": "Pre-Race-Caja-Actimax-600x600-1.webp",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Pre-Race-Caja-Actimax-600x600-1.webp?v=1785286104"
+        },
+        {
+          "name": "pre_race_actimax_caja_2.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre_race_actimax_caja_2.jpg?v=1785286104"
+        },
+        {
+          "name": "pre_race_actimax_caja_1.webp",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre_race_actimax_caja_1.webp?v=1785286104"
+        },
+        {
+          "name": "pre_race_actimax_caja.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre_race_actimax_caja.jpg?v=1785286104"
+        }
+      ]
+    },
+    "pre-race-en-tarro-400gr": {
+      "productId": "gid://shopify/Product/15227253653549",
+      "images": [
+        {
+          "file": "pre-race-tarro-500-g-actimax.webp",
+          "alt": "Tarro de Bebida Pre Race Actimax de 500 g",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre-race-tarro-500-g-actimax.webp?v=1785869647"
+        },
+        {
+          "file": "pre-race-tarro-atletismo-actimax.webp",
+          "alt": "Atleta con el tarro de Bebida Pre Race Actimax en la pista antes de entrenar",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre-race-tarro-atletismo-actimax.webp?v=1785869647"
+        },
+        {
+          "file": "pre-race-tarro-ciclismo-actimax.webp",
+          "alt": "Tarro de Bebida Pre Race Actimax antes de una salida en bicicleta",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre-race-tarro-ciclismo-actimax.webp?v=1785869647"
+        },
+        {
+          "file": "pre-race-tarro-preparacion-actimax.webp",
+          "alt": "Deportista sirviendo Bebida Pre Race Actimax con el medidor del tarro",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/pre-race-tarro-preparacion-actimax.webp?v=1785869647"
+        }
+      ],
+      "kept": [
+        {
+          "name": "Pre-Race.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Pre-Race.jpg?v=1785286107"
+        }
+      ],
+      "removed": [
+        {
+          "name": "Pre-Race-en-Tarro-400gr.png",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Pre-Race-en-Tarro-400gr.png?v=1785286107"
+        },
+        {
+          "name": "1-pre_race_actimax_tarro.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-pre_race_actimax_tarro.jpg?v=1785286107"
+        }
+      ]
+    },
+    "pack-sachets-bebida-elite-cafeina": {
+      "productId": "gid://shopify/Product/15227259387949",
+      "images": [
+        {
+          "file": "bebida-elite-sobre-con-cafeina-actimax.webp",
+          "alt": "Sobre de Bebida Deportiva Élite Actimax con cafeína de 30 g",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-sobre-con-cafeina-actimax.webp?v=1785869656"
+        },
+        {
+          "file": "bebida-elite-sobre-ciclismo-actimax.webp",
+          "alt": "Ciclista con un sobre de Bebida Deportiva Élite Actimax y su caramañola",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-sobre-ciclismo-actimax.webp?v=1785869656"
+        },
+        {
+          "file": "bebida-elite-sobre-hidratacion-actimax.webp",
+          "alt": "Triatleta vertiendo un sobre de Bebida Deportiva Élite Actimax en la caramañola",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-sobre-hidratacion-actimax.webp?v=1785869656"
+        },
+        {
+          "file": "bebida-elite-sobre-caramanola-actimax.webp",
+          "alt": "Deportista preparando un sobre de Bebida Deportiva Élite Actimax en su termo",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-sobre-caramanola-actimax.webp?v=1785869656"
+        }
+      ],
+      "kept": [
+        {
+          "name": "Bebida-elite-sachet-tabla-nutricional.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Bebida-elite-sachet-tabla-nutricional.jpg?v=1785286190"
+        }
+      ],
+      "removed": [
+        {
+          "name": "Pack-x20-sachets-Bebida-Deportiva-Elite-con-Cafeina.png",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Pack-x20-sachets-Bebida-Deportiva-Elite-con-Cafeina.png?v=1785286190"
+        },
+        {
+          "name": "bebida_deportiva_elite.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida_deportiva_elite.jpg?v=1785286190"
+        },
+        {
+          "name": "bebida_deportiva_sin-cafeina.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida_deportiva_sin-cafeina.jpg?v=1785286190"
+        },
+        {
+          "name": "bebida_deportiva_elite-actimax.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida_deportiva_elite-actimax.jpg?v=1785286190"
+        }
+      ]
+    },
+    "bebida-deportiva-elite-con-cafeina-tarro-de-500gr": {
+      "productId": "gid://shopify/Product/15227253162029",
+      "images": [
+        {
+          "file": "bebida-elite-tarro-500-g-con-cafeina-actimax.webp",
+          "alt": "Tarro de Bebida Deportiva Élite Actimax con cafeína de 500 g",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-tarro-500-g-con-cafeina-actimax.webp?v=1785869664"
+        },
+        {
+          "file": "bebida-elite-tarro-con-cafeina-ciclismo-actimax.webp",
+          "alt": "Ciclista hidratándose con Bebida Deportiva Élite Actimax durante una salida en ruta",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-tarro-con-cafeina-ciclismo-actimax.webp?v=1785869664"
+        },
+        {
+          "file": "bebida-elite-tarro-con-cafeina-en-mano-actimax.webp",
+          "alt": "Tarro de Bebida Deportiva Élite Actimax con cafeína sostenido en la mano",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-tarro-con-cafeina-en-mano-actimax.webp?v=1785869664"
+        },
+        {
+          "file": "bebida-elite-tarro-con-cafeina-atletismo-actimax.webp",
+          "alt": "Atleta mostrando el tarro de Bebida Deportiva Élite Actimax con cafeína en la pista",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-tarro-con-cafeina-atletismo-actimax.webp?v=1785869664"
+        }
+      ],
+      "kept": [
+        {
+          "name": "bebida-elite-tarro-con-cafeina-tabla-nutricional.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-tarro-con-cafeina-tabla-nutricional.jpg?v=1785286097"
+        }
+      ],
+      "removed": [
+        {
+          "name": "Bebida-Deportiva-elite-con-Cafeina-Tarro-de-500gr.png",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Bebida-Deportiva-elite-con-Cafeina-Tarro-de-500gr.png?v=1785286097"
+        },
+        {
+          "name": "2-bebida_deportiva_elite_actimax_2.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-bebida_deportiva_elite_actimax_2.jpg?v=1785286097"
+        },
+        {
+          "name": "1-bebida_deportiva_elite_actimax.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-bebida_deportiva_elite_actimax.jpg?v=1785286097"
+        }
+      ]
+    },
+    "bebida-deportiva-elite-tarro-500gr": {
+      "productId": "gid://shopify/Product/15227253325869",
+      "images": [
+        {
+          "file": "bebida-elite-tarro-500-g-sin-cafeina-actimax.webp",
+          "alt": "Tarro de Bebida Élite Actimax sin cafeína de 500 g",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-tarro-500-g-sin-cafeina-actimax.webp?v=1785869672"
+        },
+        {
+          "file": "bebida-elite-tarro-sin-cafeina-tenis-actimax.webp",
+          "alt": "Tarro de Bebida Élite Actimax sin cafeína junto a una raqueta y pelotas de tenis",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-tarro-sin-cafeina-tenis-actimax.webp?v=1785869672"
+        },
+        {
+          "file": "bebida-elite-tarro-sin-cafeina-preparacion-actimax.webp",
+          "alt": "Deportista preparando Bebida Élite Actimax sin cafeína en varias caramañolas",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-tarro-sin-cafeina-preparacion-actimax.webp?v=1785869672"
+        },
+        {
+          "file": "bebida-elite-sin-cafeina-hidratacion-ciclismo-actimax.webp",
+          "alt": "Ciclista con la caramañola de Bebida Élite Actimax sin cafeína lista para rodar",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-sin-cafeina-hidratacion-ciclismo-actimax.webp?v=1785869672"
+        }
+      ],
+      "kept": [
+        {
+          "name": "bebida-elite-sin-cafeina-tarro-tabla-nutricional.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/bebida-elite-sin-cafeina-tarro-tabla-nutricional.jpg?v=1785286101"
+        }
+      ],
+      "removed": [
+        {
+          "name": "Bebida-Elite-Actimax-500gr.png",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Bebida-Elite-Actimax-500gr.png?v=1785286101"
+        },
+        {
+          "name": "2-bebida_elite_actimax_2.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-bebida_elite_actimax_2.jpg?v=1785286101"
+        },
+        {
+          "name": "1-bebida_elite_actimax_1.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-bebida_elite_actimax_1.jpg?v=1785286101"
+        }
+      ]
+    },
+    "gl-energetico-actimax-sachets-x24-con-cafeina": {
+      "productId": "gid://shopify/Product/15227257749549",
+      "images": [
+        {
+          "file": "gel-energetico-30-g-con-cafeina-actimax.webp",
+          "alt": "Sobre de Gel Energético Élite Actimax de 30 g con cafeína sabor fresa",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-con-cafeina-actimax.webp?v=1785869682"
+        },
+        {
+          "file": "gel-energetico-30-g-con-cafeina-running-actimax.webp",
+          "alt": "Corredor consumiendo un Gel Energético Élite Actimax de 30 g con cafeína en la pista",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-con-cafeina-running-actimax.webp?v=1785869682"
+        },
+        {
+          "file": "gel-energetico-30-g-con-cafeina-montana-actimax.webp",
+          "alt": "Gel Energético Élite Actimax de 30 g con cafeína frente a una laguna de montaña",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-con-cafeina-montana-actimax.webp?v=1785869682"
+        },
+        {
+          "file": "gel-energetico-30-g-con-cafeina-atletismo-actimax.webp",
+          "alt": "Atleta tomando un Gel Energético Élite Actimax de 30 g con cafeína durante el entrenamiento",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-con-cafeina-atletismo-actimax.webp?v=1785869681"
+        },
+        {
+          "file": "gel-energetico-30-g-con-cafeina-pista-actimax.webp",
+          "alt": "Deportista con un Gel Energético Élite Actimax de 30 g con cafeína en la pista atlética",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-con-cafeina-pista-actimax.webp?v=1785869682"
+        }
+      ],
+      "kept": [
+        {
+          "name": "gel-energetico-30-g-fresa-cafeina-tabla-nutricional.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-fresa-cafeina-tabla-nutricional.jpg?v=1785286166"
+        },
+        {
+          "name": "gel-energetico-30-g-mango-cafeina-tabla-nutricional.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-mango-cafeina-tabla-nutricional.jpg?v=1785286166"
+        },
+        {
+          "name": "gel-energetico-30-g-manzana-verde-cafeina-tabla-nutricional.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-manzana-verde-cafeina-tabla-nutricional.jpg?v=1785286166"
+        }
+      ],
+      "removed": [
+        {
+          "name": "gel-energetico-actimax-con-cafeina.png",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-actimax-con-cafeina.png?v=1785286167"
+        },
+        {
+          "name": "5-gel_energetico_con_cafeina_30_gr.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/5-gel_energetico_con_cafeina_30_gr.jpg?v=1785286166"
+        },
+        {
+          "name": "2-gel_energetico_con_cafeina_30_gr.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-gel_energetico_con_cafeina_30_gr.jpg?v=1785286166"
+        },
+        {
+          "name": "1-gel_energetico_con_cafeina_30_gr.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-gel_energetico_con_cafeina_30_gr.jpg?v=1785286166"
+        },
+        {
+          "name": "4-gel_energetico_con_cafeina_30_gr.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/4-gel_energetico_con_cafeina_30_gr.jpg?v=1785286166"
+        },
+        {
+          "name": "3-gel_energetico_con_cafeina_30_gr.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/3-gel_energetico_con_cafeina_30_gr.jpg?v=1785286166"
+        }
+      ]
+    },
+    "gel-energetico-sachets-x24-sin-cafeina": {
+      "productId": "gid://shopify/Product/15227257978925",
+      "images": [
+        {
+          "file": "gel-energetico-30-g-sin-cafeina-actimax.webp",
+          "alt": "Sobre de Gel Energético Élite Actimax de 30 g sin cafeína sabor fresa banano",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-sin-cafeina-actimax.webp?v=1785869690"
+        },
+        {
+          "file": "gel-energetico-30-g-sin-cafeina-carrera-actimax.webp",
+          "alt": "Gel Energético Élite Actimax de 30 g sin cafeína en la mano durante una carrera",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-sin-cafeina-carrera-actimax.webp?v=1785869690"
+        },
+        {
+          "file": "gel-energetico-30-g-sin-cafeina-ciclismo-actimax.webp",
+          "alt": "Ciclista con un Gel Energético Élite Actimax de 30 g sin cafeína sobre el manubrio",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-sin-cafeina-ciclismo-actimax.webp?v=1785869690"
+        },
+        {
+          "file": "gel-energetico-30-g-sin-cafeina-running-actimax.webp",
+          "alt": "Corredora con un Gel Energético Élite Actimax de 30 g sin cafeína en plena carrera",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-sin-cafeina-running-actimax.webp?v=1785869690"
+        }
+      ],
+      "kept": [
+        {
+          "name": "gel-energetico-30-g-fresa-banano-sin-cafeina-tabla-nutricional.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-30-g-fresa-banano-sin-cafeina-tabla-nutricional.jpg?v=1785286170"
+        }
+      ],
+      "removed": [
+        {
+          "name": "gel-energetico-actimax-sin-cafeina.png",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-actimax-sin-cafeina.png?v=1785286171"
+        },
+        {
+          "name": "1-gel_energetico_sin_cafeina_30_gr.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-gel_energetico_sin_cafeina_30_gr.jpg?v=1785286170"
+        },
+        {
+          "name": "2-gel_energetico_sin_cafeina_30_gr-2.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-gel_energetico_sin_cafeina_30_gr-2.jpg?v=1785286170"
+        },
+        {
+          "name": "3-gel_energetico_sin_cafeina_30_gr-3.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/3-gel_energetico_sin_cafeina_30_gr-3.jpg?v=1785286170"
+        }
+      ]
+    },
+    "gel-energetico-actimax-caja-x8-con-cafeina": {
+      "productId": "gid://shopify/Product/15227258175533",
+      "images": [
+        {
+          "file": "gel-energetico-90-g-con-cafeina-actimax.webp",
+          "alt": "Gel Energético Élite Actimax de 90 g con cafeína sabor manzana",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-con-cafeina-actimax.webp?v=1785869700"
+        },
+        {
+          "file": "gel-energetico-90-g-con-cafeina-ciclismo-actimax.webp",
+          "alt": "Ciclista sosteniendo un Gel Energético Élite Actimax de 90 g con cafeína",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-con-cafeina-ciclismo-actimax.webp?v=1785869700"
+        },
+        {
+          "file": "gel-energetico-90-g-con-cafeina-ciclista-actimax.webp",
+          "alt": "Ciclista consumiendo un Gel Energético Élite Actimax de 90 g con cafeína en ruta",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-con-cafeina-ciclista-actimax.webp?v=1785869700"
+        },
+        {
+          "file": "gel-energetico-90-g-con-cafeina-ruta-actimax.webp",
+          "alt": "Gel Energético Élite Actimax de 90 g con cafeína en el manubrio de una bicicleta de ruta",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-con-cafeina-ruta-actimax.webp?v=1785869700"
+        },
+        {
+          "file": "gel-energetico-90-g-con-cafeina-off-road-actimax.webp",
+          "alt": "Gel Energético Élite Actimax de 90 g con cafeína en una ruta off road de montaña",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-con-cafeina-off-road-actimax.webp?v=1785869700"
+        }
+      ],
+      "kept": [
+        {
+          "name": "gel-energetico-90-g-fresa-cafeina-tabla-nutricional.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-fresa-cafeina-tabla-nutricional.jpg?v=1785286173"
+        },
+        {
+          "name": "gel-energetico-90-g-mango-cafeina-tabla-nutricional.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-mango-cafeina-tabla-nutricional.jpg?v=1785286173"
+        },
+        {
+          "name": "gel-energetico-90-g-manzana-verde-cafeina-tabla-nutricional.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-manzana-verde-cafeina-tabla-nutricional.jpg?v=1785286173"
+        }
+      ],
+      "removed": [
+        {
+          "name": "gel-energetico-actimax-con-cafeina-90.png",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-actimax-con-cafeina-90.png?v=1785286174"
+        },
+        {
+          "name": "1-gel_energetico_con_cafeina_90gr_2.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-gel_energetico_con_cafeina_90gr_2.jpg?v=1785286173"
+        },
+        {
+          "name": "3-gel_energetico_con_cafeina_90gr_4.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/3-gel_energetico_con_cafeina_90gr_4.jpg?v=1785286173"
+        },
+        {
+          "name": "2-gel_energetico_con_cafeina_90gr_3.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-gel_energetico_con_cafeina_90gr_3.jpg?v=1785286173"
+        }
+      ]
+    },
+    "gel-energetico-actimax-caja-x8": {
+      "productId": "gid://shopify/Product/15227258306605",
+      "images": [
+        {
+          "file": "gel-energetico-90-g-sin-cafeina-actimax.webp",
+          "alt": "Gel Energético Élite Actimax de 90 g sin cafeína sabor fresa banano",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-sin-cafeina-actimax.webp?v=1785869708"
+        },
+        {
+          "file": "gel-energetico-90-g-sin-cafeina-en-carrera-actimax.webp",
+          "alt": "Deportista abriendo un Gel Energético Élite Actimax de 90 g sin cafeína",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-sin-cafeina-en-carrera-actimax.webp?v=1785869708"
+        },
+        {
+          "file": "gel-energetico-90-g-sin-cafeina-ciclismo-actimax.webp",
+          "alt": "Gel Energético Élite Actimax de 90 g sin cafeína en el bolsillo del maillot",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-sin-cafeina-ciclismo-actimax.webp?v=1785869708"
+        },
+        {
+          "file": "geles-energeticos-90-g-sin-cafeina-actimax.webp",
+          "alt": "Varios Geles Energéticos Élite Actimax de 90 g sin cafeína",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/geles-energeticos-90-g-sin-cafeina-actimax.webp?v=1785869708"
+        }
+      ],
+      "kept": [
+        {
+          "name": "gel-energetico-90-g-fresa-banano-sin-cafeina-tabla-nutricional.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/gel-energetico-90-g-fresa-banano-sin-cafeina-tabla-nutricional.jpg?v=1785286177"
+        }
+      ],
+      "removed": [
+        {
+          "name": "Gel-Energetico-Actimax-Caja-x8-sin-cafeina.png",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Gel-Energetico-Actimax-Caja-x8-sin-cafeina.png?v=1785286177"
+        }
+      ]
+    },
+    "energy-gel-caja-x24": {
+      "productId": "gid://shopify/Product/15227254964269",
+      "images": [
+        {
+          "file": "energy-gel-tubo-30-g-actimax.webp",
+          "alt": "Tubo de Energy Gel Actimax de 30 g",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/energy-gel-tubo-30-g-actimax.webp?v=1785869718"
+        },
+        {
+          "file": "energy-gel-caja-x24-actimax.webp",
+          "alt": "Caja x 24 tubos de Energy Gel Actimax",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/energy-gel-caja-x24-actimax.webp?v=1785869718"
+        },
+        {
+          "file": "energy-gel-montana-actimax.webp",
+          "alt": "Energy Gel Actimax en la mano frente a la montaña",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/energy-gel-montana-actimax.webp?v=1785869718"
+        },
+        {
+          "file": "energy-gel-atletismo-actimax.webp",
+          "alt": "Atleta mostrando un Energy Gel Actimax en la pista",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/energy-gel-atletismo-actimax.webp?v=1785869718"
+        },
+        {
+          "file": "energy-gel-ciclismo-actimax.webp",
+          "alt": "Ciclista consumiendo un Energy Gel Actimax durante la ruta",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/energy-gel-ciclismo-actimax.webp?v=1785869718"
+        },
+        {
+          "file": "energy-gel-running-actimax.webp",
+          "alt": "Energy Gel Actimax en la mano durante un entrenamiento de running en pista",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/energy-gel-running-actimax.webp?v=1785869718"
+        },
+        {
+          "file": "energy-gel-ciclismo-laguna-actimax.webp",
+          "alt": "Ciclista tomando un Energy Gel Actimax junto a una laguna",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/energy-gel-ciclismo-laguna-actimax.webp?v=1785869718"
+        }
+      ],
+      "kept": [
+        {
+          "name": "energy-gel-tabla-nutricional.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/energy-gel-tabla-nutricional.jpg?v=1785286114"
+        }
+      ],
+      "removed": [
+        {
+          "name": "Energy-Gel-Caja-x24.png",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Energy-Gel-Caja-x24.png?v=1785286114"
+        },
+        {
+          "name": "1-energy_gel_actimax.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-energy_gel_actimax.jpg?v=1785286114"
+        },
+        {
+          "name": "2-energy_gel_actimax.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-energy_gel_actimax.jpg?v=1785286114"
+        },
+        {
+          "name": "3-energy_gel_actimax.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/3-energy_gel_actimax.jpg?v=1785286114"
+        },
+        {
+          "name": "4-energy_gel_actimax.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/4-energy_gel_actimax.jpg?v=1785286114"
+        }
+      ]
+    },
+    "recovery-tarro-400gr": {
+      "productId": "gid://shopify/Product/15227252506669",
+      "images": [
+        {
+          "file": "recovery-tarro-400-g-actimax.webp",
+          "alt": "Tarro de Bebida de Recuperación Recovery Actimax de 400 g",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery-tarro-400-g-actimax.webp?v=1785869726"
+        },
+        {
+          "file": "recovery-tarro-preparacion-actimax.webp",
+          "alt": "Preparando Recovery Actimax en una caramañola después de entrenar",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery-tarro-preparacion-actimax.webp?v=1785869726"
+        },
+        {
+          "file": "recovery-tarro-shaker-actimax.webp",
+          "alt": "Tarro de Recovery Actimax junto a un shaker con el medidor de polvo",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery-tarro-shaker-actimax.webp?v=1785869726"
+        }
+      ],
+      "kept": [
+        {
+          "name": "Recovery-Tarro.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Tarro.jpg?v=1785286085"
+        }
+      ],
+      "removed": [
+        {
+          "name": "Recovery-Tarro-400gr.png",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Tarro-400gr.png?v=1785286085"
+        },
+        {
+          "name": "Recovery-Actimax-tarro.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Actimax-tarro.jpg?v=1785286084"
+        }
+      ]
+    },
+    "recovery-pro-tarro-400gr": {
+      "productId": "gid://shopify/Product/15227252801581",
+      "images": [
+        {
+          "file": "recovery-pro-tarro-400-g-actimax.webp",
+          "alt": "Tarro de Bebida de Recuperación Recovery Pro Actimax de 400 g",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery-pro-tarro-400-g-actimax.webp?v=1785869734"
+        },
+        {
+          "file": "recovery-pro-tarro-atletismo-actimax.webp",
+          "alt": "Atleta mostrando el tarro de Recovery Pro Actimax en la pista",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery-pro-tarro-atletismo-actimax.webp?v=1785869734"
+        },
+        {
+          "file": "recovery-pro-tarro-post-entreno-actimax.webp",
+          "alt": "Tarro de Recovery Pro Actimax después de una salida en moto",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery-pro-tarro-post-entreno-actimax.webp?v=1785869735"
+        },
+        {
+          "file": "recovery-pro-tarro-ciclismo-actimax.webp",
+          "alt": "Ciclista tomando Recovery Pro Actimax preparado en su caramañola",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery-pro-tarro-ciclismo-actimax.webp?v=1785869734"
+        }
+      ],
+      "kept": [
+        {
+          "name": "Recovery-Pro-Tarro-final.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Pro-Tarro-final.jpg?v=1785286091"
+        }
+      ],
+      "removed": [
+        {
+          "name": "Recovery-Pro-Tarro-400gr.png",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Pro-Tarro-400gr.png?v=1785286091"
+        },
+        {
+          "name": "1-recovery_pro_tarro_1.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/1-recovery_pro_tarro_1.jpg?v=1785286091"
+        },
+        {
+          "name": "2-recovery_pro_tarro_2.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/2-recovery_pro_tarro_2.jpg?v=1785286091"
+        }
+      ]
+    },
+    "recovery-pro-caja-x12": {
+      "productId": "gid://shopify/Product/15227252670509",
+      "images": [
+        {
+          "file": "recovery-pro-sobre-37-g-actimax.webp",
+          "alt": "Sobre de Bebida de Recuperación Recovery Pro Actimax de 37 g",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery-pro-sobre-37-g-actimax.webp?v=1785869743"
+        },
+        {
+          "file": "recovery-pro-sobre-post-carrera-actimax.webp",
+          "alt": "Atleta mostrando un sobre de Recovery Pro Actimax después de la carrera",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery-pro-sobre-post-carrera-actimax.webp?v=1785869743"
+        },
+        {
+          "file": "recovery-pro-sobre-recuperacion-actimax.webp",
+          "alt": "Corredor con un sobre de Recovery Pro Actimax en la pista",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery-pro-sobre-recuperacion-actimax.webp?v=1785869743"
+        },
+        {
+          "file": "recovery-pro-sobre-post-entreno-actimax.webp",
+          "alt": "Deportista abriendo un sobre de Recovery Pro Actimax después de entrenar",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery-pro-sobre-post-entreno-actimax.webp?v=1785869743"
+        }
+      ],
+      "kept": [
+        {
+          "name": "Recovery-Pro-Sachet.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Pro-Sachet.jpg?v=1785286088"
+        }
+      ],
+      "removed": [
+        {
+          "name": "Recovery-Pro-Caja-x12-600x600-1.webp",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/Recovery-Pro-Caja-x12-600x600-1.webp?v=1785286088"
+        },
+        {
+          "name": "recovery_pro_actimax_caja_1.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery_pro_actimax_caja_1.jpg?v=1785286087"
+        },
+        {
+          "name": "recovery_pro_actimax_caja_2.jpg",
+          "url": "https://cdn.shopify.com/s/files/1/0769/0790/5069/files/recovery_pro_actimax_caja_2.jpg?v=1785286087"
+        }
+      ]
+    }
+  }
+}

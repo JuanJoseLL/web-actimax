@@ -74,6 +74,26 @@ Antes de apuntar `actimax.com.co` al nuevo storefront:
 5. Enviar `https://actimax.com.co/sitemap.xml` a Google Search Console.
 6. Revisar errores 404, indexacion y Core Web Vitals durante las semanas siguientes.
 
+## Fotos de producto
+
+`product-photos-manifest.json` declara, por handle, que fotos nuevas van (en
+orden, con su `alt`) y que media vieja se conserva (`keep`: las tablas
+nutricionales). Todo lo demas se borra.
+
+```bash
+pnpm photos:stage    # copia la sesion de fotos a public/products con nombre SEO
+pnpm photos:plan     # muestra que se subiria, conservaria y borraria
+pnpm photos:apply    # sube, reordena y borra en Shopify + sincroniza el repo
+pnpm photos:verify   # comprueba que Shopify, catalog.json y los 301 coinciden
+```
+
+`apply` es reanudable e idempotente: si las fotos ya estan en Shopify no las
+vuelve a subir. Antes de borrar guarda en `product-photos-state.json` la URL de
+cada archivo eliminado, porque las redirecciones de
+`/wp-content/uploads/...` de `legacy-image-redirects.json` apuntaban a esos
+mismos archivos; el paso de sincronizacion las reapunta una a una a la foto
+nueva equivalente para no perder el SEO de imagenes ya indexadas.
+
 ## Resenas de productos
 
 `pnpm reviews:prepare` consulta los productos publicados en Shopify y convierte

@@ -13,7 +13,11 @@
     "blog:verify": "node --env-file-if-exists=.env.local scripts/migrate-wordpress-blog.mjs verify",
     "reviews:prepare": "node --env-file-if-exists=.env.local scripts/prepare-judgeme-reviews.mjs",
     "shopify:migrate": "node --env-file-if-exists=.env.local scripts/migrate-shopify-store.mjs migrate",
-    "shopify:verify": "node --env-file-if-exists=.env.local scripts/migrate-shopify-store.mjs verify"
+    "shopify:verify": "node --env-file-if-exists=.env.local scripts/migrate-shopify-store.mjs verify",
+    "photos:stage": "node --env-file-if-exists=.env.local scripts/update-product-photos.mjs stage",
+    "photos:plan": "node --env-file-if-exists=.env.local scripts/update-product-photos.mjs plan",
+    "photos:apply": "node --env-file-if-exists=.env.local scripts/update-product-photos.mjs apply",
+    "photos:verify": "node --env-file-if-exists=.env.local scripts/update-product-photos.mjs verify"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
