@@ -156,12 +156,12 @@ function Hero() {
 
         <div className="relative min-h-[400px] overflow-hidden border-t border-white/10 sm:min-h-[520px] lg:min-h-full lg:border-l lg:border-t-0">
           <Image
-            src="/products/energy-pack-media-maraton-21k-1.jpg"
-            alt="Atleta Actimax preparándose con un gel energético en la pista"
+            src="https://cdn.shopify.com/s/files/1/0769/0790/5069/files/hero-ciclistas-actimax.webp?v=1786220475"
+            alt="Dos ciclistas Actimax compitiendo en carretera"
             fill
             priority
             sizes="(min-width: 1440px) 684px, (min-width: 1024px) 48vw, 100vw"
-            className="hero-athlete object-cover"
+            className="hero-athlete object-cover object-[55%_center]"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,20,60,0.05)_35%,rgba(0,20,60,0.92)_100%)]" />
           <div className="absolute inset-y-0 left-0 hidden w-28 bg-[linear-gradient(90deg,#002f87,transparent)] lg:block" />

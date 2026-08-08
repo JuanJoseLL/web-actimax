@@ -1,9 +1,11 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { fallbackPosts } from "@/data/blog";
 import blogPaths from "@/data/blog-paths.json";
+import { POSTS_PER_PAGE } from "@/lib/blog-pagination";
 import type { BlogCategory, BlogImage, BlogPost } from "@/lib/blog-types";
 
 export * from "@/lib/blog-types";
+export { getBlogPageParams, POSTS_PER_PAGE } from "@/lib/blog-pagination";
 
 const STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const STOREFRONT_TOKEN = process.env.SHOPIFY_STOREFRONT_TOKEN;
@@ -34,8 +36,6 @@ interface BlogPathData {
 
 const pathData = blogPaths as BlogPathData;
 const pathsBySlug = new Map(pathData.posts.map((post) => [post.slug, post.sourcePath]));
-
-export const POSTS_PER_PAGE = 12;
 
 // Con el webhook de Shopify (/api/revalidar) la caché se invalida al publicar,
 // así que la revalidación periódica puede ser espaciada.

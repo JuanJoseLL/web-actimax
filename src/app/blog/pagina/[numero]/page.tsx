@@ -7,8 +7,8 @@ import { BlogPageSkeleton } from "@/components/blog/BlogPageSkeleton";
 import { pageMetadata } from "@/lib/seo";
 import {
   BLOG_CACHE_LIFE,
-  POSTS_PER_PAGE,
   getAllBlogPosts,
+  getBlogPageParams,
   getBlogPostsPage,
 } from "@/lib/blog";
 
@@ -19,11 +19,7 @@ function parsePage(numero: string): number | undefined {
 
 export async function generateStaticParams() {
   const posts = await getAllBlogPosts();
-  const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
-  // La página 1 vive en /blog/; aquí solo se generan las siguientes.
-  return Array.from({ length: totalPages - 1 }, (_, index) => ({
-    numero: String(index + 2),
-  }));
+  return getBlogPageParams(posts.length);
 }
 
 export async function generateMetadata({
