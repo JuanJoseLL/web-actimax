@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# datos personales de la migracion de clientes (Woo -> Shopify).
+# Nombres, correos, telefonos y direcciones de ~4.800 personas: no van al
+# repo. Se regeneran cuando haga falta con scripts/export-woo-customers.mjs,
+# mientras el WordPress viejo siga en pie.
+/shopify-import/woo-customers-export.json
+/shopify-import/shopify-customers.csv
