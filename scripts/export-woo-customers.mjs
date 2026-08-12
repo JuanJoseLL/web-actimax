@@ -212,6 +212,18 @@ function limpiar(v) {
   return typeof v === "string" ? v.trim() : "";
 }
 
+/* Colombia: móviles de 10 dígitos que empiezan por 3, o ya en internacional.
+   Lo que no encaje se deja en blanco — un teléfono inventado es peor que
+   ninguno, y Shopify rechaza la fila entera si el formato no le cuadra. */
+function sanearTelefono(t) {
+  const limpio = (t ?? "").replace(/[^\d+]/g, "");
+  const digitos = limpio.replace(/\D/g, "");
+  if (limpio.startsWith("+") && digitos.length >= 10 && digitos.length <= 15) return limpio;
+  if (digitos.length === 10 && digitos.startsWith("3")) return `+57${digitos}`;
+  if (digitos.length === 12 && digitos.startsWith("57")) return `+${digitos}`;
+  return "";
+}
+
 /* Un cliente por correo. Los datos del registro mandan sobre los del pedido,
    pero el pedido rellena lo que el registro tenga vacío (mucha gente se
    registra sin dirección y luego la escribe al comprar). */
@@ -317,7 +329,13 @@ const filas = clientes.map((c) => {
     c.firstName, c.lastName, c.email, MARKETING,
     c.company, c.address1, c.address2,
     c.city, prov, c.country || "CO",
-    c.zip, c.phone, c.phone, "no",
+    /* El teléfono va SOLO en la dirección. La columna "Phone" es el teléfono
+       a nivel de cliente y Shopify lo exige único en toda la tienda: al
+       duplicarlo ahí, 228 clientes que compartían celular con otro (familias,
+       o el mismo comprador con dos correos) fueron rechazados en la primera
+       importación. El de la dirección no tiene esa restricción y es el que
+       sirve para los envíos. */
+    c.zip, sanearTelefono(c.phone), "", "no",
     c.gastado ? c.gastado.toFixed(2) : "", c.pedidos || "", nota, "no", tags.join(","),
   ].map(celda).join(",");
 });

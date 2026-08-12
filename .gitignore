@@ -45,4 +45,4 @@ next-env.d.ts
 # repo. Se regeneran cuando haga falta con scripts/export-woo-customers.mjs,
 # mientras el WordPress viejo siga en pie.
 /shopify-import/woo-customers-export.json
-/shopify-import/shopify-customers.csv
+/shopify-import/shopify-customers*.csv
