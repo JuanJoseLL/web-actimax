@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Archivo, Barlow_Condensed, Chivo_Mono } from "next/font/google";
 import { Suspense } from "react";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { CartProvider } from "@/components/cart/CartProvider";
@@ -97,6 +99,8 @@ export default function RootLayout({
           </Suspense>
           <Toaster position="top-right" offset={{ top: 108 }} mobileOffset={{ top: 108 }} />
         </CartProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
