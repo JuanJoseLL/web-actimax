@@ -5,6 +5,30 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+/**
+ * Migra el blog de WordPress a Shopify. Tres subcomandos: prepare, import, verify.
+ *
+ * SHOPIFY_BLOG_MIGRATION_STATE_FILE es obligatoria en la práctica: pásala en
+ * TODOS los comandos, incluido verify. El default (`blog-migration-state.json`)
+ * es el state de la tienda VIEJA de desarrollo (cdn.shopify.com/s/files/1/0813/8194/9670/)
+ * y no tiene `storeDomain`, así que la comprobación de readState no lo detecta:
+ * un import contra la tienda de la clienta escribiría los cuerpos con URLs del
+ * CDN equivocado sin avisar. El state bueno es
+ * `shopify-import/blog-migration-state-actimax-hzfavz8j.json` (.../1/0769/0790/5069/).
+ *
+ * BLOG_IMPORT_ONLY_WORDPRESS_IDS acota el import a esos wordpressId. Sirve para
+ * publicar posts nuevos sin tocar los ya migrados, porque `upsertArticles`
+ * recorre todo lo que devuelve WordPress y haría un articleUpdate por artículo
+ * existente. Acotado, además, NO toca `catalog.json` ni sube imágenes de
+ * catálogo, y hace merge en `legacy-image-redirects.json` en vez de
+ * regenerarlo (regenerarlo borra las redirecciones que reescribió
+ * `photos:apply`). Las imágenes propias de los posts acotados —destacada y
+ * embebidas— sí se migran. Sin la variable el comportamiento es el de siempre.
+ *
+ *   SHOPIFY_BLOG_MIGRATION_STATE_FILE=shopify-import/blog-migration-state-actimax-hzfavz8j.json \
+ *   BLOG_IMPORT_ONLY_WORDPRESS_IDS=29908,29915 pnpm blog:import
+ */
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const IMPORT_DIR = path.join(ROOT, "shopify-import");
 const BLOG_PATHS_FILE = path.join(ROOT, "src/data/blog-paths.json");
@@ -27,6 +51,13 @@ const CLIENT_ID = process.env.SHOPIFY_CLIENT_ID;
 const CLIENT_SECRET = process.env.SHOPIFY_CLIENT_SECRET;
 const BLOG_HANDLE = process.env.SHOPIFY_BLOG_HANDLE ?? "blog";
 const SHOPIFY_API_VERSION = process.env.SHOPIFY_API_VERSION ?? "2026-01";
+const IMPORT_ONLY_IDS = process.env.BLOG_IMPORT_ONLY_WORDPRESS_IDS
+  ? new Set(
+      process.env.BLOG_IMPORT_ONLY_WORDPRESS_IDS.split(",")
+        .map((value) => Number(value.trim()))
+        .filter(Number.isInteger),
+    )
+  : null;
 const command = process.argv[2] ?? "prepare";
 
 const WP_IMAGE_PATTERN = /https:\/\/actimax\.com\.co\/wp-content\/uploads\/[^\s"'<>),]+/gi;
@@ -881,11 +912,14 @@ async function rewriteCatalogImages(catalog, state, sourceState = null) {
   return rewritten;
 }
 
-async function writeLegacyImageRedirects(state) {
-  const redirects = {};
+async function writeLegacyImageRedirects(state, { merge = false } = {}) {
+  const redirects = merge ? JSON.parse(await readFile(IMAGE_REDIRECTS_FILE, "utf8")) : {};
   for (const source of Object.keys(state.images).filter(isWordPressImage)) {
     const destination = state.images[source]?.url;
-    if (destination) redirects[new URL(source).pathname] = destination;
+    const pathname = new URL(source).pathname;
+    /* Al fusionar, lo que ya existe manda: photos:apply reapunta a mano parte de
+       estas rutas a las fotos nuevas de producto y no hay que pisarlas. */
+    if (destination && !(merge && pathname in redirects)) redirects[pathname] = destination;
   }
   const sorted = Object.fromEntries(Object.entries(redirects).sort(([left], [right]) => left.localeCompare(right)));
   await writeFile(IMAGE_REDIRECTS_FILE, `${JSON.stringify(sorted, null, 2)}\n`);
@@ -900,11 +934,34 @@ async function importToShopify() {
   await getAdminToken();
   const { source, inspection } = await prepare();
   const state = await readState();
+  const blog = await findOrCreateBlog();
+  console.log(`Shopify blog: ${blog.title} (${blog.handle})`);
+
+  if (IMPORT_ONLY_IDS !== null) {
+    const posts = source.posts.filter((post) => IMPORT_ONLY_IDS.has(post.wordpressId));
+    if (posts.length !== IMPORT_ONLY_IDS.size) {
+      const found = new Set(posts.map((post) => post.wordpressId));
+      throw new Error(
+        `BLOG_IMPORT_ONLY_WORDPRESS_IDS names posts WordPress no longer returns: ${[...IMPORT_ONLY_IDS]
+          .filter((id) => !found.has(id))
+          .join(", ")}`,
+      );
+    }
+    const scoped = inspectSource({ posts, categories: source.categories, sitemapImages: [] });
+    console.log(
+      `Scoped import: ${posts.length} articles, ${scoped.externalImages.length} external and ${scoped.dataImages.size} embedded images. Catalog untouched.`,
+    );
+    await uploadExternalImages(scoped.externalImages, state);
+    await uploadDataImages(scoped.dataImages, state);
+    await upsertArticles({ ...source, posts }, blog, state);
+    await writeLegacyImageRedirects(state, { merge: true });
+    console.log(`Import complete: ${posts.map((post) => post.slug).join(", ")}.`);
+    return;
+  }
+
   const { catalog, sources: catalogImages } = await readCatalogImages(state);
   const externalImages = [...new Set([...inspection.externalImages, ...catalogImages])];
   const sourceState = await readSourceState();
-  const blog = await findOrCreateBlog();
-  console.log(`Shopify blog: ${blog.title} (${blog.handle})`);
   await uploadExternalImages(externalImages, state);
   await uploadDataImages(inspection.dataImages, state);
   await upsertArticles(source, blog, state);

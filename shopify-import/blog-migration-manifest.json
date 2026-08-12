@@ -1,23 +1,30 @@
 {
-  "generatedAt": "2026-07-29T00:57:38.774Z",
+  "generatedAt": "2026-08-11T23:25:33.190Z",
   "source": "https://actimax.com.co",
   "totals": {
-    "posts": 81,
-    "rootPosts": 9,
+    "posts": 88,
+    "rootPosts": 10,
     "categories": 12,
-    "sitemapImages": 279,
-    "discoveredExternalImages": 383,
-    "embeddedDataImages": 39
+    "sitemapImages": 286,
+    "discoveredExternalImages": 390,
+    "embeddedDataImages": 60
   },
   "diagnostics": {
-    "postsWithDataImages": 15,
+    "postsWithDataImages": 22,
     "postsWithForms": 0,
     "postsWithIframes": 4,
     "postsWithScripts": 3,
-    "postsWithTables": 21
+    "postsWithTables": 28
   },
   "diagnosticPosts": {
     "dataImages": [
+      "electrolitos-para-deportistas-de-resistencia-dosificacion-y-estrategia-de-hidratacion",
+      "que-comer-despues-de-una-carrera-nutricion-post-competencia-para-recuperacion-optima",
+      "proteina-para-corredores-cuando-y-cuanta-consumir-segun-tu-entrenamiento",
+      "recuperacion-muscular-despues-de-correr-estrategias-nutricionales-y-de-descanso-basadas-en-evidencia",
+      "como-mantener-energia-despues-del-km-15-estrategia-nutricional-para-carreras-de-resistencia",
+      "senales-de-falta-de-energia-al-correr-como-identificarlas-y-prevenirlas",
+      "como-evitar-el-muro-en-carreras-largas-estrategia-nutricional-y-de-entrenamiento",
       "que-llevar-en-el-jersey-para-una-salida-larga-guia-practica-de-nutricion-herramientas-y-seguridad",
       "nutricion-previa-a-rodadas-largas-que-comer-para-optimizar-rendimiento-y-resistencia",
       "nutricion-para-ciclismo-de-ruta-estrategia-de-alimentacion-para-rendimiento-y-recuperacion",
@@ -47,6 +54,13 @@
       "cuando-ejercitarse-la-mejor-hora-del-dia-para-hacer-ejercicio"
     ],
     "tables": [
+      "electrolitos-para-deportistas-de-resistencia-dosificacion-y-estrategia-de-hidratacion",
+      "que-comer-despues-de-una-carrera-nutricion-post-competencia-para-recuperacion-optima",
+      "proteina-para-corredores-cuando-y-cuanta-consumir-segun-tu-entrenamiento",
+      "recuperacion-muscular-despues-de-correr-estrategias-nutricionales-y-de-descanso-basadas-en-evidencia",
+      "como-mantener-energia-despues-del-km-15-estrategia-nutricional-para-carreras-de-resistencia",
+      "senales-de-falta-de-energia-al-correr-como-identificarlas-y-prevenirlas",
+      "como-evitar-el-muro-en-carreras-largas-estrategia-nutricional-y-de-entrenamiento",
       "que-llevar-en-el-jersey-para-una-salida-larga-guia-practica-de-nutricion-herramientas-y-seguridad",
       "nutricion-previa-a-rodadas-largas-que-comer-para-optimizar-rendimiento-y-resistencia",
       "nutricion-para-ciclismo-de-ruta-estrategia-de-alimentacion-para-rendimiento-y-recuperacion",
@@ -71,6 +85,13 @@
     ]
   },
   "externalImages": [
+    "https://actimax.com.co/wp-content/uploads/2026/08/1.-corredor-hidratacion-electrolitos.webp",
+    "https://actimax.com.co/wp-content/uploads/2026/08/1.-proteina-en-polvo.webp",
+    "https://actimax.com.co/wp-content/uploads/2026/08/1.-que-comer-despues-de-entrenar.webp",
+    "https://actimax.com.co/wp-content/uploads/2026/08/1.-recuperacion_post_entreno.webp",
+    "https://actimax.com.co/wp-content/uploads/2026/07/1.-Consejos-para-corredores.webp",
+    "https://actimax.com.co/wp-content/uploads/2026/07/1.-Consejos-running.webp",
+    "https://actimax.com.co/wp-content/uploads/2026/07/1.-Como-evitar-el-muro-en-running.webp",
     "https://actimax.com.co/wp-content/uploads/2026/07/1.-Que-llevar-en-el-jersey-para-salir-a-rodar.webp",
     "https://actimax.com.co/wp-content/uploads/2026/07/1.-Opciones-desayunos-para-ciclistas.webp",
     "https://actimax.com.co/wp-content/uploads/2026/07/1.-Nutricion-e-hidratacion-para-ciclismo-de-ruta.webp",
@@ -249,7 +270,7 @@
     "https://actimax.com.co/wp-content/uploads/2023/12/Desayuno-deportistas.jpg",
     "https://actimax.com.co/wp-content/uploads/2023/09/beneficios-cafeina.jpg",
     "https://actimax.com.co/wp-content/uploads/2021/12/gel-energetico-actimax-con-cafeina-90-300x300.png",
-    "https://actimax.com.co/wp-content/uploads/2021/11/gel-energetico-actimax-con-cafeina-300x300.png",
+    "https://actimax.com.co/wp-content/uploads/2021/11/Bebida-Deportiva-elite-con-Cafeina-Tarro-de-500gr-300x300.png",
     "https://actimax.com.co/wp-content/uploads/2023/11/cyclist-man-riding-bike-road.jpg",
     "https://actimax.com.co/wp-content/uploads/2023/12/Ciclistas-medellin.jpg",
     "https://actimax.com.co/wp-content/uploads/2023/12/ciclista-colombia-scaled.jpg",
@@ -424,22 +445,22 @@
     "https://actimax.com.co/wp-content/uploads/2022/01/10_340_victoreleuterio_032024_38910-2-300x200.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/12_340_viniciuscabral_0020678_38910-2.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/12_340_viniciuscabral_0020678_38910-2-300x200.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-1.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-1-225x300.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-3.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-3-300x225.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-2.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-2-300x225.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-5.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-5-300x188.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-1.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-1-225x300.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-3.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-3-225x300.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-2.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-2-300x225.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-4.jpg",
     "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-4-225x300.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-1.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-1-225x300.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-3.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-3-300x225.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-5.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-5-300x188.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-3.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-prensa-3-225x300.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-2.jpg",
-    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-2-300x225.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-1.jpg",
+    "https://actimax.com.co/wp-content/uploads/2022/01/rally-dakar-nutricion-1-225x300.jpg",
     "https://actimax.com.co/wp-content/uploads/2021/12/sandra-lorena-arenas.jpeg",
     "https://actimax.com.co/wp-content/uploads/2021/12/sandra-lorena-arenas_2.jpeg",
     "https://actimax.com.co/wp-content/uploads/2021/12/sandra-lorena-arenas_2-300x199.jpeg",
@@ -456,6 +477,160 @@
     "https://actimax.com.co/wp-content/uploads/2021/12/geles-energeticos.jpg"
   ],
   "posts": [
+    {
+      "wordpressId": 30049,
+      "wordpressSlug": "electrolitos-para-deportistas-de-resistencia-dosificacion-y-estrategia-de-hidratacion",
+      "slug": "electrolitos-para-deportistas-de-resistencia-dosificacion-y-estrategia-de-hidratacion",
+      "sourceUrl": "https://actimax.com.co/blog/electrolitos-para-deportistas-de-resistencia-dosificacion-y-estrategia-de-hidratacion/",
+      "sourcePath": "/blog/electrolitos-para-deportistas-de-resistencia-dosificacion-y-estrategia-de-hidratacion/",
+      "title": "Electrolitos para deportistas de resistencia: dosificación y estrategia de hidratación",
+      "excerpt": "Durante el ejercicio de resistencia, el organismo pierde electrolitos a través del sudor en cantidades que varían según la intensidad, temperatura y",
+      "publishedAt": "2026-08-10T14:59:30-05:00",
+      "modifiedAt": "2026-08-10T15:01:10-05:00",
+      "categories": [
+        "Nutrición deportiva"
+      ],
+      "featuredImage": "https://actimax.com.co/wp-content/uploads/2026/08/1.-corredor-hidratacion-electrolitos.webp",
+      "seo": {
+        "title": "Electrolitos para deportistas de resistencia: dosificación y estrategia de hidratación | Actimax",
+        "description": "Durante el ejercicio de resistencia, el organismo pierde electrolitos a través del sudor en cantidades que varían según la intensidad, temperatura y",
+        "canonical": "https://actimax.com.co/blog/electrolitos-para-deportistas-de-resistencia-dosificacion-y-estrategia-de-hidratacion/",
+        "image": "https://actimax.com.co/wp-content/uploads/2026/08/1.-corredor-hidratacion-electrolitos.webp"
+      },
+      "bodyBytesBeforeImageMigration": 279284
+    },
+    {
+      "wordpressId": 30027,
+      "wordpressSlug": "que-comer-despues-de-una-carrera-nutricion-post-competencia-para-recuperacion-optima",
+      "slug": "que-comer-despues-de-una-carrera-nutricion-post-competencia-para-recuperacion-optima",
+      "sourceUrl": "https://actimax.com.co/blog/que-comer-despues-de-una-carrera-nutricion-post-competencia-para-recuperacion-optima/",
+      "sourcePath": "/blog/que-comer-despues-de-una-carrera-nutricion-post-competencia-para-recuperacion-optima/",
+      "title": "Qué Comer Después de una Carrera: Nutrición Post-Competencia para Recuperación Óptima",
+      "excerpt": "Ventana anabólica: Las primeras 2–4 horas post-carrera son el período de mayor receptividad a los nutrientes. Durante este tiempo, la síntesis de glucógeno es",
+      "publishedAt": "2026-08-09T14:02:24-05:00",
+      "modifiedAt": "2026-08-07T14:05:33-05:00",
+      "categories": [
+        "Nutrición deportiva"
+      ],
+      "featuredImage": "https://actimax.com.co/wp-content/uploads/2026/08/1.-proteina-en-polvo.webp",
+      "seo": {
+        "title": "Qué Comer Después de una Carrera: Nutrición Post-Competencia para Recuperación Óptima | Actimax",
+        "description": "Ventana anabólica: Las primeras 2–4 horas post-carrera son el período de mayor receptividad a los nutrientes. Durante este tiempo, la síntesis de glucógeno es",
+        "canonical": "https://actimax.com.co/blog/que-comer-despues-de-una-carrera-nutricion-post-competencia-para-recuperacion-optima/",
+        "image": "https://actimax.com.co/wp-content/uploads/2026/08/1.-proteina-en-polvo.webp"
+      },
+      "bodyBytesBeforeImageMigration": 377372
+    },
+    {
+      "wordpressId": 30021,
+      "wordpressSlug": "proteina-para-corredores-cuando-y-cuanta-consumir-segun-tu-entrenamiento",
+      "slug": "proteina-para-corredores-cuando-y-cuanta-consumir-segun-tu-entrenamiento",
+      "sourceUrl": "https://actimax.com.co/proteina-para-corredores-cuando-y-cuanta-consumir-segun-tu-entrenamiento/",
+      "sourcePath": "/proteina-para-corredores-cuando-y-cuanta-consumir-segun-tu-entrenamiento/",
+      "title": "Proteína para Corredores: Cuándo y Cuánta Consumir Según tu Entrenamiento",
+      "excerpt": "Cada sesión de carrera, especialmente las de alta intensidad o larga duración, causa microdesgarros en las fibras musculares que requieren aminoácidos para su",
+      "publishedAt": "2026-08-08T13:57:04-05:00",
+      "modifiedAt": "2026-08-07T13:58:52-05:00",
+      "categories": [
+        "Running"
+      ],
+      "featuredImage": "https://actimax.com.co/wp-content/uploads/2026/08/1.-que-comer-despues-de-entrenar.webp",
+      "seo": {
+        "title": "Proteína para Corredores: Cuándo y Cuánta Consumir Según tu Entrenamiento | Actimax",
+        "description": "Cada sesión de carrera, especialmente las de alta intensidad o larga duración, causa microdesgarros en las fibras musculares que requieren aminoácidos para su",
+        "canonical": "https://actimax.com.co/proteina-para-corredores-cuando-y-cuanta-consumir-segun-tu-entrenamiento/",
+        "image": "https://actimax.com.co/wp-content/uploads/2026/08/1.-que-comer-despues-de-entrenar.webp"
+      },
+      "bodyBytesBeforeImageMigration": 257108
+    },
+    {
+      "wordpressId": 30014,
+      "wordpressSlug": "recuperacion-muscular-despues-de-correr-estrategias-nutricionales-y-de-descanso-basadas-en-evidencia",
+      "slug": "recuperacion-muscular-despues-de-correr-estrategias-nutricionales-y-de-descanso-basadas-en-evidencia",
+      "sourceUrl": "https://actimax.com.co/blog/recuperacion-muscular-despues-de-correr-estrategias-nutricionales-y-de-descanso-basadas-en-evidencia/",
+      "sourcePath": "/blog/recuperacion-muscular-despues-de-correr-estrategias-nutricionales-y-de-descanso-basadas-en-evidencia/",
+      "title": "Recuperación Muscular Después de Correr: Estrategias Nutricionales y de Descanso Basadas en Evidencia",
+      "excerpt": "Durante la carrera, las contracciones musculares repetitivas generan microdesgarros en las fibras musculares, especialmente en carreras largas o de alta",
+      "publishedAt": "2026-08-07T12:05:31-05:00",
+      "modifiedAt": "2026-08-07T12:07:54-05:00",
+      "categories": [
+        "Running"
+      ],
+      "featuredImage": "https://actimax.com.co/wp-content/uploads/2026/08/1.-recuperacion_post_entreno.webp",
+      "seo": {
+        "title": "Recuperación Muscular Después de Correr: Estrategias Nutricionales y de Descanso Basadas en Evidencia | Actimax",
+        "description": "Durante la carrera, las contracciones musculares repetitivas generan microdesgarros en las fibras musculares, especialmente en carreras largas o de alta",
+        "canonical": "https://actimax.com.co/blog/recuperacion-muscular-despues-de-correr-estrategias-nutricionales-y-de-descanso-basadas-en-evidencia/",
+        "image": "https://actimax.com.co/wp-content/uploads/2026/08/1.-recuperacion_post_entreno.webp"
+      },
+      "bodyBytesBeforeImageMigration": 275715
+    },
+    {
+      "wordpressId": 29921,
+      "wordpressSlug": "como-mantener-energia-despues-del-km-15-estrategia-nutricional-para-carreras-de-resistencia",
+      "slug": "como-mantener-energia-despues-del-km-15-estrategia-nutricional-para-carreras-de-resistencia",
+      "sourceUrl": "https://actimax.com.co/blog/como-mantener-energia-despues-del-km-15-estrategia-nutricional-para-carreras-de-resistencia/",
+      "sourcePath": "/blog/como-mantener-energia-despues-del-km-15-estrategia-nutricional-para-carreras-de-resistencia/",
+      "title": "Cómo Mantener Energía Después del Km 15: Estrategia Nutricional para Carreras de Resistencia",
+      "excerpt": "Después de los primeros 15 kilómetros, el cuerpo consume aproximadamente 3–4 gramos de carbohidratos por minuto a ritmo de media maratón o maratón. En los",
+      "publishedAt": "2026-08-01T15:20:21-05:00",
+      "modifiedAt": "2026-07-30T15:25:10-05:00",
+      "categories": [
+        "Running"
+      ],
+      "featuredImage": "https://actimax.com.co/wp-content/uploads/2026/07/1.-Consejos-para-corredores.webp",
+      "seo": {
+        "title": "Cómo Mantener Energía Después del Km 15: Estrategia Nutricional para Carreras de Resistencia | Actimax",
+        "description": "Después de los primeros 15 kilómetros, el cuerpo consume aproximadamente 3–4 gramos de carbohidratos por minuto a ritmo de media maratón o maratón. En los",
+        "canonical": "https://actimax.com.co/blog/como-mantener-energia-despues-del-km-15-estrategia-nutricional-para-carreras-de-resistencia/",
+        "image": "https://actimax.com.co/wp-content/uploads/2026/07/1.-Consejos-para-corredores.webp"
+      },
+      "bodyBytesBeforeImageMigration": 423732
+    },
+    {
+      "wordpressId": 29915,
+      "wordpressSlug": "senales-de-falta-de-energia-al-correr-como-identificarlas-y-prevenirlas",
+      "slug": "senales-de-falta-de-energia-al-correr-como-identificarlas-y-prevenirlas",
+      "sourceUrl": "https://actimax.com.co/blog/senales-de-falta-de-energia-al-correr-como-identificarlas-y-prevenirlas/",
+      "sourcePath": "/blog/senales-de-falta-de-energia-al-correr-como-identificarlas-y-prevenirlas/",
+      "title": "Señales de Falta de Energía al Correr: Cómo Identificarlas y Prevenirlas",
+      "excerpt": "La falta de energía se manifiesta a través de una cascada de cambios fisiológicos que afectan tanto el rendimiento físico como mental. Estos síntomas pueden",
+      "publishedAt": "2026-07-31T15:13:52-05:00",
+      "modifiedAt": "2026-07-30T15:16:32-05:00",
+      "categories": [
+        "Running"
+      ],
+      "featuredImage": "https://actimax.com.co/wp-content/uploads/2026/07/1.-Consejos-running.webp",
+      "seo": {
+        "title": "Señales de Falta de Energía al Correr: Cómo Identificarlas y Prevenirlas | Actimax",
+        "description": "La falta de energía se manifiesta a través de una cascada de cambios fisiológicos que afectan tanto el rendimiento físico como mental. Estos síntomas pueden",
+        "canonical": "https://actimax.com.co/blog/senales-de-falta-de-energia-al-correr-como-identificarlas-y-prevenirlas/",
+        "image": "https://actimax.com.co/wp-content/uploads/2026/07/1.-Consejos-running.webp"
+      },
+      "bodyBytesBeforeImageMigration": 301926
+    },
+    {
+      "wordpressId": 29908,
+      "wordpressSlug": "como-evitar-el-muro-en-carreras-largas-estrategia-nutricional-y-de-entrenamiento",
+      "slug": "como-evitar-el-muro-en-carreras-largas-estrategia-nutricional-y-de-entrenamiento",
+      "sourceUrl": "https://actimax.com.co/blog/como-evitar-el-muro-en-carreras-largas-estrategia-nutricional-y-de-entrenamiento/",
+      "sourcePath": "/blog/como-evitar-el-muro-en-carreras-largas-estrategia-nutricional-y-de-entrenamiento/",
+      "title": "Cómo Evitar el Muro en Carreras Largas: Estrategia Nutricional y de Entrenamiento",
+      "excerpt": "El muro es un colapso súbito del rendimiento que experimentan muchos corredores de larga distancia, generalmente entre los kilómetros 30 y 35 de una maratón.",
+      "publishedAt": "2026-07-30T15:10:09-05:00",
+      "modifiedAt": "2026-07-30T15:11:51-05:00",
+      "categories": [
+        "Running"
+      ],
+      "featuredImage": "https://actimax.com.co/wp-content/uploads/2026/07/1.-Como-evitar-el-muro-en-running.webp",
+      "seo": {
+        "title": "Cómo Evitar el Muro en Carreras Largas: Estrategia Nutricional y de Entrenamiento | Actimax",
+        "description": "El muro es un colapso súbito del rendimiento que experimentan muchos corredores de larga distancia, generalmente entre los kilómetros 30 y 35 de una maratón.",
+        "canonical": "https://actimax.com.co/blog/como-evitar-el-muro-en-carreras-largas-estrategia-nutricional-y-de-entrenamiento/",
+        "image": "https://actimax.com.co/wp-content/uploads/2026/07/1.-Como-evitar-el-muro-en-running.webp"
+      },
+      "bodyBytesBeforeImageMigration": 471737
+    },
     {
       "wordpressId": 29827,
       "wordpressSlug": "que-llevar-en-el-jersey-para-una-salida-larga-guia-practica-de-nutricion-herramientas-y-seguridad",
@@ -945,7 +1120,7 @@
         "canonical": "https://actimax.com.co/blog/ciclismo-de-ruta-consejos-para-ciclistas-principiantes/",
         "image": "https://actimax.com.co/wp-content/uploads/2021/03/ciclismo-de-ruta-para-principiantes.jpg"
       },
-      "bodyBytesBeforeImageMigration": 19147
+      "bodyBytesBeforeImageMigration": 19171
     },
     {
       "wordpressId": 28430,
@@ -990,7 +1165,7 @@
         "canonical": "https://actimax.com.co/blog/ectomorfo-endomorfo-o-mesomorfo-somatotipo/",
         "image": "https://actimax.com.co/wp-content/uploads/2022/07/Que-somatotipo-eres.jpg"
       },
-      "bodyBytesBeforeImageMigration": 35211
+      "bodyBytesBeforeImageMigration": 35187
     },
     {
       "wordpressId": 23938,
@@ -1188,7 +1363,7 @@
         "canonical": "https://actimax.com.co/blog/nutricion-deportiva-vs-formulas-caseras/",
         "image": "https://actimax.com.co/wp-content/uploads/2025/02/5.-Energy-Gel-Actimax.webp"
       },
-      "bodyBytesBeforeImageMigration": 6052
+      "bodyBytesBeforeImageMigration": 6076
     },
     {
       "wordpressId": 26347,
@@ -1277,7 +1452,7 @@
         "canonical": "https://actimax.com.co/blog/nutricion-deportiva/",
         "image": "https://actimax.com.co/wp-content/uploads/2025/02/Running-Colombia.jpg"
       },
-      "bodyBytesBeforeImageMigration": 5501
+      "bodyBytesBeforeImageMigration": 5492
     },
     {
       "wordpressId": 25240,
@@ -1299,7 +1474,7 @@
         "canonical": "https://actimax.com.co/blog/consejos-infalibles-de-nutricion-para-deportistas-con-diabetes/",
         "image": "https://actimax.com.co/wp-content/uploads/2024/12/deportista-con-diabetes.webp"
       },
-      "bodyBytesBeforeImageMigration": 7000
+      "bodyBytesBeforeImageMigration": 6985
     },
     {
       "wordpressId": 24914,
@@ -1365,7 +1540,7 @@
         "canonical": "https://actimax.com.co/blog/desmitificando-los-geles-energeticos-como-usarlos/",
         "image": "https://actimax.com.co/wp-content/uploads/2024/10/deportista-con-dolor.webp"
       },
-      "bodyBytesBeforeImageMigration": 9387
+      "bodyBytesBeforeImageMigration": 9381
     },
     {
       "wordpressId": 24617,
@@ -1388,7 +1563,7 @@
         "canonical": "https://actimax.com.co/blog/geles-energeticos-que-son-como-usarlos-y-cuanto-tomarlos/",
         "image": "https://actimax.com.co/wp-content/uploads/2024/10/media-maraton-alimentacion.jpg"
       },
-      "bodyBytesBeforeImageMigration": 13476
+      "bodyBytesBeforeImageMigration": 13506
     },
     {
       "wordpressId": 24238,
@@ -1455,7 +1630,7 @@
         "canonical": "https://actimax.com.co/blog/nutricion-deportiva-para-adolescentes-consejos-para-jovenes-atletas/",
         "image": "https://actimax.com.co/wp-content/uploads/2024/05/adolecente-deportista.jpg"
       },
-      "bodyBytesBeforeImageMigration": 11492
+      "bodyBytesBeforeImageMigration": 11468
     },
     {
       "wordpressId": 21980,
@@ -1544,7 +1719,7 @@
         "canonical": "https://actimax.com.co/blog/beneficios-de-la-cafeina-en-el-deporte/",
         "image": "https://actimax.com.co/wp-content/uploads/2023/09/beneficios-cafeina.jpg"
       },
-      "bodyBytesBeforeImageMigration": 8441
+      "bodyBytesBeforeImageMigration": 8492
     },
     {
       "wordpressId": 19918,
@@ -1588,7 +1763,7 @@
         "canonical": "https://actimax.com.co/blog/los-15-mejores-ciclistas-de-la-historia-hazanas-y-legados/",
         "image": "https://actimax.com.co/wp-content/uploads/2023/04/BmSm2R9-MY8-unsplash.jpg"
       },
-      "bodyBytesBeforeImageMigration": 16787
+      "bodyBytesBeforeImageMigration": 16802
     },
     {
       "wordpressId": 19442,
@@ -1611,7 +1786,7 @@
         "canonical": "https://actimax.com.co/blog/lesiones-mas-comunes-en-ciclismo-y-como-prevenirlas/",
         "image": "https://actimax.com.co/wp-content/uploads/2023/06/ciclista-lesion.jpg"
       },
-      "bodyBytesBeforeImageMigration": 9163
+      "bodyBytesBeforeImageMigration": 9172
     },
     {
       "wordpressId": 19007,
@@ -1655,7 +1830,7 @@
         "canonical": "https://actimax.com.co/blog/electrolitos-lo-que-todo-deportista-debe-saber/",
         "image": "https://actimax.com.co/wp-content/uploads/2023/04/Electrolitos-Lo-que-todo-deportista-debe-saber.jpg"
       },
-      "bodyBytesBeforeImageMigration": 10755
+      "bodyBytesBeforeImageMigration": 10746
     },
     {
       "wordpressId": 18701,
@@ -1724,7 +1899,7 @@
         "canonical": "https://actimax.com.co/blog/deficit-calorico-crear-una-dieta-efectiva/",
         "image": "https://actimax.com.co/wp-content/uploads/2023/02/sporty-man-does-calorie-assault.jpg"
       },
-      "bodyBytesBeforeImageMigration": 18971
+      "bodyBytesBeforeImageMigration": 18956
     },
     {
       "wordpressId": 18258,
@@ -1813,7 +1988,7 @@
         "canonical": "https://actimax.com.co/blog/proteinas-para-mujeres-beneficios-mitos-y-consejos/",
         "image": "https://actimax.com.co/wp-content/uploads/2022/11/Proteinas-para-mujeres.jpg"
       },
-      "bodyBytesBeforeImageMigration": 15325
+      "bodyBytesBeforeImageMigration": 15319
     },
     {
       "wordpressId": 15821,
@@ -1882,7 +2057,7 @@
         "canonical": "https://actimax.com.co/blog/consejos-para-empezar-a-practicar-ciclismo-de-montana/",
         "image": "https://actimax.com.co/wp-content/uploads/2022/06/ciclismo-de-montana_3.jpg"
       },
-      "bodyBytesBeforeImageMigration": 33587
+      "bodyBytesBeforeImageMigration": 33608
     },
     {
       "wordpressId": 14102,
@@ -1904,7 +2079,7 @@
         "canonical": "https://actimax.com.co/blog/consejos-gran-fondo-en-ciclismo/",
         "image": "https://actimax.com.co/wp-content/uploads/2022/05/gran-fondo-en-cilcismo.jpg"
       },
-      "bodyBytesBeforeImageMigration": 24770
+      "bodyBytesBeforeImageMigration": 24755
     },
     {
       "wordpressId": 13884,
@@ -2016,7 +2191,7 @@
         "canonical": "https://actimax.com.co/blog/triatlon-media-distancia-deportes-y-preparacion-nutricional/",
         "image": "https://actimax.com.co/wp-content/uploads/2021/12/triatlon-media-distancia_2.jpg"
       },
-      "bodyBytesBeforeImageMigration": 33012
+      "bodyBytesBeforeImageMigration": 33162
     },
     {
       "wordpressId": 3730,
@@ -2038,7 +2213,7 @@
         "canonical": "https://actimax.com.co/blog/sandra-lorena-arenas-ganadora-de-medalla-de-plata-tokyo-2020/",
         "image": "https://actimax.com.co/wp-content/uploads/2021/12/sandra-lorena-arenas-1.jpeg"
       },
-      "bodyBytesBeforeImageMigration": 27160
+      "bodyBytesBeforeImageMigration": 27154
     },
     {
       "wordpressId": 3739,
@@ -2060,7 +2235,7 @@
         "canonical": "https://actimax.com.co/blog/cuando-ejercitarse-la-mejor-hora-del-dia-para-hacer-ejercicio/",
         "image": "https://actimax.com.co/wp-content/uploads/2021/12/cuando-hacer-ejercicio_2.jpg"
       },
-      "bodyBytesBeforeImageMigration": 36412
+      "bodyBytesBeforeImageMigration": 36442
     },
     {
       "wordpressId": 3747,
@@ -2126,7 +2301,7 @@
         "canonical": "https://actimax.com.co/blog/alimentacion-y-nutricion-para-deportistas/",
         "image": "https://actimax.com.co/wp-content/uploads/2021/02/alimentacioon-y-nutricioon-para-deportistas.jpg"
       },
-      "bodyBytesBeforeImageMigration": 22715
+      "bodyBytesBeforeImageMigration": 22691
     },
     {
       "wordpressId": 2876,
@@ -2258,7 +2433,7 @@
         "canonical": "https://actimax.com.co/blog/geles-energeticos-actimax/",
         "image": "https://actimax.com.co/wp-content/uploads/2019/04/geles-energeeticos-productos-actimax.jpg"
       },
-      "bodyBytesBeforeImageMigration": 9427
+      "bodyBytesBeforeImageMigration": 9421
     }
   ]
 }
