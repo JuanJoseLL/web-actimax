@@ -14,7 +14,8 @@ export interface ProductReview {
 const REVIEWS = reviewsData as ProductReview[];
 const STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const PUBLIC_TOKEN = process.env.JUDGEME_PUBLIC_TOKEN;
-const JUDGEME_WIDGET_API = "https://cdn.judge.me/api/v1/widgets/product_review";
+const JUDGEME_WIDGET_API = "https://api.judge.me/api/v1/widgets/product_review";
+const JUDGEME_PER_PAGE = 30;
 
 interface JudgeMeReview {
   uuid: string;
@@ -39,20 +40,50 @@ function localReviews(handle: string): ProductReview[] {
   return REVIEWS.filter((review) => review.handle === handle);
 }
 
-async function judgeMePage(externalId: string, page: number): Promise<JudgeMeReviewsResponse> {
+class JudgeMeResponseError extends Error {
+  constructor(readonly status: number) {
+    super(`Judge.me respondió ${status}`);
+  }
+}
+
+function retryDelay(response: Response): number {
+  const retryAfter = response.headers.get("retry-after");
+  if (retryAfter === null) return 1000;
+
+  const seconds = Number(retryAfter);
+  const delay = Number.isFinite(seconds)
+    ? seconds * 1000
+    : Date.parse(retryAfter) - Date.now();
+  return Number.isFinite(delay) ? Math.min(Math.max(delay, 250), 3000) : 1000;
+}
+
+export async function judgeMePage(
+  externalId: string,
+  page: number,
+  storeDomain = STORE_DOMAIN as string,
+  publicToken = PUBLIC_TOKEN as string,
+): Promise<JudgeMeReviewsResponse> {
   const url = new URL(JUDGEME_WIDGET_API);
-  url.searchParams.set("shop_domain", STORE_DOMAIN as string);
-  url.searchParams.set("api_token", PUBLIC_TOKEN as string);
+  url.searchParams.set("shop_domain", storeDomain);
   url.searchParams.set("external_id", externalId);
   url.searchParams.set("json_request", "true");
   url.searchParams.set("page", String(page));
+  url.searchParams.set("per_page", String(JUDGEME_PER_PAGE));
 
-  const response = await fetch(url, {
-    cache: "no-store",
-    signal: AbortSignal.timeout(8000),
-  });
-  if (!response.ok) throw new Error(`Judge.me respondió ${response.status}`);
-  return response.json();
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const response = await fetch(url, {
+      headers: { "X-Api-Token": publicToken },
+      cache: "no-store",
+      signal: AbortSignal.timeout(8000),
+    });
+    if (response.ok) return response.json();
+    if (response.status !== 429 || attempt === 1) {
+      throw new JudgeMeResponseError(response.status);
+    }
+    await new Promise((resolve) => setTimeout(resolve, retryDelay(response)));
+  }
+
+  throw new Error("Judge.me agotó los reintentos");
 }
 
 /**
@@ -65,7 +96,7 @@ export async function getProductReviews(
 ): Promise<ProductReview[]> {
   "use cache";
   cacheTag("reviews");
-  cacheLife({ stale: 300, revalidate: 300, expire: 3600 });
+  cacheLife({ stale: 1200, revalidate: 1200, expire: 86400 });
 
   const externalId = shopifyProductId(productId);
   if (STORE_DOMAIN === undefined || PUBLIC_TOKEN === undefined || externalId === null) {
@@ -75,10 +106,11 @@ export async function getProductReviews(
   try {
     const first = await judgeMePage(externalId, 1);
     const totalPages = Math.min(Math.max(first.total_pages ?? 1, 1), 20);
-    const remaining = await Promise.all(
-      Array.from({ length: totalPages - 1 }, (_, index) => judgeMePage(externalId, index + 2)),
-    );
-    const reviews = [first, ...remaining].flatMap((page) => page.reviews ?? []);
+    const pages = [first];
+    for (let page = 2; page <= totalPages; page += 1) {
+      pages.push(await judgeMePage(externalId, page));
+    }
+    const reviews = pages.flatMap((page) => page.reviews ?? []);
     return reviews.map((review) => ({
       id: review.uuid,
       handle,
@@ -89,7 +121,12 @@ export async function getProductReviews(
       verified: review.verified_buyer,
     }));
   } catch (error) {
-    console.error(`[reviews] no se pudieron leer las reseñas de ${handle}:`, error);
+    cacheLife({ stale: 60, revalidate: 60, expire: 300 });
+    if (error instanceof JudgeMeResponseError && error.status === 429) {
+      console.warn(`[reviews] Judge.me limitó las solicitudes de ${handle}; se usó el respaldo local.`);
+    } else {
+      console.error(`[reviews] no se pudieron leer las reseñas de ${handle}:`, error);
+    }
     return localReviews(handle);
   }
 }
