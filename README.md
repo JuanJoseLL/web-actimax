@@ -110,13 +110,19 @@ clave la ruta responde 401. No es un capricho de seguridad: cada invalidación
 obliga a reescribir las ~52 MB de páginas cacheadas, y Vercel lo cobra como
 escrituras ISR.
 
-Las cachés están en 24 h porque la frescura la dan los webhooks, no el reloj.
-Eso vale para el **catálogo**, que sí tiene webhook de Shopify
-(`products/create|update|delete`) y se actualiza solo. **El blog y las reseñas
-no tienen webhook**: Shopify no emite eventos de artículos y Judge.me tampoco
-está conectado. Después de publicar o editar un post, o de aprobar una reseña en
-Judge.me, **hay que abrir el marcador** o el cambio puede tardar hasta un día en
-verse.
+Cada caché usa la ventana que le corresponde según cómo se entere de un cambio:
+
+- **Catálogo: 24 h.** Tiene webhook de Shopify (`products/create|update|delete`),
+  así que un cambio se ve al instante y la ventana solo cubre una entrega
+  perdida. Era la caché cara: su JSON cambia entre revalidaciones y cada una se
+  cobraba como escritura ISR.
+- **Blog y reseñas: 10 min.** No tienen webhook —Shopify no emite eventos de
+  artículos y Judge.me no está conectado—, así que el reloj es la única vía
+  automática. Sale barato porque un artículo o un listado de reseñas devuelven
+  los mismos bytes en cada regeneración, y Vercel no cobra una escritura cuya
+  salida no cambió.
+
+El marcador sigue siendo la forma de no esperar esos 10 min tras publicar.
 
 `SHOPIFY_CLIENT_ID` y `SHOPIFY_CLIENT_SECRET` pertenecen a la integración
 administrativa instalada en la tienda Actimax. Se usan únicamente en scripts de

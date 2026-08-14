@@ -37,12 +37,13 @@ interface BlogPathData {
 const pathData = blogPaths as BlogPathData;
 const pathsBySlug = new Map(pathData.posts.map((post) => [post.slug, post.sourcePath]));
 
-// Shopify no emite webhooks de artículos (ver /api/revalidar), así que a 24 h
-// el marcador con clave deja de ser un atajo y pasa a ser el único camino
-// práctico: tras publicar o editar un post hay que abrirlo, o el cambio puede
-// tardar hasta un día en verse. A cambio, 88 posts que no cambian en semanas
-// dejan de releerse cada hora.
-export const BLOG_CACHE_LIFE = { stale: 86400, revalidate: 86400, expire: 604800 } as const;
+// Shopify no emite webhooks de artículos (ver /api/revalidar), así que sin una
+// ventana corta publicar dependería de que alguien se acuerde de abrir el
+// marcador con clave. 10 min es barato acá aunque no lo fuera para el catálogo:
+// un artículo publicado genera los mismos bytes en cada regeneración, y Vercel
+// no cobra escritura ISR cuando el contenido no cambió. Lo que gasta son
+// invocaciones, que sobran. El marcador sigue sirviendo para no esperar.
+export const BLOG_CACHE_LIFE = { stale: 600, revalidate: 600, expire: 604800 } as const;
 
 const ARTICLE_FIELDS = /* GraphQL */ `
   id
