@@ -100,7 +100,11 @@ export async function getProductReviews(
   // diarias sumadas. Una reseña enviada desde la PDP (/api/resenas) va a
   // Judge.me y solo aparece cuando allá la aprueban, así que esta ventana
   // nunca es el cuello de botella para verla publicada.
-  cacheLife({ stale: 3600, revalidate: 3600, expire: 86400 });
+  //
+  // Judge.me tampoco tiene webhook acá, así que a 24 h el tag `reviews` se
+  // invalida desde el marcador manual (GET /api/revalidar); sin eso una reseña
+  // recién aprobada podía tardar un día sin forma de adelantarla.
+  cacheLife({ stale: 86400, revalidate: 86400, expire: 604800 });
 
   const externalId = shopifyProductId(productId);
   if (STORE_DOMAIN === undefined || PUBLIC_TOKEN === undefined || externalId === null) {

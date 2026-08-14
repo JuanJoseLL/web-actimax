@@ -37,11 +37,12 @@ interface BlogPathData {
 const pathData = blogPaths as BlogPathData;
 const pathsBySlug = new Map(pathData.posts.map((post) => [post.slug, post.sourcePath]));
 
-// Shopify no emite webhooks de artículos (ver /api/revalidar), así que publicar
-// se refleja abriendo el marcador con clave, que es inmediato. Esta ventana es
-// solo la red de seguridad por si nadie lo abre: 1 h sobre 88 posts que no
-// cambian en semanas, en vez de releer el blog entero cada 5 min.
-export const BLOG_CACHE_LIFE = { stale: 3600, revalidate: 3600, expire: 604800 } as const;
+// Shopify no emite webhooks de artículos (ver /api/revalidar), así que a 24 h
+// el marcador con clave deja de ser un atajo y pasa a ser el único camino
+// práctico: tras publicar o editar un post hay que abrirlo, o el cambio puede
+// tardar hasta un día en verse. A cambio, 88 posts que no cambian en semanas
+// dejan de releerse cada hora.
+export const BLOG_CACHE_LIFE = { stale: 86400, revalidate: 86400, expire: 604800 } as const;
 
 const ARTICLE_FIELDS = /* GraphQL */ `
   id

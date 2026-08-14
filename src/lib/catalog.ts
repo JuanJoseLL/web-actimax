@@ -261,9 +261,13 @@ function localProducts(): Product[] {
  *
  * La frescura la da el webhook de Shopify (products/create|update|delete →
  * /api/revalidar), que invalida el tag `catalog` en el momento del cambio.
- * Esta ventana de 30 min es solo la red de seguridad por si una entrega del
+ * Esta ventana de 24 h es solo la red de seguridad por si una entrega del
  * webhook se pierde; no es el mecanismo principal. Para forzarlo a mano:
  * GET /api/revalidar/?clave=…
+ *
+ * `expire` queda por encima de `revalidate` a propósito: igualarlos elimina la
+ * ventana de stale-while-revalidate y la primera visita tras vencer el plazo
+ * tendría que esperar a Shopify en vez de recibir lo cacheado al instante.
  *
  * Estaba en 30 s: 2.880 revalidaciones diarias de una respuesta de ~136 KB,
  * o sea ~17 unidades de escritura ISR cada vez que el resultado cambiaba.
@@ -272,7 +276,7 @@ function localProducts(): Product[] {
 export async function getAllProducts(): Promise<Product[]> {
   "use cache";
   cacheTag("catalog");
-  cacheLife({ stale: 1800, revalidate: 1800, expire: 86400 });
+  cacheLife({ stale: 86400, revalidate: 86400, expire: 604800 });
 
   const fromShopify = await fetchShopifyProducts();
   if (fromShopify === null) {

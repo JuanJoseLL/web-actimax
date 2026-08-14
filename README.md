@@ -110,6 +110,14 @@ clave la ruta responde 401. No es un capricho de seguridad: cada invalidación
 obliga a reescribir las ~52 MB de páginas cacheadas, y Vercel lo cobra como
 escrituras ISR.
 
+Las cachés están en 24 h porque la frescura la dan los webhooks, no el reloj.
+Eso vale para el **catálogo**, que sí tiene webhook de Shopify
+(`products/create|update|delete`) y se actualiza solo. **El blog y las reseñas
+no tienen webhook**: Shopify no emite eventos de artículos y Judge.me tampoco
+está conectado. Después de publicar o editar un post, o de aprobar una reseña en
+Judge.me, **hay que abrir el marcador** o el cambio puede tardar hasta un día en
+verse.
+
 `SHOPIFY_CLIENT_ID` y `SHOPIFY_CLIENT_SECRET` pertenecen a la integración
 administrativa instalada en la tienda Actimax. Se usan únicamente en scripts de
 migración y mantenimiento; no se despliegan al frontend.

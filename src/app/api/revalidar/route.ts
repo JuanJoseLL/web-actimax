@@ -49,8 +49,11 @@ export function GET(request: Request) {
     return NextResponse.json({ error: "Clave inválida" }, { status: 401 });
   }
 
+  // Incluye `reviews` porque Judge.me no tiene webhook: con la caché en 24 h,
+  // este marcador es la única forma de adelantar una reseña recién aprobada.
   revalidateTag("catalog", "max");
   revalidateTag("blog", "max");
+  revalidateTag("reviews", "max");
 
   if (request.headers.get("accept")?.includes("text/html") === true) {
     return new Response(
