@@ -37,9 +37,11 @@ interface BlogPathData {
 const pathData = blogPaths as BlogPathData;
 const pathsBySlug = new Map(pathData.posts.map((post) => [post.slug, post.sourcePath]));
 
-// Con el webhook de Shopify (/api/revalidar) la caché se invalida al publicar,
-// así que la revalidación periódica puede ser espaciada.
-export const BLOG_CACHE_LIFE = { stale: 300, revalidate: 300, expire: 604800 } as const;
+// Shopify no emite webhooks de artículos (ver /api/revalidar), así que publicar
+// se refleja abriendo el marcador con clave, que es inmediato. Esta ventana es
+// solo la red de seguridad por si nadie lo abre: 1 h sobre 88 posts que no
+// cambian en semanas, en vez de releer el blog entero cada 5 min.
+export const BLOG_CACHE_LIFE = { stale: 3600, revalidate: 3600, expire: 604800 } as const;
 
 const ARTICLE_FIELDS = /* GraphQL */ `
   id

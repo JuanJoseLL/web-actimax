@@ -101,7 +101,14 @@ SHOPIFY_STORE_DOMAIN=actimax-hzfavz8j.myshopify.com
 SHOPIFY_STOREFRONT_TOKEN=token_publico_de_actimax_headless
 SHOPIFY_BLOG_HANDLE=blog
 JUDGEME_PUBLIC_TOKEN=token_publico_de_judge_me
+REVALIDATE_SECRET=cadena_larga_al_azar
 ```
+
+`REVALIDATE_SECRET` protege el refresco manual: el marcador para actualizar la
+web tras publicar en Shopify es `/api/revalidar/?clave=<REVALIDATE_SECRET>`. Sin
+clave la ruta responde 401. No es un capricho de seguridad: cada invalidación
+obliga a reescribir las ~52 MB de páginas cacheadas, y Vercel lo cobra como
+escrituras ISR.
 
 `SHOPIFY_CLIENT_ID` y `SHOPIFY_CLIENT_SECRET` pertenecen a la integración
 administrativa instalada en la tienda Actimax. Se usan únicamente en scripts de

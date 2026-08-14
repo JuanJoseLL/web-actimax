@@ -1,19 +1,51 @@
-import { BadgeCheckIcon, StarIcon } from "lucide-react";
+import { BadgeCheckIcon } from "lucide-react";
 import { ReviewForm } from "@/components/ReviewForm";
 import { Separator } from "@/components/ui/separator";
 import { reviewsAverage, type ProductReview } from "@/lib/reviews";
+
+/**
+ * Las 5 estrellas se repiten una vez por reseña. Con el <path> completo de
+ * lucide cada una pesa ~650 bytes: una PDP con 14 reseñas emitía 70 SVG
+ * idénticos (44 KB de HTML, y otro tanto duplicado en el payload RSC, que
+ * Vercel cobra como escrituras ISR). Definido una sola vez como <symbol>,
+ * cada estrella pasa a ser un <use> de ~90 bytes.
+ *
+ * El símbolo no lleva `fill`: quien decide relleno o contorno es la clase del
+ * <svg> que lo referencia. Un `fill` propio ganaría siempre por estar puesto
+ * sobre el símbolo, y las estrellas saldrían todas vacías.
+ */
+const ESTRELLA_ID = "ico-estrella";
+
+export function EstrellaSprite() {
+  return (
+    <svg width="0" height="0" aria-hidden className="absolute overflow-hidden">
+      <symbol
+        id={ESTRELLA_ID}
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
+      </symbol>
+    </svg>
+  );
+}
 
 function Stars({ rating, className }: { rating: number; className?: string }) {
   return (
     <span role="img" aria-label={`${rating} de 5 estrellas`} className={`flex gap-0.5 ${className ?? ""}`}>
       {[1, 2, 3, 4, 5].map((star) => (
-        <StarIcon
+        <svg
           key={star}
           aria-hidden
           className={
-            star <= rating ? "size-4 fill-current text-amarillo" : "size-4 text-tinta/20"
+            star <= rating ? "size-4 fill-current text-amarillo" : "size-4 fill-none text-tinta/20"
           }
-        />
+        >
+          <use href={`#${ESTRELLA_ID}`} />
+        </svg>
       ))}
     </span>
   );
@@ -39,6 +71,7 @@ export function ProductReviews({
 
   return (
     <section className="mt-16 max-w-3xl">
+      <EstrellaSprite />
       <Separator className="mb-8" />
       <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-azul">
         Lo que dicen los que ya lo corrieron

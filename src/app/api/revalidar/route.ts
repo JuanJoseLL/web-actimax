@@ -8,6 +8,11 @@ import { NextResponse } from "next/server";
  * GET: refresco manual. Tras publicar o editar algo en Shopify, abrir esta
  * URL en el navegador actualiza la web al instante (guardarla como marcador).
  * Desde un navegador responde con una página amigable; desde un script, JSON.
+ * Exige `?clave=` con REVALIDATE_SECRET: sin eso, invalidar el catálogo y el
+ * blog enteros quedaba al alcance de cualquiera que diera con la URL, y cada
+ * invalidación obliga a reescribir los ~52 MB de páginas cacheadas (Vercel
+ * cobra eso como escrituras ISR). robots.txt pide que no la rastreen, pero es
+ * una petición, no un candado.
  *
  * POST: webhook de Shopify (productos/colecciones). Ojo: Shopify ya no
  * ofrece webhooks para artículos del blog — el enum WebhookSubscriptionTopic
@@ -26,7 +31,24 @@ function tagsForTopic(topic: string): string[] {
   return ["catalog", "blog"];
 }
 
+/**
+ * Compara en tiempo constante y sin filtrar la longitud del secreto: la
+ * comparación solo corre cuando ambos miden lo mismo.
+ */
+function claveValida(recibida: string): boolean {
+  const esperada = process.env.REVALIDATE_SECRET;
+  if (esperada === undefined || esperada === "") return false;
+
+  const a = Buffer.from(recibida);
+  const b = Buffer.from(esperada);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 export function GET(request: Request) {
+  if (!claveValida(new URL(request.url).searchParams.get("clave") ?? "")) {
+    return NextResponse.json({ error: "Clave inválida" }, { status: 401 });
+  }
+
   revalidateTag("catalog", "max");
   revalidateTag("blog", "max");
 
@@ -63,13 +85,17 @@ export async function POST(request: Request) {
   // Los webhooks creados desde el panel se firman con el secreto de la página
   // de notificaciones (SHOPIFY_WEBHOOK_SECRET); los creados vía Admin API por
   // nuestra app se firman con el client secret de la app.
+  // Sin secreto no se valida nada, así que se rechaza: dejar pasar el webhook
+  // sin firma convierte esta ruta en un botón público para vaciar el cache.
   const secret = process.env.SHOPIFY_WEBHOOK_SECRET ?? process.env.SHOPIFY_CLIENT_SECRET;
-  if (secret !== undefined && secret !== "") {
-    const received = Buffer.from(request.headers.get("x-shopify-hmac-sha256") ?? "");
-    const expected = Buffer.from(createHmac("sha256", secret).update(body, "utf8").digest("base64"));
-    if (received.length !== expected.length || !timingSafeEqual(received, expected)) {
-      return NextResponse.json({ error: "Firma inválida" }, { status: 401 });
-    }
+  if (secret === undefined || secret === "") {
+    return NextResponse.json({ error: "Webhook sin secreto configurado" }, { status: 401 });
+  }
+
+  const received = Buffer.from(request.headers.get("x-shopify-hmac-sha256") ?? "");
+  const expected = Buffer.from(createHmac("sha256", secret).update(body, "utf8").digest("base64"));
+  if (received.length !== expected.length || !timingSafeEqual(received, expected)) {
+    return NextResponse.json({ error: "Firma inválida" }, { status: 401 });
   }
 
   const topic = request.headers.get("x-shopify-topic") ?? "";

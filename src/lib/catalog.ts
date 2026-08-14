@@ -257,14 +257,22 @@ function localProducts(): Product[] {
 }
 
 /**
- * Catálogo completo, cacheado con stale-while-revalidate: las páginas se
- * sirven al instante y el catálogo se refresca en segundo plano cada 30 s.
- * Para forzar el refresco inmediato: GET /api/revalidar
+ * Catálogo completo, cacheado con stale-while-revalidate.
+ *
+ * La frescura la da el webhook de Shopify (products/create|update|delete →
+ * /api/revalidar), que invalida el tag `catalog` en el momento del cambio.
+ * Esta ventana de 30 min es solo la red de seguridad por si una entrega del
+ * webhook se pierde; no es el mecanismo principal. Para forzarlo a mano:
+ * GET /api/revalidar/?clave=…
+ *
+ * Estaba en 30 s: 2.880 revalidaciones diarias de una respuesta de ~136 KB,
+ * o sea ~17 unidades de escritura ISR cada vez que el resultado cambiaba.
+ * Esa era la fuga que tenía el proyecto al 90% de la cuota de Hobby.
  */
 export async function getAllProducts(): Promise<Product[]> {
   "use cache";
   cacheTag("catalog");
-  cacheLife({ stale: 30, revalidate: 30, expire: 86400 });
+  cacheLife({ stale: 1800, revalidate: 1800, expire: 86400 });
 
   const fromShopify = await fetchShopifyProducts();
   if (fromShopify === null) {

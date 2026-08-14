@@ -96,7 +96,11 @@ export async function getProductReviews(
 ): Promise<ProductReview[]> {
   "use cache";
   cacheTag("reviews");
-  cacheLife({ stale: 1200, revalidate: 1200, expire: 86400 });
+  // Una entrada por producto (31 en total): a 20 min eran ~700 revalidaciones
+  // diarias sumadas. Una reseña enviada desde la PDP (/api/resenas) va a
+  // Judge.me y solo aparece cuando allá la aprueban, así que esta ventana
+  // nunca es el cuello de botella para verla publicada.
+  cacheLife({ stale: 3600, revalidate: 3600, expire: 86400 });
 
   const externalId = shopifyProductId(productId);
   if (STORE_DOMAIN === undefined || PUBLIC_TOKEN === undefined || externalId === null) {
