@@ -23,16 +23,36 @@ export async function generateStaticParams() {
   ];
 }
 
+/**
+ * Los artículos viven en Shopify, no en un JSON del repo, así que saber si un
+ * slug existe obliga a esperar un dato. Se pregunta al listado completo, que
+ * es una sola entrada de caché, y no a getBlogPost, que etiqueta
+ * `blog:<slug>`: si se validara con este último, cada slug que tantee un bot
+ * escribiría su propia entrada de caché, que es justo lo que hay que evitar.
+ */
+async function blogSlugExists(slug: string): Promise<boolean> {
+  if (getBlogCategory(slug) !== undefined) return true;
+  const posts = await getAllBlogPosts();
+  return posts.some((post) => post.slug === slug && !isRootBlogPost(post));
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
+  const { slug } = await params;
+  /* Filtrar antes de entrar al "use cache" evita que un slug inventado deje
+     rastro en la caché, tanto en esta función como en getBlogPost. */
+  if (!(await blogSlugExists(slug))) return { title: "Entrada no encontrada | Actimax" };
+  return blogEntryMetadata(slug);
+}
+
+async function blogEntryMetadata(slug: string): Promise<Metadata> {
   "use cache";
   cacheTag("blog");
   cacheLife(BLOG_CACHE_LIFE);
 
-  const { slug } = await params;
   const category = getBlogCategory(slug);
   if (category !== undefined) {
     return pageMetadata({
@@ -65,20 +85,39 @@ export async function generateMetadata({
 
 type BlogParams = Promise<{ slug: string }>;
 
-export default function BlogPostPage({
+export default async function BlogPostPage({
   params,
 }: {
   params: BlogParams;
 }) {
+  const { slug } = await params;
+  /* El estado HTTP se congela en 200 apenas se abre el <Suspense>, así que un
+     notFound() de adentro pintaba la interfaz del 404 sobre una respuesta 200
+     y hasta lo que Next guardaba en caché era ese 200: /blog/loquesea/ era un
+     soft 404 permanente. Resolviéndolo antes del límite, lo cacheado pasa a
+     ser un 404 de verdad.
+
+     Queda un 200 en la primerísima visita a una URL nunca vista, porque con
+     Cache Components toda ruta dinámica sirve primero su App Shell; ese HTML
+     lleva <meta name="robots" content="noindex">, así que no se indexa. La
+     única forma documentada de evitar también ese primero es `proxy`, que
+     corre antes de resolver la ruta y necesitaría la lista de slugs válidos
+     de toda la raíz del sitio fuera de la caché de datos.
+
+     El costo del chequeo: los ~90 slugs de generateStaticParams siguen
+     prerenderizados y no pagan nada, pero un artículo publicado después del
+     build pierde el shell instantáneo y espera el listado —un acierto de
+     caché, no una consulta a Shopify— antes del primer byte. */
+  if (!(await blogSlugExists(slug))) notFound();
+
   return (
     <Suspense fallback={<BlogPageSkeleton />}>
-      <BlogPostContent params={params} />
+      <BlogPostContent slug={slug} />
     </Suspense>
   );
 }
 
-async function BlogPostContent({ params }: { params: BlogParams }) {
-  const { slug } = await params;
+async function BlogPostContent({ slug }: { slug: string }) {
   const category = getBlogCategory(slug);
   if (category !== undefined) {
     const posts = (await getAllBlogPosts()).filter((candidate) => candidate.tags.includes(category.name));

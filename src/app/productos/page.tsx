@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
+import { FilterChip } from "@/components/FilterChip";
 import { ProductCard } from "@/components/ProductCard";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -99,27 +99,37 @@ export async function generateMetadata({
   return pageMetadata({ title, description, path: filterUrl(filters, {}) });
 }
 
+/** La faceta que aplica un chip: `tipo=geles`, `momento=todos`, … */
+function facetLabel(patch: Partial<Filters>): string {
+  const [key, value] = Object.entries(patch)[0] ?? ["", undefined];
+  return `${key}=${value ?? "todos"}`;
+}
+
+/** El estado del catálogo al que lleva el chip, sin la parte de la ruta. */
+function combinationLabel(current: Filters, patch: Partial<Filters>): string {
+  return filterUrl(current, patch).split("?")[1] ?? "sin-filtros";
+}
+
 function Chip({
-  href,
+  current,
+  patch,
   active,
   children,
 }: {
-  href: string;
+  current: Filters;
+  patch: Partial<Filters>;
   active: boolean;
   children: React.ReactNode;
 }) {
   return (
-    <Badge
-      asChild
-      variant={active ? "default" : "outline"}
-      className={`h-8 rounded-sm px-3.5 font-mono text-xs font-semibold uppercase tracking-wide ${
-        active
-          ? "border-primary bg-primary text-primary-foreground"
-          : "bg-background text-foreground hover:border-primary hover:text-primary"
-      }`}
+    <FilterChip
+      href={filterUrl(current, patch)}
+      active={active}
+      filtro={facetLabel(patch)}
+      combinacion={combinationLabel(current, patch)}
     >
-      <Link href={href}>{children}</Link>
-    </Badge>
+      {children}
+    </FilterChip>
   );
 }
 
@@ -223,11 +233,11 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
           <span className="w-full font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-tinta/55 sm:w-20">
             Tipo
           </span>
-          <Chip href={filterUrl(current, { tipo: undefined })} active={tipo === undefined}>
+          <Chip current={current} patch={{ tipo: undefined }} active={tipo === undefined}>
             Todos
           </Chip>
           {(Object.keys(TYPE_LABELS) as Array<keyof typeof TYPE_LABELS>).map((t) => (
-            <Chip key={t} href={filterUrl(current, { tipo: t })} active={tipo === t}>
+            <Chip key={t} current={current} patch={{ tipo: t }} active={tipo === t}>
               {TYPE_LABELS[t]}
             </Chip>
           ))}
@@ -236,11 +246,11 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
           <span className="w-full font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-tinta/55 sm:w-20">
             Momento
           </span>
-          <Chip href={filterUrl(current, { momento: undefined })} active={momento === undefined}>
+          <Chip current={current} patch={{ momento: undefined }} active={momento === undefined}>
             Todos
           </Chip>
           {(Object.keys(MOMENTO_LABELS) as Array<keyof typeof MOMENTO_LABELS>).map((m) => (
-            <Chip key={m} href={filterUrl(current, { momento: m })} active={momento === m}>
+            <Chip key={m} current={current} patch={{ momento: m }} active={momento === m}>
               {MOMENTO_LABELS[m]}
             </Chip>
           ))}
@@ -249,11 +259,11 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
           <span className="w-full font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-tinta/55 sm:w-20">
             Deporte
           </span>
-          <Chip href={filterUrl(current, { deporte: undefined })} active={deporte === undefined}>
+          <Chip current={current} patch={{ deporte: undefined }} active={deporte === undefined}>
             Todos
           </Chip>
           {Object.entries(DEPORTE_LABELS).map(([slug, label]) => (
-            <Chip key={slug} href={filterUrl(current, { deporte: slug })} active={deporte === slug}>
+            <Chip key={slug} current={current} patch={{ deporte: slug }} active={deporte === slug}>
               {label}
             </Chip>
           ))}

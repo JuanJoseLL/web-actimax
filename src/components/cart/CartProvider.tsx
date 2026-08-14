@@ -9,6 +9,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import { track } from "@vercel/analytics";
 import { cartLineId } from "@/lib/cart";
 import { isValidCedula, normalizeCedula } from "@/lib/cedula";
 import { isShortedLine, shortedCartMessage } from "@/lib/checkout-lines";
@@ -250,14 +251,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (isCheckingOut) return;
     setCheckoutError(null);
 
+    const valor = items.reduce((acc, i) => acc + i.price * i.qty, 0);
+    const unidades = items.reduce((acc, i) => acc + i.qty, 0);
+    /* La tienda ya perdió un día de ventas por un checkout roto que nadie vio
+       hasta el día siguiente. `motivo` separa un problema de negocio (stock,
+       cédula) de uno técnico (Shopify caído) y `valor` dice cuánta plata hay
+       detrás de cada motivo, que es lo que decide qué se arregla primero. */
+    let failureTracked = false;
+    const trackFailure = (motivo: string) => {
+      failureTracked = true;
+      track("checkout_fallido", { motivo, valor });
+    };
+
     if (items.length === 0) {
       setCheckoutError("Tu carrito está vacío.");
+      trackFailure("carrito-vacio");
       return;
     }
     if (items.some((item) => item.variantId === null)) {
       setCheckoutError(
         "Uno o más productos vienen del catálogo de respaldo. Recarga la página para volver a conectarte con Shopify.",
       );
+      trackFailure("catalogo-respaldo");
       return;
     }
     if (!isValidCedula(cedula)) {
@@ -265,6 +280,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
          campo de cédula quede a la vista junto al error. */
       setCheckoutError("Ingresa tu cédula (solo números, de 6 a 10 dígitos) para continuar.");
       setIsOpen(true);
+      trackFailure("cedula");
       return;
     }
 
@@ -293,6 +309,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         if (response.status === 409 && Array.isArray(resultObj.shorted)) {
           const shorted = resultObj.shorted.filter(isShortedLine);
           if (shorted.length > 0) {
+            trackFailure("inventario");
             throw new Error(
               shortedCartMessage(
                 shorted,
@@ -302,6 +319,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             );
           }
         }
+        trackFailure("shopify");
         const message = resultObj.error;
         throw new Error(typeof message === "string" ? message : "No se pudo iniciar el pago.");
       }
@@ -312,8 +330,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           // sin almacenamiento no habrá limpieza post-compra, nada más
         }
       }
+      /* Último punto que controla el sitio: de acá en adelante el pago ocurre
+         en Shopify. `valor` da el ticket de los carritos que sí llegan a pagar
+         y `unidades` separa un pack caro de seis geles; el número de checkouts
+         es el conteo del evento y no necesita propiedad. */
+      track("iniciar_checkout", { valor, unidades });
       window.location.assign(checkoutUrl);
     } catch (error) {
+      /* Un fallo de red no pasó por ninguna de las ramas de arriba: se
+         registra acá, y solo si esas ramas no lo marcaron ya al lanzar. */
+      if (!failureTracked) trackFailure("conexion");
       setCheckoutError(
         error instanceof Error ? error.message : "No se pudo iniciar el pago. Inténtalo de nuevo.",
       );

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { track } from "@vercel/analytics";
 import { ArrowLeftRightIcon } from "lucide-react";
 import { useState } from "react";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
@@ -140,14 +141,39 @@ export function PackComparator({ packs }: { packs: ComparablePack[] }) {
   const firstPack = packs.find((pack) => pack.handle === first) ?? packs[0];
   const secondPack = packs.find((pack) => pack.handle === second) ?? packs[1] ?? packs[0];
 
+  /* /productos/comparar/ es una sola URL: el pageview no dice qué se comparó.
+     El par revela qué packs compiten entre sí y cuál se pone al lado cuando
+     alguien duda, que es información de surtido y de precio que no aparece en
+     ningún otro lado. */
+  const trackComparison = (pack: string, contra: string) => {
+    if (pack === contra) return;
+    track("comparador_packs", { pack, contra });
+  };
+
   if (firstPack === undefined || secondPack === undefined) return null;
 
   return (
     <div>
       <Card className="gap-0 bg-muted py-0">
         <CardContent className="grid gap-4 p-5 md:grid-cols-2 md:p-6">
-          <PackSelect label="Primer Energy Pack" value={first} onValueChange={setFirst} packs={packs} />
-          <PackSelect label="Segundo Energy Pack" value={second} onValueChange={setSecond} packs={packs} />
+          <PackSelect
+            label="Primer Energy Pack"
+            value={first}
+            onValueChange={(value) => {
+              setFirst(value);
+              trackComparison(value, second);
+            }}
+            packs={packs}
+          />
+          <PackSelect
+            label="Segundo Energy Pack"
+            value={second}
+            onValueChange={(value) => {
+              setSecond(value);
+              trackComparison(value, first);
+            }}
+            packs={packs}
+          />
         </CardContent>
       </Card>
       {first === second ? (

@@ -20,6 +20,7 @@ import {
   ZapIcon,
 } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { track } from "@vercel/analytics";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -339,9 +340,21 @@ export function ActimaxPlanBuilder({
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      const nextPlan = createActimaxPlan(toPlanInput(form));
+      const planInput = toPlanInput(form);
+      const nextPlan = createActimaxPlan(planInput);
       setPlan(nextPlan);
       setError(null);
+      /* El pageview de /mi-plan/ no dice qué reto arma la gente. `pack` es el
+         desenlace comercial —qué Energy Pack habría que tener en stock— y de
+         paso revela el deporte, porque cada pack pertenece a uno solo.
+         `distancia` es la segmentación central de la tienda y lo único que el
+         pack no dice en ciclismo y triatlón, donde siempre recomienda el
+         mismo. Peso, clima y tolerancia se quedan afuera: la página promete
+         que no se guardan. */
+      track("plan_creado", {
+        pack: nextPlan.packHandle,
+        distancia: Math.round(planInput.distanceKm),
+      });
       requestAnimationFrame(() => {
         resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       });

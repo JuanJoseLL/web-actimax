@@ -17,6 +17,7 @@ import {
   ZapIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { track } from "@vercel/analytics";
 import { toast } from "sonner";
 import { useCart } from "@/components/cart/CartProvider";
 import {
@@ -31,6 +32,7 @@ import {
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
+import { trackableText } from "@/lib/analytics";
 import { cartLineId } from "@/lib/cart";
 import { formatCOP } from "@/lib/format";
 import { scoreMatch } from "@/lib/palette-search";
@@ -139,6 +141,51 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
     [products],
   );
 
+  /** Los mismos términos con los que cmdk filtra cada fila. */
+  const productKeywords = useCallback(
+    (product: PaletteProduct) => [
+      product.title,
+      typeLabel(product.type),
+      ...product.momentos.map((m) => MOMENTO_LABELS[m]),
+      ...product.deportes.map((d) => DEPORTE_LABELS[d] ?? d),
+      ...searchKeywords(product),
+    ],
+    [],
+  );
+
+  /**
+   * Lo que se escribe en la paleta es demanda declarada y no deja rastro en
+   * ningún pageview. `consulta` da el vocabulario real de los clientes y
+   * `resultado` dice en qué producto terminó; las que terminan en
+   * "sin-resultados" son las accionables (un nombre que no usamos, un
+   * producto que no tenemos) y nadie las reporta a mano.
+   */
+  const trackSearch = useCallback(
+    (resultado: string) => {
+      const term = query.trim();
+      if (term === "") return;
+      track("busqueda_paleta", {
+        consulta: trackableText(term.toLocaleLowerCase("es-CO")),
+        resultado,
+      });
+    },
+    [query],
+  );
+
+  /* Una búsqueda fallida no termina en ningún clic que registrar, así que se
+     registra sola cuando la escritura se detiene. */
+  useEffect(() => {
+    const term = query.trim();
+    if (!isOpen || term.length < 3) return;
+    const timer = setTimeout(() => {
+      const found = products.some(
+        (product) => scoreMatch(product.handle, term, productKeywords(product)) > 0,
+      );
+      if (!found) trackSearch("sin-resultados");
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [isOpen, productKeywords, products, query, trackSearch]);
+
   /** La cantidad vive pegada a un producto: moverse por la lista no la arrastra. */
   const qtyFor = useCallback(
     (handle: string) => (pending?.handle === handle ? pending.qty : 1),
@@ -182,6 +229,15 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
     [setOpen],
   );
 
+  /** Abrir la ficha cierra la paleta y cuenta como resultado de la búsqueda. */
+  const openProduct = useCallback(
+    (product: PaletteProduct) => {
+      trackSearch(product.handle);
+      run(() => router.push(canonicalProductPath(product.handle)));
+    },
+    [router, run, trackSearch],
+  );
+
   const addToCart = useCallback(
     (product: PaletteProduct, quantity: number) => {
       if (!product.inStock) return;
@@ -190,6 +246,10 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
         (items.find((item) => cartLineId(item) === lineId)?.qty ?? 0) +
         quantity;
       add(product, quantity);
+      /* La paleta no pasa por AddToCartButton: sin esto, todo lo que se agrega
+         con ⌘K quedaría fuera del embudo. */
+      track("agregar_al_carrito", { producto: product.handle, origen: "paleta" });
+      trackSearch(product.handle);
       setPending(null);
       toast.success(product.title, {
         /* Un toast por producto, compartido con AddToCartButton: agregar de
@@ -205,7 +265,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
         },
       });
     },
-    [add, items, openCart, setOpen],
+    [add, items, openCart, setOpen, trackSearch],
   );
 
   /** Cierra la paleta, muestra el carrito y arranca el pago desde ahí. */
@@ -243,7 +303,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
       if (product.hasMultipleVariants || !product.inStock) {
         if (e.key !== "Enter") return;
         e.preventDefault();
-        run(() => router.push(canonicalProductPath(product.handle)));
+        openProduct(product);
         return;
       }
       e.preventDefault();
@@ -259,7 +319,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
           : { handle: product.handle, qty: Math.min(MAX_QTY, next) },
       );
     },
-    [addToCart, byHandle, count, goToCheckout, qtyFor, router, run],
+    [addToCart, byHandle, count, goToCheckout, openProduct, qtyFor],
   );
 
   const pendingProduct =
@@ -318,16 +378,8 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
                 <CommandItem
                   key={product.handle}
                   value={product.handle}
-                  keywords={[
-                    product.title,
-                    typeLabel(product.type),
-                    ...product.momentos.map((m) => MOMENTO_LABELS[m]),
-                    ...product.deportes.map((d) => DEPORTE_LABELS[d] ?? d),
-                    ...searchKeywords(product),
-                  ]}
-                  onSelect={() =>
-                    run(() => router.push(canonicalProductPath(product.handle)))
-                  }
+                  keywords={productKeywords(product)}
+                  onSelect={() => openProduct(product)}
                 >
                   <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-sm bg-muted">
                     {product.image !== null ? (
@@ -372,9 +424,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
                       e.preventDefault();
                       e.stopPropagation();
                       if (product.hasMultipleVariants) {
-                        run(() =>
-                          router.push(canonicalProductPath(product.handle)),
-                        );
+                        openProduct(product);
                       } else {
                         addToCart(product, qty);
                       }

@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { track } from "@vercel/analytics";
 import { CheckIcon, ShoppingBagIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useCart, type CartLine } from "@/components/cart/CartProvider";
 import { Button } from "@/components/ui/button";
+import { cartSurface } from "@/lib/analytics";
 import { cartLineId } from "@/lib/cart";
 import { formatCOP } from "@/lib/format";
 
@@ -33,6 +35,15 @@ export function AddToCartButton({ product, qty = 1, variant = "card", disabled =
     const total =
       (items.find((item) => cartLineId(item) === lineId)?.qty ?? 0) + qty;
     add(product, qty);
+    /* Qué se agrega y desde dónde: el ranking de lo agregado no coincide con
+       el de lo visto, y `origen` es lo único que dice si las herramientas
+       propias (mi-plan, comparador, paleta) terminan en carrito. La plata del
+       carrito se mide entera en `iniciar_checkout`, para no contarla dos
+       veces acá. */
+    track("agregar_al_carrito", {
+      producto: product.handle,
+      origen: cartSurface(window.location.pathname),
+    });
     if (variant === "full") {
       open();
       return;

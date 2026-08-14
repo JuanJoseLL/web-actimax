@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@vercel/analytics";
 import { CheckCircle2Icon, StarIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,15 @@ export function ReviewForm({
         setMessage(data.error ?? "No pudimos guardar tu reseña. Inténtalo nuevamente.");
         return;
       }
+
+      /* Judge.me modera antes de publicar, así que la tienda no sabe qué se
+         envió ni con qué nota hasta que aparece días después. Esto adelanta
+         la distribución real y avisa temprano si un producto empieza a
+         recibir reseñas malas. */
+      track("resena_enviada", {
+        producto: productHandle,
+        estrellas: Number(formData.get("rating")),
+      });
 
       form.reset();
       setRating(0);

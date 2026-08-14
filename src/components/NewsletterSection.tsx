@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@vercel/analytics";
 import { ArrowRightIcon, CheckCircle2Icon, MailIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -34,13 +35,24 @@ export function NewsletterSection() {
       if (!response.ok || data.ok !== true) {
         setStatus("error");
         setMessage(data.error ?? "No pudimos registrar tu correo. Inténtalo de nuevo.");
+        trackSubscription("error");
         return;
       }
       setStatus("ok");
+      trackSubscription("ok");
     } catch {
       setStatus("error");
       setMessage("No pudimos registrar tu correo. Revisa tu conexión e inténtalo de nuevo.");
+      trackSubscription("conexion");
     }
+  }
+
+  /* La suscripción termina en la misma URL, así que ningún pageview la ve.
+     Una sola propiedad alcanza: separar el éxito del fallo es lo único que
+     cambia una decisión, porque un pico de "error" significa que el endpoint
+     dejó de responder y nadie más se va a enterar. */
+  function trackSubscription(resultado: string) {
+    track("newsletter_suscripcion", { resultado });
   }
 
   return (

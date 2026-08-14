@@ -60,20 +60,29 @@ export async function generateMetadata({
 
 type ProductParams = Promise<{ handle: string }>;
 
-export default function ProductPage({
+export default async function ProductPage({
   params,
 }: {
   params: ProductParams;
 }) {
+  const { handle } = await params;
+  /* Igual que en el blog: con el notFound() adentro del <Suspense> el estado
+     HTTP ya iba en 200 y /productos/loquesea/ respondía un soft 404. Acá el
+     chequeo no cuesta una consulta extra —getProduct sale del catálogo
+     completo, que es una única entrada de caché— y solo le quita el
+     App Shell a los handles que no estaban en generateStaticParams, o sea a
+     los inventados y a lo que Shopify publique después del build. */
+  const product = await getProduct(handle);
+  if (product === undefined) notFound();
+
   return (
     <Suspense fallback={<ProductPageSkeleton />}>
-      <ProductPageContent params={params} />
+      <ProductPageContent handle={product.handle} />
     </Suspense>
   );
 }
 
-async function ProductPageContent({ params }: { params: ProductParams }) {
-  const { handle } = await params;
+async function ProductPageContent({ handle }: { handle: string }) {
   const product = await getProduct(handle);
   if (product === undefined) notFound();
 

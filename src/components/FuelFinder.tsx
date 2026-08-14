@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { track } from "@vercel/analytics";
 import { CompassIcon, RouteIcon } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -158,7 +159,19 @@ export function FuelFinder({ tone = "dark" }: { tone?: "dark" | "light" }) {
           <Separator />
           <CardFooter className="bg-transparent px-5 py-4">
             <Button asChild variant="race" className="w-full">
-              <Link href={`/mi-plan/?deporte=${sport}&distancia=${planDistance}`}>
+              <Link
+                href={`/mi-plan/?deporte=${sport}&distancia=${planDistance}`}
+                /* Vercel guarda el pageview sin querystring, así que el salto
+                   a /mi-plan/ llega sin deporte ni distancia. Este evento es
+                   lo único que dice qué reto busca la gente en el buscador de
+                   la home, y cuántos de los que lo abren llegan al plan. */
+                onClick={() =>
+                  track("recomendador_kit", {
+                    deporte: sport,
+                    distancia: Number(planDistance),
+                  })
+                }
+              >
                 Armar mi plan completo
               </Link>
             </Button>
