@@ -1,53 +1,231 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ExpandIcon,
+  Minimize2Icon,
+  XIcon,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export function ImageGallery({ images, alt }: { images: string[]; alt: string }) {
   const [active, setActive] = useState(0);
+  const [zoomOpen, setZoomOpen] = useState(false);
+  const [zoomed, setZoomed] = useState(false);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const zoomViewportRef = useRef<HTMLDivElement>(null);
   const main = images[active] ?? images[0];
 
+  useEffect(() => {
+    const viewport = zoomViewportRef.current;
+    if (!zoomed || viewport === null) return;
+
+    viewport.scrollTo({
+      left: (viewport.scrollWidth - viewport.clientWidth) / 2,
+      top: (viewport.scrollHeight - viewport.clientHeight) / 2,
+    });
+  }, [zoomed]);
+
+  function selectImage(index: number) {
+    const gallery = galleryRef.current;
+    setActive(index);
+    setZoomed(false);
+    gallery?.scrollTo({ left: index * gallery.clientWidth });
+  }
+
+  function openZoom(index: number) {
+    setActive(index);
+    setZoomed(false);
+    setZoomOpen(true);
+  }
+
   return (
-    <div>
-      <div className="relative aspect-square overflow-hidden rounded-xl bg-muted ring-1 ring-border">
-        {main !== undefined ? (
-          <Image
-            src={main}
-            alt={alt}
-            fill
-            priority
-            sizes="(min-width: 1280px) 580px, (min-width: 1024px) 50vw, 100vw"
-            className="object-contain p-8 mix-blend-multiply"
-          />
+    <>
+      <div>
+        {images.length > 0 ? (
+          <div
+            ref={galleryRef}
+            onScroll={(event) => {
+              const gallery = event.currentTarget;
+              const next = Math.round(gallery.scrollLeft / gallery.clientWidth);
+              setActive(Math.max(0, Math.min(next, images.length - 1)));
+            }}
+            className="product-gallery-scroll flex aspect-square snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth rounded-xl bg-muted ring-1 ring-border motion-reduce:scroll-auto"
+          >
+            {images.map((src, index) => (
+              <button
+                type="button"
+                key={`${src}-${index}`}
+                onClick={() => openZoom(index)}
+                aria-label={`Ampliar imagen ${index + 1} de ${images.length}: ${alt}`}
+                className="group relative block aspect-square w-full shrink-0 snap-center cursor-zoom-in overflow-hidden"
+              >
+                <Image
+                  src={src}
+                  alt={index === 0 ? alt : `${alt}, imagen ${index + 1}`}
+                  fill
+                  preload={index === 0}
+                  sizes="(min-width: 1280px) 580px, (min-width: 1024px) 50vw, 100vw"
+                  className="object-contain p-4 mix-blend-multiply transition-transform duration-300 group-hover:scale-[1.02] sm:p-8"
+                />
+                <span className="pointer-events-none absolute bottom-3 right-3 flex min-h-9 items-center gap-2 rounded-full bg-background/90 px-3 font-mono text-[10px] font-bold uppercase tracking-wider text-foreground shadow-sm backdrop-blur-sm">
+                  <ExpandIcon className="size-4" />
+                  Ampliar
+                </span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="aspect-square rounded-xl bg-muted ring-1 ring-border" />
+        )}
+
+        {images.length > 1 ? (
+          <>
+            <p
+              aria-live="polite"
+              className="mt-3 text-center font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground sm:hidden"
+            >
+              Imagen {active + 1} de {images.length} · Desliza para ver más
+            </p>
+            <div className="product-gallery-scroll mt-3 hidden gap-2 overflow-x-auto pb-1 sm:flex">
+              {images.map((src, index) => (
+                <Button
+                  type="button"
+                  key={`${src}-${index}`}
+                  onClick={() => selectImage(index)}
+                  aria-label={`Ver imagen ${index + 1} de ${images.length}`}
+                  aria-pressed={index === active}
+                  variant="outline"
+                  size="icon"
+                  className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-md bg-muted p-0 transition-all ${
+                    index === active
+                      ? "border-primary ring-2 ring-primary"
+                      : "opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <Image
+                    src={src}
+                    alt=""
+                    fill
+                    sizes="80px"
+                    className="object-contain p-1.5 mix-blend-multiply"
+                  />
+                </Button>
+              ))}
+            </div>
+          </>
         ) : null}
       </div>
-      {images.length > 1 ? (
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-          {images.map((src, i) => (
-            <Button
-              type="button"
-              key={src}
-              onClick={() => setActive(i)}
-              aria-label={`Ver imagen ${i + 1} de ${images.length}`}
-              aria-pressed={i === active}
-              variant="outline"
-              size="icon"
-              className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-md bg-muted p-0 transition-all ${
-                i === active ? "border-primary ring-2 ring-primary" : "opacity-70 hover:opacity-100"
-              }`}
-            >
-              <Image
-                src={src}
-                alt=""
-                fill
-                sizes="80px"
-                className="object-contain p-1.5 mix-blend-multiply"
-              />
-            </Button>
-          ))}
-        </div>
-      ) : null}
-    </div>
+
+      <Dialog
+        open={zoomOpen}
+        onOpenChange={(open) => {
+          setZoomOpen(open);
+          if (!open) setZoomed(false);
+        }}
+      >
+        <DialogContent
+          showCloseButton={false}
+          className="inset-0 flex h-dvh w-screen max-w-none translate-x-0 translate-y-0 flex-col gap-0 rounded-none bg-tinta p-0 text-white ring-0 sm:max-w-none"
+        >
+          <DialogTitle className="sr-only">Galería ampliada de {alt}</DialogTitle>
+          <DialogDescription className="sr-only">
+            Imagen {active + 1} de {images.length}. Usa el botón de zoom para ampliar la imagen.
+          </DialogDescription>
+
+          <div className="relative z-10 flex min-h-16 shrink-0 items-center justify-between gap-2 border-b border-white/15 bg-tinta/95 px-3 pt-[env(safe-area-inset-top)] sm:px-5">
+            <p className="min-w-0 truncate font-mono text-[11px] font-bold uppercase tracking-wider text-white/70">
+              {active + 1} / {images.length} · {alt}
+            </p>
+            <div className="flex shrink-0 items-center gap-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setZoomed((current) => !current)}
+                className="text-white hover:bg-white/10 hover:text-white"
+                aria-label={zoomed ? "Ajustar imagen a la pantalla" : "Ampliar imagen dos veces"}
+              >
+                {zoomed ? <Minimize2Icon /> : <ExpandIcon />}
+              </Button>
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/10 hover:text-white"
+                  aria-label="Cerrar imagen ampliada"
+                >
+                  <XIcon />
+                </Button>
+              </DialogClose>
+            </div>
+          </div>
+
+          <div
+            ref={zoomViewportRef}
+            className="product-gallery-zoom relative min-h-0 flex-1 overflow-auto overscroll-contain bg-tinta"
+          >
+            {main !== undefined ? (
+              <button
+                type="button"
+                onClick={() => setZoomed((current) => !current)}
+                className={`relative block ${
+                  zoomed
+                    ? "h-[200dvh] w-[200vw] cursor-zoom-out"
+                    : "h-full min-h-[calc(100dvh-4rem)] w-full cursor-zoom-in"
+                }`}
+                aria-label={zoomed ? "Reducir imagen" : "Ampliar imagen dos veces"}
+              >
+                <Image
+                  src={main}
+                  alt={`${alt}, imagen ${active + 1} ampliada`}
+                  fill
+                  sizes={zoomed ? "200vw" : "100vw"}
+                  className="object-contain p-3 sm:p-6"
+                />
+              </button>
+            ) : null}
+          </div>
+
+          {images.length > 1 ? (
+            <div className="pointer-events-none absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 justify-between px-2 sm:px-5">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                disabled={active === 0}
+                onClick={() => selectImage(active - 1)}
+                className="pointer-events-auto border-white/25 bg-tinta/75 text-white hover:bg-tinta hover:text-white"
+                aria-label="Ver imagen anterior"
+              >
+                <ChevronLeftIcon />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                disabled={active === images.length - 1}
+                onClick={() => selectImage(active + 1)}
+                className="pointer-events-auto border-white/25 bg-tinta/75 text-white hover:bg-tinta hover:text-white"
+                aria-label="Ver imagen siguiente"
+              >
+                <ChevronRightIcon />
+              </Button>
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

@@ -108,7 +108,7 @@ export function NewsletterSection() {
                 onChange={(e) => setNombre(e.target.value)}
                 placeholder="Tu nombre (opcional)"
                 autoComplete="given-name"
-                className="h-12 border border-white/25 bg-white/8 px-4 text-sm text-white placeholder:text-white/45 focus:border-amarillo focus:outline-none"
+                className="h-12 border border-white/25 bg-white/8 px-4 text-base text-white placeholder:text-white/45 focus:border-amarillo focus:outline-none"
               />
               <label className="sr-only" htmlFor="newsletter-email">
                 Correo electrónico
@@ -127,7 +127,7 @@ export function NewsletterSection() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="tucorreo@ejemplo.com"
                     autoComplete="email"
-                    className="h-12 w-full border border-white/25 bg-white/8 pl-11 pr-4 text-sm text-white placeholder:text-white/45 focus:border-amarillo focus:outline-none"
+                    className="h-12 w-full border border-white/25 bg-white/8 pl-11 pr-4 text-base text-white placeholder:text-white/45 focus:border-amarillo focus:outline-none"
                   />
                 </div>
                 <Button

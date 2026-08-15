@@ -126,22 +126,22 @@ export function ReviewForm({
             <legend className="text-sm font-bold">Calificación</legend>
             <div className="mt-2 flex w-fit gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
-                <label key={star} className="cursor-pointer p-1">
+                <label key={star} className="grid size-11 cursor-pointer place-items-center">
                   <input
                     type="radio"
                     name="rating"
                     value={star}
                     required
-                    className="sr-only"
+                    className="peer sr-only"
                     onChange={() => setRating(star)}
                   />
                   <StarIcon
                     aria-hidden
-                    className={
+                    className={`size-7 rounded-sm peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-azul ${
                       star <= rating
-                        ? "size-7 fill-current text-amarillo"
-                      : "size-7 text-tinta/20 transition-colors hover:text-amarillo"
-                    }
+                        ? "fill-current text-amarillo"
+                        : "text-tinta/20 transition-colors hover:text-amarillo"
+                    }`}
                   />
                   <span className="sr-only">
                     {star} {star === 1 ? "estrella" : "estrellas"}

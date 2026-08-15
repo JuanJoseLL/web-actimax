@@ -203,7 +203,7 @@ export function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="block py-2.5 text-sm text-white/65 transition-colors hover:text-amarillo md:py-0"
+                      className="flex min-h-11 items-center py-2 text-sm text-white/65 transition-colors hover:text-amarillo"
                     >
                       {link.label}
                     </Link>
@@ -215,7 +215,7 @@ export function Footer() {
         </div>
       </div>
       <Separator className="bg-white/10" />
-      <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 pr-20 font-mono text-[10px] tracking-[0.04em] text-white/35 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 pr-20 font-mono text-[10px] tracking-[0.04em] text-white/35 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:pr-20 lg:px-8 lg:pr-8">
         <p>© 2026 Actimax · Nutrición deportiva especializada</p>
         <p>Hecho en Colombia · Envíos a todo el país</p>
       </div>

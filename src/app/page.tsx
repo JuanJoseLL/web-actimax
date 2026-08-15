@@ -35,14 +35,14 @@ export default function Home() {
       <Hero />
       <Ticker />
       <Suspense fallback={<HomeSectionSkeleton className="bg-[#f4f2ec]" />}>
+        <BestSellersSection />
+      </Suspense>
+      <Suspense fallback={<HomeSectionSkeleton className="bg-[#f4f2ec]" />}>
         <ChallengeSection />
       </Suspense>
       <StorySection />
       <Suspense fallback={<HomeSectionSkeleton className="bg-white" />}>
         <RitualSection />
-      </Suspense>
-      <Suspense fallback={<HomeSectionSkeleton className="bg-[#f4f2ec]" />}>
-        <BestSellersSection />
       </Suspense>
       <ClubSection />
       <Suspense fallback={<HomeSectionSkeleton className="bg-white" />}>
@@ -170,7 +170,7 @@ function Hero() {
             Medellín · Colombia · Desde hace más de 20 años
           </p>
 
-          <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-4 p-5 sm:p-8">
+          <div className="absolute bottom-0 left-0 right-0 flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-end sm:justify-between sm:p-8">
             <div className="max-w-xs">
               <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-amarillo">
                 Historia real · Producto real
@@ -181,7 +181,7 @@ function Hero() {
             </div>
             <Link
               href={canonicalProductPath("energy-pack-media-maraton-21k")}
-              className="group hidden shrink-0 items-center gap-3 rounded-full border border-white/30 bg-white/10 px-4 py-2.5 text-xs font-semibold backdrop-blur-md transition hover:border-amarillo hover:text-amarillo sm:flex"
+              className="group flex min-h-11 shrink-0 items-center gap-3 rounded-full border border-white/30 bg-white/10 px-4 py-2.5 text-xs font-semibold backdrop-blur-md transition hover:border-amarillo hover:text-amarillo"
             >
               Ver pack 21K
               <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
@@ -225,11 +225,11 @@ async function ChallengeSection() {
   const byHandle = new Map(products.map((product) => [product.handle, product]));
 
   return (
-    <section id="retos" className="scroll-mt-28 bg-[#f4f2ec]">
+    <section id="retos" className="scroll-mt-28 border-t border-tinta/10 bg-[#f4f2ec]">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
         <div className="reveal grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
-            <p className="section-kicker">01 · Elige tu próxima meta</p>
+            <p className="section-kicker">02 · Elige tu próxima meta</p>
             <h2 className="mt-4 max-w-3xl font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl lg:text-8xl">
               ¿Qué historia vas a contar?
             </h2>
@@ -246,7 +246,7 @@ async function ChallengeSection() {
           </div>
         </div>
 
-        <div className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           {CHALLENGES.map((challenge, index) => {
             const product = byHandle.get(challenge.handle);
             /* Un handle renombrado en Shopify no puede borrar el reto: la
@@ -258,7 +258,7 @@ async function ChallengeSection() {
             return (
               <article
                 key={challenge.handle}
-                className="challenge-card reveal group relative overflow-hidden bg-white"
+                className="challenge-card group relative overflow-hidden bg-white"
               >
                 <Link
                   href={
@@ -268,12 +268,12 @@ async function ChallengeSection() {
                   }
                   className="block h-full"
                 >
-                  <div className="flex items-center justify-between border-b border-tinta/10 px-5 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-tinta/45">
+                  <div className="flex items-center justify-between border-b border-tinta/10 px-3 py-2 font-mono text-[8px] font-bold uppercase tracking-[0.12em] text-tinta/45 sm:px-5 sm:py-3 sm:text-[10px] sm:tracking-[0.16em]">
                     <span>Reto {String(index + 1).padStart(2, "0")}</span>
                     <span className="text-azul">Energy Pack</span>
                   </div>
                   <div className="relative aspect-[1.08] overflow-hidden bg-[#e8ebf0]">
-                    <span className="absolute -left-2 top-1 z-0 font-display text-[8rem] font-extrabold italic leading-none text-white sm:text-[9rem]">
+                    <span className="absolute -left-2 top-1 z-0 font-display text-[4.5rem] font-extrabold italic leading-none text-white sm:text-[9rem]">
                       {challenge.distance}
                     </span>
                     {product?.images[0] !== undefined ? (
@@ -281,8 +281,8 @@ async function ChallengeSection() {
                         src={product.images[0]}
                         alt={product.title}
                         fill
-                        sizes="(min-width: 1280px) 292px, (min-width: 768px) 50vw, 100vw"
-                        className="relative z-10 object-contain p-7 transition-transform duration-500 group-hover:scale-105 group-hover:-rotate-1"
+                        sizes="(min-width: 1280px) 292px, 50vw"
+                        className="relative z-10 object-contain p-3 transition-transform duration-500 group-hover:scale-105 group-hover:-rotate-1 sm:p-7"
                       />
                     ) : null}
                     {product?.onSale === true ? (
@@ -291,14 +291,14 @@ async function ChallengeSection() {
                       </span>
                     ) : null}
                   </div>
-                  <div className="p-5">
-                    <p className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-azul">
+                  <div className="p-3 sm:p-5">
+                    <p className="font-mono text-[8px] font-bold uppercase tracking-[0.12em] text-azul sm:text-[10px] sm:tracking-[0.16em]">
                       {challenge.eyebrow}
                     </p>
-                    <h3 className="mt-2 font-display text-3xl font-bold uppercase italic leading-none">
+                    <h3 className="mt-2 font-display text-xl font-bold uppercase italic leading-none sm:text-3xl">
                       {challenge.promise}
                     </h3>
-                    <div className="mt-5 flex items-end justify-between gap-4 border-t border-tinta/10 pt-4">
+                    <div className="mt-4 flex flex-col items-start gap-2 border-t border-tinta/10 pt-3 sm:mt-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:pt-4">
                       <div>
                         {product?.onSale === true ? (
                           <span className="block font-mono text-[10px] text-tinta/40 line-through">
@@ -306,12 +306,12 @@ async function ChallengeSection() {
                           </span>
                         ) : null}
                         {product !== undefined ? (
-                          <span className="font-mono text-lg font-bold tabular-nums">
+                          <span className="font-mono text-sm font-bold tabular-nums sm:text-lg">
                             {formatCOP(product.price)}
                           </span>
                         ) : null}
                       </div>
-                      <span className="flex items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-wider text-azul">
+                      <span className="flex items-center gap-1 font-mono text-[9px] font-bold uppercase tracking-wider text-azul sm:text-[10px]">
                         {product === undefined ? "Ver Energy Packs" : "Ver mi kit"}
                         <ChevronRightIcon className="size-4" />
                       </span>
@@ -359,7 +359,7 @@ function StorySection() {
         </div>
 
         <div className="flex flex-col justify-center px-4 py-16 sm:px-8 md:py-20 lg:px-16 xl:px-20">
-          <p className="section-kicker section-kicker-dark">02 · Nuestra historia</p>
+          <p className="section-kicker section-kicker-dark">03 · Nuestra historia</p>
           <h2 className="mt-5 max-w-xl font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl lg:text-8xl">
             De una fórmula a miles de metas.
           </h2>
@@ -433,7 +433,7 @@ async function RitualSection() {
     <section id="metodo" className="scroll-mt-28 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
         <div className="reveal max-w-4xl">
-          <p className="section-kicker">03 · El método Actimax</p>
+          <p className="section-kicker">04 · El método Actimax</p>
           <h2 className="mt-4 font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl lg:text-8xl">
             Todo atleta tiene un ritual.
           </h2>
@@ -447,7 +447,7 @@ async function RitualSection() {
           {RITUALS.map((ritual) => {
             const product = byHandle.get(ritual.handle);
             return (
-              <article key={ritual.step} className="ritual-card reveal group bg-white p-6 sm:p-8">
+              <article key={ritual.step} className="ritual-card group bg-white p-6 sm:p-8">
                 <div className="flex items-center justify-between font-mono text-[10px] font-bold uppercase tracking-[0.18em]">
                   <span className="text-azul">Momento {ritual.step}</span>
                   <span className="rounded-full border border-tinta/15 px-3 py-1 text-tinta/50">
@@ -476,7 +476,7 @@ async function RitualSection() {
                 <p className="mt-2 text-sm leading-relaxed text-tinta/60">{ritual.copy}</p>
                 <Link
                   href={ritual.href}
-                  className="mt-6 flex items-center justify-between border-t border-tinta/10 pt-4 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-azul"
+                  className="mt-6 flex min-h-11 items-center justify-between border-t border-tinta/10 pt-4 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-azul"
                 >
                   Comprar para {ritual.moment.toLowerCase()}
                   <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-1" />
@@ -508,7 +508,7 @@ async function BestSellersSection() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
         <div className="reveal flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="section-kicker">04 · Los favoritos del club</p>
+            <p className="section-kicker">01 · Los favoritos del club</p>
             <h2 className="mt-4 font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl">
               Los que siempre vuelven.
             </h2>
@@ -522,7 +522,7 @@ async function BestSellersSection() {
         </div>
         <div className="mt-12 grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-5 lg:grid-cols-4">
           {featured.map((product) => (
-            <div key={product.handle} className="reveal">
+            <div key={product.handle}>
               <ProductCard product={product} />
             </div>
           ))}
@@ -651,7 +651,7 @@ async function JournalSection() {
 
         <div className="mt-12 grid gap-px overflow-hidden border border-tinta/10 bg-tinta/10 md:grid-cols-3">
           {posts.map((post, index) => (
-            <article key={post.slug} className="reveal group bg-white">
+            <article key={post.slug} className="group bg-white">
               <Link href={post.path} className="flex min-h-[360px] flex-col">
                 {/* La miniatura aligera el bloque de texto; el post local de
                     respaldo no trae imagen y conserva el layout tipográfico. */}

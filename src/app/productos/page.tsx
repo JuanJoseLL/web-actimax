@@ -15,7 +15,7 @@ import {
   isProductType,
 } from "@/lib/catalog";
 import { itemListJsonLd, jsonLd, pageMetadata } from "@/lib/seo";
-import type { Momento, ProductType } from "@/lib/taxonomia";
+import type { Momento, Product, ProductType } from "@/lib/taxonomia";
 
 interface Filters {
   tipo?: ProductType;
@@ -62,6 +62,24 @@ const TYPE_DESCRIPTIONS: Record<ProductType, string> = {
     "Barras de proteína para recuperar después del ejercicio, hechas en Colombia. Compra en línea con envíos a todo el país.",
   kits: "Energy Packs armados por distancia: 10K, 15K, 21K, 42K, Gran Fondo y triatlón. Nutrición deportiva colombiana con envíos a todo el país.",
 };
+
+const CATALOG_PRIORITY = new Map(
+  [
+    "energy-pack-de-10k",
+    "energy-pack-15k",
+    "energy-pack-media-maraton-21k",
+  ].map((handle, index) => [handle, index]),
+);
+
+function catalogOrder(a: Product, b: Product): number {
+  if (a.inStock !== b.inStock) return a.inStock ? -1 : 1;
+
+  const priorityA = CATALOG_PRIORITY.get(a.handle) ?? Number.POSITIVE_INFINITY;
+  const priorityB = CATALOG_PRIORITY.get(b.handle) ?? Number.POSITIVE_INFINITY;
+  if (priorityA !== priorityB) return priorityA - priorityB;
+
+  return a.price - b.price || a.title.localeCompare(b.title, "es");
+}
 
 export async function generateMetadata({
   searchParams,
@@ -139,7 +157,10 @@ export default function ProductosPage({
   searchParams: SearchParams;
 }) {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+    <div
+      data-catalog-page
+      className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8"
+    >
       <Suspense fallback={null}>
         <DynamicMetadataMarker />
       </Suspense>
@@ -186,12 +207,14 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
   const { tipo, momento, deporte } = current;
 
   const products = await getAllProducts();
-  const filtered = products.filter(
-    (p) =>
-      (tipo === undefined || p.type === tipo) &&
-      (momento === undefined || p.momentos.includes(momento)) &&
-      (deporte === undefined || p.deportes.includes(deporte)),
-  );
+  const filtered = products
+    .filter(
+      (p) =>
+        (tipo === undefined || p.type === tipo) &&
+        (momento === undefined || p.momentos.includes(momento)) &&
+        (deporte === undefined || p.deportes.includes(deporte)),
+    )
+    .toSorted(catalogOrder);
 
   const hasFilters = tipo !== undefined || momento !== undefined || deporte !== undefined;
 

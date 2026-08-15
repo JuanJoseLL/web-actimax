@@ -547,7 +547,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
             type="button"
             onClick={() => run(openCart)}
             aria-label={`Ver carrito: ${cartLabel}, total ${formatCOP(subtotal)}`}
-            className="-my-1 flex min-w-0 flex-1 items-center gap-2 rounded-sm px-1.5 py-1 text-left hover:bg-muted"
+            className="-my-1 flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-sm px-1.5 py-1 text-left hover:bg-muted"
           >
             <ShoppingCartIcon aria-hidden className="size-4 shrink-0 text-azul" />
             <span className="min-w-0 flex-1 truncate font-mono text-[11px] tabular-nums text-muted-foreground">

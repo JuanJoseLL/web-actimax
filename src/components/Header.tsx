@@ -29,6 +29,13 @@ const NAV = [
   { label: "Club", href: "/#club" },
 ];
 
+const MOBILE_CATEGORIES = [
+  { label: "Geles", href: "/productos?tipo=geles" },
+  { label: "Bebidas", href: "/productos?tipo=bebidas" },
+  { label: "Barras", href: "/productos?tipo=barras" },
+  { label: "Energy Packs", href: "/productos?tipo=kits" },
+];
+
 export function Header() {
   const { count, open } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -165,6 +172,28 @@ export function Header() {
                           <span className="font-display text-3xl font-bold uppercase italic tracking-wide">
                             {item.label}
                           </span>
+                        </Link>
+                      </SheetClose>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+              <nav
+                className="border-t border-background/15 px-6 py-5"
+                aria-label="Categorías de productos"
+              >
+                <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-background/50">
+                  Comprar por categoría
+                </p>
+                <ul className="mt-3 grid grid-cols-2 gap-2">
+                  {MOBILE_CATEGORIES.map((category) => (
+                    <li key={category.label}>
+                      <SheetClose asChild>
+                        <Link
+                          href={category.href}
+                          className="flex min-h-11 items-center border border-background/15 px-3 py-2 font-display text-lg font-bold uppercase italic tracking-wide transition-colors hover:border-accent hover:text-accent"
+                        >
+                          {category.label}
                         </Link>
                       </SheetClose>
                     </li>

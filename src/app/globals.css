@@ -534,8 +534,13 @@ html {
   [data-slot="select-trigger"],
   [data-slot="select-item"],
   [data-slot="command-item"],
+  [data-slot="input"],
   a[data-slot="badge"] {
     min-height: 2.75rem;
+  }
+  [data-slot="input"],
+  [data-slot="textarea"] {
+    font-size: 1rem;
   }
   [data-slot="command-input-wrapper"] {
     padding-right: 3.5rem;
@@ -545,6 +550,24 @@ html {
   }
   [data-slot="command-input"] {
     font-size: 1rem;
+  }
+}
+
+.product-gallery-scroll {
+  scrollbar-width: none;
+}
+.product-gallery-scroll::-webkit-scrollbar {
+  display: none;
+}
+.product-gallery-zoom {
+  touch-action: pan-x pan-y pinch-zoom;
+}
+
+/* El acceso de ayuda no debe tapar acciones de compra en pantallas pequeñas. */
+@media (max-width: 767px) {
+  body:has([data-catalog-page]) .whatsapp-button,
+  body:has([data-buy-bar][aria-hidden="false"]) .whatsapp-button {
+    display: none;
   }
 }
 
@@ -571,7 +594,7 @@ html {
     .reveal {
       animation: reveal-up linear both;
       animation-timeline: view();
-      animation-range: entry 5% entry 35%;
+      animation-range: entry 0% entry 20%;
     }
   }
 }
@@ -599,7 +622,6 @@ html {
 }
 @keyframes reveal-up {
   from {
-    opacity: 0;
     transform: translateY(18px);
   }
   to {
@@ -629,7 +651,8 @@ html {
 /* imprimir: los bloques oscuros salían en blanco sobre blanco, o sea, vacíos. */
 @media print {
   body > header,
-  body > footer {
+  body > footer,
+  .whatsapp-button {
     display: none !important;
   }
 
