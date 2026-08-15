@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense, use } from "react";
 import { FlagIcon, LoaderCircleIcon, TriangleAlertIcon, Trash2Icon } from "lucide-react";
-import { PaymentMethods } from "@/components/PaymentMethods";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import {
@@ -298,7 +297,6 @@ export function CartDrawer({ productsPromise }: { productsPromise: Promise<CartL
                   </>
                 )}
               </p>
-              <PaymentMethods compact className="mt-1" />
               <Button
                 type="button"
                 variant="raceSun"
