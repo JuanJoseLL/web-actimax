@@ -13,6 +13,11 @@ import {
 } from "@/lib/blog";
 import { DEFAULT_OG_IMAGE } from "@/lib/seo";
 
+/* El 404 real exige resolver la URL antes del primer <Suspense> (ver el
+   notFound() de abajo), así que la ruta se declara bloqueante en vez de
+   volver al soft 404 con estado 200. */
+export const instant = false;
+
 /* Este segmento captura cualquier URL de un solo tramo que no sea una ruta
    propia (/productos/, /blog/, …), o sea que /en/ y cualquier slug inventado
    caen acá. Las URL heredadas de WordPress que quedaron en la raíz están

@@ -29,6 +29,12 @@ import {
   productUrl,
 } from "@/lib/seo";
 
+/* El 404 real exige resolver la URL antes del primer <Suspense> (ver el
+   notFound() de abajo), así que la ruta se declara bloqueante en vez de
+   volver al soft 404 con estado 200. Los handles de generateStaticParams
+   siguen prerenderizados; solo los desconocidos pagan la espera. */
+export const instant = false;
+
 export async function generateStaticParams() {
   const products = await getAllProducts();
   return products.map((p) => ({ handle: p.handle }));

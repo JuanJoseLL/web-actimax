@@ -6,6 +6,11 @@ import { BlogPageSkeleton } from "@/components/blog/BlogPageSkeleton";
 import { pageMetadata } from "@/lib/seo";
 import { getAllBlogPosts, getBlogPageParams, getBlogPostsPage } from "@/lib/blog";
 
+/* El 404 real exige resolver la URL antes del primer <Suspense> (ver el
+   notFound() de abajo), así que la ruta se declara bloqueante en vez de
+   volver al soft 404 con estado 200. */
+export const instant = false;
+
 function parsePage(numero: string): number | undefined {
   if (!/^\d{1,4}$/.test(numero)) return undefined;
   return Number.parseInt(numero, 10);

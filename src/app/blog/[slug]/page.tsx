@@ -15,6 +15,11 @@ import {
 } from "@/lib/blog";
 import { DEFAULT_OG_IMAGE, pageMetadata } from "@/lib/seo";
 
+/* El 404 real exige resolver la URL antes del primer <Suspense> (ver el
+   notFound() de abajo), así que la ruta se declara bloqueante en vez de
+   volver al soft 404 con estado 200. */
+export const instant = false;
+
 export async function generateStaticParams() {
   const posts = (await getAllBlogPosts()).filter((post) => !isRootBlogPost(post));
   return [
