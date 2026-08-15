@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { TruckIcon } from "lucide-react";
 import { track } from "@/lib/track";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { BuyNowButton } from "@/components/cart/BuyNowButton";
@@ -15,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatCOP } from "@/lib/format";
+import { ENVIO_GRATIS_UMBRAL } from "@/lib/envio";
 import {
   initialProductVariant,
   selectableProductOptions,
@@ -83,15 +85,23 @@ export function BuyBox({ product, inStock, showPrice = false, stickyBar = false 
   return (
     <div ref={boxRef} className="grid gap-4">
       {showPrice ? (
-        <div className="flex items-baseline gap-3" aria-live="polite">
-          <p className="font-mono text-3xl font-bold tabular-nums">
-            {formatCOP(selectedPrice)}
-          </p>
-          {selectedRegularPrice > selectedPrice ? (
-            <p className="font-mono text-base tabular-nums text-tinta/40 line-through">
-              {formatCOP(selectedRegularPrice)}
+        <div aria-live="polite">
+          <div className="flex items-baseline gap-3">
+            <p className="font-mono text-3xl font-bold tabular-nums">
+              {formatCOP(selectedPrice)}
             </p>
-          ) : null}
+            {selectedRegularPrice > selectedPrice ? (
+              <p className="font-mono text-base tabular-nums text-tinta/40 line-through">
+                {formatCOP(selectedRegularPrice)}
+              </p>
+            ) : null}
+          </div>
+          <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-primary">
+            <TruckIcon aria-hidden className="size-4" />
+            {selectedPrice * qty >= ENVIO_GRATIS_UMBRAL
+              ? "Envío gratis incluido en este pedido"
+              : `Envío gratis desde ${formatCOP(ENVIO_GRATIS_UMBRAL)}`}
+          </p>
         </div>
       ) : null}
 

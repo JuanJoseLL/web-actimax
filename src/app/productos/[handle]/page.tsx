@@ -212,6 +212,20 @@ async function ProductPageContent({ handle }: { handle: string }) {
         </div>
       </div>
 
+      {related.length > 0 ? (
+        <section className="mt-16">
+          <Separator className="mb-8" />
+          <h2 className="font-display text-3xl font-extrabold uppercase italic">
+            También te puede servir
+          </h2>
+          <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
+            {related.map((p) => (
+              <ProductCard key={p.handle} product={p} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       {product.descriptionHtml !== "" ? (
         <section className="mt-16 max-w-3xl">
           <Separator className="mb-8" />
@@ -237,20 +251,6 @@ async function ProductPageContent({ handle }: { handle: string }) {
       />
 
       <ProductFaq items={productFaq(product)} />
-
-      {related.length > 0 ? (
-        <section className="mt-16">
-          <Separator className="mb-8" />
-          <h2 className="font-display text-3xl font-extrabold uppercase italic">
-            También te puede servir
-          </h2>
-          <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
-            {related.map((p) => (
-              <ProductCard key={p.handle} product={p} />
-            ))}
-          </div>
-        </section>
-      ) : null}
     </div>
   );
 }

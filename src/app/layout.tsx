@@ -6,13 +6,13 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { MetaPixel } from "@/components/MetaPixel";
 import { CartDrawer } from "@/components/cart/CartDrawer";
-import { CartProvider } from "@/components/cart/CartProvider";
+import { CartProvider, type CartLine } from "@/components/cart/CartProvider";
 import { CommandPalette, type PaletteProduct } from "@/components/CommandPalette";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { Toaster } from "@/components/ui/sonner";
-import { getAllProducts } from "@/lib/catalog";
+import { getAllProducts, type Product } from "@/lib/catalog";
 import { initialProductVariant } from "@/lib/product-variants";
 import { DEFAULT_OG_IMAGE, SITE_URL, jsonLd, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
 import { cn } from "@/lib/utils";
@@ -75,6 +75,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const productsPromise = getAllProducts();
+
   return (
     <html
       lang="es"
@@ -94,9 +96,9 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
           <WhatsAppButton />
-          <CartDrawer />
+          <CartDrawer productsPromise={productsPromise.then(cartUpsellProducts)} />
           <Suspense fallback={null}>
-            <StoreCommandPalette />
+            <StoreCommandPalette productsPromise={productsPromise} />
           </Suspense>
           <Toaster position="top-right" offset={{ top: 108 }} mobileOffset={{ top: 108 }} />
         </CartProvider>
@@ -112,8 +114,37 @@ export default function RootLayout({
   );
 }
 
-async function StoreCommandPalette() {
-  const paletteProducts: PaletteProduct[] = (await getAllProducts()).map((p) => {
+function cartUpsellProducts(products: Product[]): CartLine[] {
+  return products
+    .flatMap((product) => {
+      const variant = initialProductVariant(product.variants);
+      if (
+        product.variants.length !== 1 ||
+        variant === undefined ||
+        !product.inStock ||
+        !variant.inStock ||
+        variant.price <= 0
+      ) {
+        return [];
+      }
+      return [{
+        variantId: variant.id ?? product.variantId,
+        variantTitle: variant.title,
+        handle: product.handle,
+        title: product.title,
+        price: variant.price,
+        image: variant.image ?? product.images[0] ?? null,
+      }];
+    })
+    .sort((a, b) => a.price - b.price);
+}
+
+async function StoreCommandPalette({
+  productsPromise,
+}: {
+  productsPromise: Promise<Product[]>;
+}) {
+  const paletteProducts: PaletteProduct[] = (await productsPromise).map((p) => {
     const variant = initialProductVariant(p.variants);
     return {
       variantId: p.variantId,

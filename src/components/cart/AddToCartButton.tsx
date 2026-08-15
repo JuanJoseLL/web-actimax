@@ -18,9 +18,17 @@ interface Props {
       "bar" abren el carrito al agregar. */
   variant?: "card" | "full" | "bar";
   disabled?: boolean;
+  /** Sobrescribe la página visible cuando el botón vive en una superficie global. */
+  origin?: string;
 }
 
-export function AddToCartButton({ product, qty = 1, variant = "card", disabled = false }: Props) {
+export function AddToCartButton({
+  product,
+  qty = 1,
+  variant = "card",
+  disabled = false,
+  origin,
+}: Props) {
   const { add, items, open } = useCart();
   const [added, setAdded] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -44,7 +52,7 @@ export function AddToCartButton({ product, qty = 1, variant = "card", disabled =
        veces acá. */
     track("agregar_al_carrito", {
       producto: product.handle,
-      origen: cartSurface(window.location.pathname),
+      origen: origin ?? cartSurface(window.location.pathname),
     });
     if (variant === "full" || variant === "bar") {
       open();
