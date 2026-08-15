@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { track } from "@vercel/analytics";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { BuyNowButton } from "@/components/cart/BuyNowButton";
 import type { CartLine } from "@/components/cart/CartProvider";
@@ -41,6 +42,13 @@ export function BuyBox({ product, inStock, showPrice = false, stickyBar = false 
   const [qty, setQty] = useState(1);
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [boxVisible, setBoxVisible] = useState(true);
+
+  /* La otra mitad del embudo por producto: junto a agregar_al_carrito
+     distingue "nadie lo ve" de "lo ven y nadie lo agrega" — problemas
+     opuestos con arreglos opuestos. */
+  useEffect(() => {
+    track("producto_visto", { producto: product.handle });
+  }, [product.handle]);
 
   useEffect(() => {
     if (!stickyBar) return;

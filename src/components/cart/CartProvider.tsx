@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
 } from "react";
@@ -60,6 +61,7 @@ const CartContext = createContext<CartContextValue | null>(null);
 const STORAGE_KEY = "actimax-cart-v3";
 const CEDULA_STORAGE_KEY = "actimax-cedula";
 const PENDING_CHECKOUT_KEY = "actimax-checkout-pendiente";
+const PENDING_BUYNOW_KEY = "actimax-comprar-ahora-pendiente";
 const CHANGE_EVENT = "actimax-cart-change";
 const CEDULA_CHANGE_EVENT = "actimax-cedula-change";
 let fallbackCart = "[]";
@@ -206,6 +208,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCedulaError(null);
   }, []);
 
+  const count = items.reduce((acc, i) => acc + i.qty, 0);
+  const subtotal = items.reduce((acc, i) => acc + i.price * i.qty, 0);
+
+  /* Separa "nunca abrió el carrito" de "vio el carrito (y la cédula) y se
+     fue". Se registra el paso de cerrado a abierto: el ref evita repetirlo
+     cuando los items cambian con el cajón ya abierto. */
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    if (isOpen && !wasOpen.current) {
+      track("ver_carrito", { valor: subtotal, unidades: count });
+    }
+    wasOpen.current = isOpen;
+  }, [isOpen, subtotal, count]);
+
   /* Volver desde Shopify restaura la página del bfcache con el estado tal
      cual quedó: sin esto el botón se queda congelado en "Abriendo pago". */
   useEffect(() => {
@@ -216,20 +232,37 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("pageshow", onPageShow);
   }, []);
 
-  /* Shopify elimina el carrito cuando la compra se completa: si el carrito
-     que dejamos pendiente al ir al checkout ya no existe, el pedido se pagó
-     y el carrito local se vacía. Si sigue existiendo, el cliente abandonó el
-     checkout y sus productos se conservan. */
+  /* Shopify elimina el carrito cuando la compra se completa: si un carrito
+     que dejamos pendiente al ir al checkout ya no existe, el pedido se pagó.
+     Es el único rastro de compra que ve el sitio (el pago ocurre en Shopify),
+     así que `compra` subcuenta: solo dispara si el comprador vuelve al
+     dominio. Sirve como tendencia y como alarma de "hoy no entró ninguna". */
   useEffect(() => {
-    const verifyPendingCheckout = () => {
+    const verifyPendingCart = (
+      storageKey: string,
+      via: "carrito" | "comprar-ahora",
+      onPaid: (() => void) | null,
+    ) => {
       let pending: string | null;
       try {
-        pending = window.localStorage.getItem(PENDING_CHECKOUT_KEY);
+        pending = window.localStorage.getItem(storageKey);
       } catch {
         return;
       }
       if (pending === null) return;
-      fetch(`/api/checkout/estado/?cart=${encodeURIComponent(pending)}`)
+      let cartId = pending;
+      let valor: number | null = null;
+      try {
+        const parsed: unknown = JSON.parse(pending);
+        if (typeof parsed === "object" && parsed !== null) {
+          const record = parsed as Record<string, unknown>;
+          if (typeof record.cart === "string") cartId = record.cart;
+          if (typeof record.valor === "number") valor = record.valor;
+        }
+      } catch {
+        // pendiente guardado antes de rastrear `compra`: trae solo el id
+      }
+      fetch(`/api/checkout/estado/?cart=${encodeURIComponent(cartId)}`)
         .then((response) => (response.ok ? (response.json() as Promise<unknown>) : null))
         .then((data) => {
           if (
@@ -238,16 +271,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             (data as { existe?: unknown }).existe === false
           ) {
             try {
-              window.localStorage.removeItem(PENDING_CHECKOUT_KEY);
+              window.localStorage.removeItem(storageKey);
             } catch {
               // sin almacenamiento: se reintentará en la próxima visita
             }
-            clear();
+            track("compra", valor === null ? { via } : { valor, via });
+            onPaid?.();
           }
         })
         .catch(() => {
           // sin conexión: se reintentará en la próxima visita
         });
+    };
+    const verifyPendingCheckout = () => {
+      /* Solo el flujo de carrito vacía el carrito guardado al pagar:
+         comprar-ahora nunca lo tocó. */
+      verifyPendingCart(PENDING_CHECKOUT_KEY, "carrito", clear);
+      verifyPendingCart(PENDING_BUYNOW_KEY, "comprar-ahora", null);
     };
     verifyPendingCheckout();
     const onPageShow = (event: PageTransitionEvent) => {
@@ -263,15 +303,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCedulaError(null);
 
     const valor = items.reduce((acc, i) => acc + i.price * i.qty, 0);
-    const unidades = items.reduce((acc, i) => acc + i.qty, 0);
     /* La tienda ya perdió un día de ventas por un checkout roto que nadie vio
        hasta el día siguiente. `motivo` separa un problema de negocio (stock,
-       cédula) de uno técnico (Shopify caído) y `valor` dice cuánta plata hay
-       detrás de cada motivo, que es lo que decide qué se arregla primero. */
+       cédula) de uno técnico (Shopify caído). El plan Pro de Vercel solo
+       guarda 2 propiedades por evento —la tercera se descarta en silencio,
+       verificado contra la API—, así que `via` desplazó a `valor`: comparar
+       los dos embudos pesa más que el ticket de los intentos fallidos. */
     let failureTracked = false;
     const trackFailure = (motivo: string) => {
       failureTracked = true;
-      track("checkout_fallido", { motivo, valor, via: "carrito" });
+      track("checkout_fallido", { motivo, via: "carrito" });
     };
 
     if (items.length === 0) {
@@ -340,16 +381,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       if (typeof resultObj.cartId === "string") {
         try {
-          window.localStorage.setItem(PENDING_CHECKOUT_KEY, resultObj.cartId);
+          /* El valor viaja junto al id: al volver del pago el carrito local
+             ya pudo cambiar y `compra` debe reportar lo que se pagó. */
+          window.localStorage.setItem(
+            PENDING_CHECKOUT_KEY,
+            JSON.stringify({ cart: resultObj.cartId, valor }),
+          );
         } catch {
           // sin almacenamiento no habrá limpieza post-compra, nada más
         }
       }
       /* Último punto que controla el sitio: de acá en adelante el pago ocurre
-         en Shopify. `valor` da el ticket de los carritos que sí llegan a pagar
-         y `unidades` separa un pack caro de seis geles; el número de checkouts
-         es el conteo del evento y no necesita propiedad. */
-      track("iniciar_checkout", { valor, unidades, via: "carrito" });
+         en Shopify. `valor` da el ticket de los carritos que sí llegan a
+         pagar; `unidades` salió por el tope de 2 propiedades del plan Pro. */
+      track("iniciar_checkout", { valor, via: "carrito" });
       window.location.assign(checkoutUrl);
     } catch (error) {
       /* Un fallo de red no pasó por ninguna de las ramas de arriba: se
@@ -363,9 +408,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [isCheckingOut, items, cedula]);
 
   /* Compra directa desde la PDP: un checkout con esa única línea. El carrito
-     guardado no participa ni se limpia al completar el pago, por eso acá no
-     se registra PENDING_CHECKOUT_KEY. Los errores van en toast porque el
-     cajón —donde vive la alerta del checkout— no está abierto en este flujo. */
+     guardado no participa ni se limpia al completar el pago; el pendiente va
+     en su propia llave solo para detectar la compra, sin vaciar nada. Los
+     errores van en toast porque el cajón —donde vive la alerta del checkout—
+     no está abierto en este flujo. */
   const buyNow = useCallback(async (line: CartLine, qty = 1) => {
     if (isCheckingOut) return;
 
@@ -373,7 +419,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     let failureTracked = false;
     const trackFailure = (motivo: string) => {
       failureTracked = true;
-      track("checkout_fallido", { motivo, valor, via: "comprar-ahora" });
+      track("checkout_fallido", { motivo, via: "comprar-ahora" });
     };
 
     if (line.variantId === null) {
@@ -423,7 +469,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const message = resultObj.error;
         throw new Error(typeof message === "string" ? message : "No se pudo iniciar el pago.");
       }
-      track("iniciar_checkout", { valor, unidades: qty, via: "comprar-ahora" });
+      if (typeof resultObj.cartId === "string") {
+        try {
+          window.localStorage.setItem(
+            PENDING_BUYNOW_KEY,
+            JSON.stringify({ cart: resultObj.cartId, valor }),
+          );
+        } catch {
+          // sin almacenamiento no se detectará esta compra, nada más
+        }
+      }
+      track("iniciar_checkout", { valor, via: "comprar-ahora" });
       window.location.assign(checkoutUrl);
     } catch (error) {
       if (!failureTracked) trackFailure("conexion");
@@ -435,8 +491,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [isCheckingOut, cedula]);
 
   const value = useMemo<CartContextValue>(() => {
-    const count = items.reduce((acc, i) => acc + i.qty, 0);
-    const subtotal = items.reduce((acc, i) => acc + i.price * i.qty, 0);
     return {
       items,
       count,
@@ -459,6 +513,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
   }, [
     items,
+    count,
+    subtotal,
     isOpen,
     isCheckingOut,
     checkoutError,
