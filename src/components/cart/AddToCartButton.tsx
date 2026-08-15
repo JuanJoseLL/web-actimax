@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/track";
 import { CheckIcon, ShoppingBagIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useCart, type CartLine } from "@/components/cart/CartProvider";

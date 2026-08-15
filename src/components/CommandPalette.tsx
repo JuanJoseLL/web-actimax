@@ -17,7 +17,7 @@ import {
   ZapIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/track";
 import { toast } from "sonner";
 import { useCart } from "@/components/cart/CartProvider";
 import {

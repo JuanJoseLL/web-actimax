@@ -10,7 +10,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/track";
 import { toast } from "sonner";
 import { cartLineId } from "@/lib/cart";
 import { isValidCedula, normalizeCedula } from "@/lib/cedula";

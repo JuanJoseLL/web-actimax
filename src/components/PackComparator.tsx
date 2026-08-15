@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/track";
 import { ArrowLeftRightIcon } from "lucide-react";
 import { useState } from "react";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";

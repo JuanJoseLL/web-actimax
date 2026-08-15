@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/track";
 import { Badge } from "@/components/ui/badge";
 
 /**

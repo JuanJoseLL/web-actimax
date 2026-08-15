@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/track";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { BuyNowButton } from "@/components/cart/BuyNowButton";
 import type { CartLine } from "@/components/cart/CartProvider";

@@ -20,7 +20,7 @@ import {
   ZapIcon,
 } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/track";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";

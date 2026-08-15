@@ -1,6 +1,6 @@
 "use client";
 
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/track";
 import { ArrowRightIcon, CheckCircle2Icon, MailIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
