@@ -14,7 +14,6 @@ import {
 } from "@/components/cart/CartProvider";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import {
   Sheet,
@@ -148,9 +147,6 @@ export function CartDrawer({ productsPromise }: { productsPromise: Promise<CartL
     isCheckingOut,
     checkoutError,
     clearCheckoutError,
-    cedula,
-    setCedula,
-    cedulaError,
   } = useCart();
 
   const handleClose = () => {
@@ -302,42 +298,6 @@ export function CartDrawer({ productsPromise }: { productsPromise: Promise<CartL
                   </>
                 )}
               </p>
-              <div className="mt-2">
-                <label
-                  htmlFor="cedula-comprador"
-                  className="font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-foreground"
-                >
-                  Cédula de quien compra{" "}
-                  <span aria-hidden className="text-destructive">
-                    *
-                  </span>
-                </label>
-                {/* Con type="tel" Chrome ofrece autollenar el teléfono acá;
-                    autoComplete="off" lo evita y la recompra ya se cubre con
-                    la cédula guardada en localStorage. */}
-                <Input
-                  id="cedula-comprador"
-                  type="tel"
-                  inputMode="numeric"
-                  autoComplete="off"
-                  required
-                  placeholder="Ej: 1035467890"
-                  value={cedula}
-                  onChange={(event) => setCedula(event.target.value)}
-                  aria-invalid={cedulaError !== null}
-                  aria-describedby={cedulaError !== null ? "cedula-error" : undefined}
-                  className="mt-1.5 h-11 font-mono tabular-nums"
-                />
-                {cedulaError !== null ? (
-                  <p id="cedula-error" className="mt-1 text-xs font-medium text-destructive">
-                    {cedulaError}
-                  </p>
-                ) : (
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    La necesitamos para tu factura y la guía de envío.
-                  </p>
-                )}
-              </div>
               <PaymentMethods compact className="mt-1" />
               <Button
                 type="button"

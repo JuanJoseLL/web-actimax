@@ -13,7 +13,6 @@ import {
 import { track } from "@/lib/track";
 import { toast } from "sonner";
 import { cartLineId } from "@/lib/cart";
-import { isValidCedula, normalizeCedula } from "@/lib/cedula";
 import { isShortedLine, shortedCartMessage } from "@/lib/checkout-lines";
 
 /** Datos mínimos de un producto para mostrarlo en el carrito. */
@@ -49,23 +48,15 @@ interface CartContextValue {
   /** Compra directa de una sola línea, sin tocar el carrito guardado. */
   buyNow: (line: CartLine, qty?: number) => Promise<void>;
   clearCheckoutError: () => void;
-  /** Cédula de quien compra: Shopify no la pide en el checkout, va como atributo. */
-  cedula: string;
-  setCedula: (value: string) => void;
-  /** Cédula faltante o mal escrita: se señala sobre el campo, no como falla del sistema. */
-  cedulaError: string | null;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
 
 const STORAGE_KEY = "actimax-cart-v3";
-const CEDULA_STORAGE_KEY = "actimax-cedula";
 const PENDING_CHECKOUT_KEY = "actimax-checkout-pendiente";
 const PENDING_BUYNOW_KEY = "actimax-comprar-ahora-pendiente";
 const CHANGE_EVENT = "actimax-cart-change";
-const CEDULA_CHANGE_EVENT = "actimax-cedula-change";
 let fallbackCart = "[]";
-let fallbackCedula = "";
 
 function subscribeToCart(onStoreChange: () => void) {
   window.addEventListener("storage", onStoreChange);
@@ -86,27 +77,6 @@ function getCartSnapshot() {
 
 function getServerCartSnapshot() {
   return "[]";
-}
-
-function subscribeToCedula(onStoreChange: () => void) {
-  window.addEventListener("storage", onStoreChange);
-  window.addEventListener(CEDULA_CHANGE_EVENT, onStoreChange);
-  return () => {
-    window.removeEventListener("storage", onStoreChange);
-    window.removeEventListener(CEDULA_CHANGE_EVENT, onStoreChange);
-  };
-}
-
-function getCedulaSnapshot() {
-  try {
-    return window.localStorage.getItem(CEDULA_STORAGE_KEY) ?? "";
-  } catch {
-    return fallbackCedula;
-  }
-}
-
-function getServerCedulaSnapshot() {
-  return "";
 }
 
 function isCartItem(value: unknown): value is CartItem {
@@ -140,22 +110,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
-  const [cedulaError, setCedulaError] = useState<string | null>(null);
-  const cedula = useSyncExternalStore(
-    subscribeToCedula,
-    getCedulaSnapshot,
-    getServerCedulaSnapshot,
-  );
-
-  const setCedula = useCallback((value: string) => {
-    setCedulaError(null);
-    try {
-      window.localStorage.setItem(CEDULA_STORAGE_KEY, value);
-    } catch {
-      fallbackCedula = value;
-    }
-    window.dispatchEvent(new Event(CEDULA_CHANGE_EVENT));
-  }, []);
 
   const updateItems = useCallback((recipe: (items: CartItem[]) => CartItem[]) => {
     try {
@@ -203,17 +157,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => setIsOpen(false), []);
 
-  const clearCheckoutError = useCallback(() => {
-    setCheckoutError(null);
-    setCedulaError(null);
-  }, []);
+  const clearCheckoutError = useCallback(() => setCheckoutError(null), []);
 
   const count = items.reduce((acc, i) => acc + i.qty, 0);
   const subtotal = items.reduce((acc, i) => acc + i.price * i.qty, 0);
 
-  /* Separa "nunca abrió el carrito" de "vio el carrito (y la cédula) y se
-     fue". Se registra el paso de cerrado a abierto: el ref evita repetirlo
-     cuando los items cambian con el cajón ya abierto. */
+  /* Separa "nunca abrió el carrito" de "vio el carrito y se fue". Se
+     registra el paso de cerrado a abierto: el ref evita repetirlo cuando
+     los items cambian con el cajón ya abierto. */
   const wasOpen = useRef(false);
   useEffect(() => {
     if (isOpen && !wasOpen.current) {
@@ -300,12 +251,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const checkout = useCallback(async () => {
     if (isCheckingOut) return;
     setCheckoutError(null);
-    setCedulaError(null);
 
     const valor = items.reduce((acc, i) => acc + i.price * i.qty, 0);
     /* La tienda ya perdió un día de ventas por un checkout roto que nadie vio
-       hasta el día siguiente. `motivo` separa un problema de negocio (stock,
-       cédula) de uno técnico (Shopify caído). El plan Pro de Vercel solo
+       hasta el día siguiente. `motivo` separa un problema de negocio (stock)
+       de uno técnico (Shopify caído). El plan Pro de Vercel solo
        guarda 2 propiedades por evento —la tercera se descarta en silencio,
        verificado contra la API—, así que `via` desplazó a `valor`: comparar
        los dos embudos pesa más que el ticket de los intentos fallidos. */
@@ -327,18 +277,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       trackFailure("catalogo-respaldo");
       return;
     }
-    if (!isValidCedula(cedula)) {
-      /* La paleta también dispara el checkout: se abre el cajón para que el
-         campo de cédula quede a la vista con su error. */
-      setCedulaError(
-        normalizeCedula(cedula) === ""
-          ? "Falta tu cédula para continuar."
-          : "La cédula va solo con números, de 6 a 10 dígitos.",
-      );
-      setIsOpen(true);
-      trackFailure("cedula");
-      return;
-    }
 
     setIsCheckingOut(true);
     try {
@@ -350,7 +288,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             merchandiseId: item.variantId,
             quantity: item.qty,
           })),
-          cedula: normalizeCedula(cedula),
         }),
       });
       const result: unknown = await response.json();
@@ -405,7 +342,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       );
       setIsCheckingOut(false);
     }
-  }, [isCheckingOut, items, cedula]);
+  }, [isCheckingOut, items]);
 
   /* Compra directa desde la PDP: un checkout con esa única línea. El carrito
      guardado no participa ni se limpia al completar el pago; el pendiente va
@@ -429,13 +366,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       trackFailure("catalogo-respaldo");
       return;
     }
-    if (!isValidCedula(cedula)) {
-      /* El botón pide la cédula en su diálogo antes de llegar acá; esto es
-         solo el respaldo por si algún camino se lo salta. */
-      toast.error("Ingresa tu cédula (solo números, de 6 a 10 dígitos) para continuar.");
-      trackFailure("cedula");
-      return;
-    }
 
     setIsCheckingOut(true);
     try {
@@ -444,7 +374,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           lines: [{ merchandiseId: line.variantId, quantity: qty }],
-          cedula: normalizeCedula(cedula),
         }),
       });
       const result: unknown = await response.json();
@@ -488,7 +417,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       );
       setIsCheckingOut(false);
     }
-  }, [isCheckingOut, cedula]);
+  }, [isCheckingOut]);
 
   const value = useMemo<CartContextValue>(() => {
     return {
@@ -507,9 +436,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       checkout,
       buyNow,
       clearCheckoutError,
-      cedula,
-      setCedula,
-      cedulaError,
     };
   }, [
     items,
@@ -518,7 +444,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     isOpen,
     isCheckingOut,
     checkoutError,
-    cedulaError,
     add,
     setQty,
     remove,
@@ -528,8 +453,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     checkout,
     buyNow,
     clearCheckoutError,
-    cedula,
-    setCedula,
   ]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
