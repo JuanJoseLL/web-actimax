@@ -13,8 +13,10 @@ import { formatCOP } from "@/lib/format";
 interface Props {
   product: CartLine;
   qty?: number;
-  /** "card": botón compacto en tarjetas. "full": botón grande de página de producto (abre el carrito). */
-  variant?: "card" | "full";
+  /** "card": botón compacto en tarjetas. "full": botón grande de página de
+      producto. "bar": solo ícono, para la barra fija de compra. "full" y
+      "bar" abren el carrito al agregar. */
+  variant?: "card" | "full" | "bar";
   disabled?: boolean;
 }
 
@@ -44,7 +46,7 @@ export function AddToCartButton({ product, qty = 1, variant = "card", disabled =
       producto: product.handle,
       origen: cartSurface(window.location.pathname),
     });
-    if (variant === "full") {
+    if (variant === "full" || variant === "bar") {
       open();
       return;
     }
@@ -73,6 +75,22 @@ export function AddToCartButton({ product, qty = 1, variant = "card", disabled =
       >
         <ShoppingBagIcon data-icon="inline-start" />
         {disabled ? "Agotado" : "Agregar al carrito"}
+      </Button>
+    );
+  }
+
+  if (variant === "bar") {
+    return (
+      <Button
+        type="button"
+        onClick={handleClick}
+        disabled={disabled}
+        aria-label={disabled ? "Agotado" : "Agregar al carrito"}
+        variant="race"
+        size="icon-lg"
+        className="size-11"
+      >
+        <ShoppingBagIcon />
       </Button>
     );
   }

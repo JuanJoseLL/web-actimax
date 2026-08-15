@@ -194,6 +194,7 @@ async function ProductPageContent({ handle }: { handle: string }) {
               }}
               inStock={product.inStock}
               showPrice
+              stickyBar
             />
             <p className="mt-3 font-mono text-[11px] uppercase tracking-wide text-tinta/50">
               Envíos a toda Colombia · Checkout seguro con Shopify

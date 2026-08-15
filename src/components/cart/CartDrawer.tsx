@@ -239,7 +239,7 @@ export function CartDrawer() {
                   </p>
                 ) : (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    La necesitamos para tu factura DIAN y la guía de envío.
+                    La necesitamos para tu factura y la guía de envío.
                   </p>
                 )}
               </div>

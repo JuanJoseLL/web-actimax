@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { BuyNowButton } from "@/components/cart/BuyNowButton";
 import type { CartLine } from "@/components/cart/CartProvider";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import {
@@ -31,10 +33,25 @@ interface BuyBoxProps {
   inStock: boolean;
   /** Permite mover el bloque de precio de la página sin duplicarlo mientras migra. */
   showPrice?: boolean;
+  /** Barra fija de compra al fondo de la pantalla cuando este bloque sale de vista. */
+  stickyBar?: boolean;
 }
 
-export function BuyBox({ product, inStock, showPrice = false }: BuyBoxProps) {
+export function BuyBox({ product, inStock, showPrice = false, stickyBar = false }: BuyBoxProps) {
   const [qty, setQty] = useState(1);
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const [boxVisible, setBoxVisible] = useState(true);
+
+  useEffect(() => {
+    if (!stickyBar) return;
+    const box = boxRef.current;
+    if (box === null) return;
+    const observer = new IntersectionObserver(([entry]) =>
+      setBoxVisible(entry.isIntersecting),
+    );
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, [stickyBar]);
   const variants = product.variants ?? [];
   const [selectedVariant, setSelectedVariant] = useState(() =>
     initialProductVariant(variants),
@@ -53,8 +70,10 @@ export function BuyBox({ product, inStock, showPrice = false }: BuyBoxProps) {
     image: selectedVariant?.image ?? product.image,
   };
 
+  const showBar = stickyBar && !boxVisible;
+
   return (
-    <div className="grid gap-4">
+    <div ref={boxRef} className="grid gap-4">
       {showPrice ? (
         <div className="flex items-baseline gap-3" aria-live="polite">
           <p className="font-mono text-3xl font-bold tabular-nums">
@@ -130,6 +149,63 @@ export function BuyBox({ product, inStock, showPrice = false }: BuyBoxProps) {
           />
         </div>
       </div>
+
+      <BuyNowButton product={cartLine} qty={qty} disabled={!selectedInStock} />
+
+      {stickyBar ? (
+        /* Barra fija de compra: en una columna (por debajo de lg) el precio y
+           el botón quedan a un scroll completo de las reseñas y el FAQ; la
+           barra recupera ese momento de decisión. Se mantiene montada para
+           animar la entrada, e `inert` evita tabular sobre botones ocultos. */
+        <div
+          aria-hidden={!showBar}
+          inert={!showBar}
+          className={`fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/92 backdrop-blur-xl transition-transform duration-300 lg:hidden ${
+            showBar ? "translate-y-0" : "translate-y-full"
+          }`}
+        >
+          <div className="flex items-center gap-3 px-4 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            <div className="relative size-11 shrink-0 overflow-hidden rounded-md bg-muted">
+              {cartLine.image !== null ? (
+                <Image
+                  src={cartLine.image}
+                  alt=""
+                  fill
+                  sizes="44px"
+                  className="object-contain p-1 mix-blend-multiply"
+                />
+              ) : null}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-xs font-semibold">{product.title}</p>
+              <div className="flex items-baseline gap-1.5">
+                <p className="font-mono text-sm font-bold tabular-nums">
+                  {formatCOP(selectedPrice)}
+                </p>
+                {selectedRegularPrice > selectedPrice ? (
+                  <p className="font-mono text-[11px] tabular-nums text-tinta/40 line-through">
+                    {formatCOP(selectedRegularPrice)}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+            <div className="ml-auto flex shrink-0 items-center gap-2">
+              <AddToCartButton
+                product={cartLine}
+                qty={qty}
+                variant="bar"
+                disabled={!selectedInStock}
+              />
+              <BuyNowButton
+                product={cartLine}
+                qty={qty}
+                variant="bar"
+                disabled={!selectedInStock}
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

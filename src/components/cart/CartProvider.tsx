@@ -10,6 +10,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import { track } from "@vercel/analytics";
+import { toast } from "sonner";
 import { cartLineId } from "@/lib/cart";
 import { isValidCedula, normalizeCedula } from "@/lib/cedula";
 import { isShortedLine, shortedCartMessage } from "@/lib/checkout-lines";
@@ -44,6 +45,8 @@ interface CartContextValue {
   close: () => void;
   /** Vive en el provider, no en el cajón: la paleta también lo dispara. */
   checkout: () => Promise<void>;
+  /** Compra directa de una sola línea, sin tocar el carrito guardado. */
+  buyNow: (line: CartLine, qty?: number) => Promise<void>;
   clearCheckoutError: () => void;
   /** Cédula de quien compra: Shopify no la pide en el checkout, va como atributo. */
   cedula: string;
@@ -268,7 +271,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     let failureTracked = false;
     const trackFailure = (motivo: string) => {
       failureTracked = true;
-      track("checkout_fallido", { motivo, valor });
+      track("checkout_fallido", { motivo, valor, via: "carrito" });
     };
 
     if (items.length === 0) {
@@ -346,7 +349,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
          en Shopify. `valor` da el ticket de los carritos que sí llegan a pagar
          y `unidades` separa un pack caro de seis geles; el número de checkouts
          es el conteo del evento y no necesita propiedad. */
-      track("iniciar_checkout", { valor, unidades });
+      track("iniciar_checkout", { valor, unidades, via: "carrito" });
       window.location.assign(checkoutUrl);
     } catch (error) {
       /* Un fallo de red no pasó por ninguna de las ramas de arriba: se
@@ -358,6 +361,78 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setIsCheckingOut(false);
     }
   }, [isCheckingOut, items, cedula]);
+
+  /* Compra directa desde la PDP: un checkout con esa única línea. El carrito
+     guardado no participa ni se limpia al completar el pago, por eso acá no
+     se registra PENDING_CHECKOUT_KEY. Los errores van en toast porque el
+     cajón —donde vive la alerta del checkout— no está abierto en este flujo. */
+  const buyNow = useCallback(async (line: CartLine, qty = 1) => {
+    if (isCheckingOut) return;
+
+    const valor = line.price * qty;
+    let failureTracked = false;
+    const trackFailure = (motivo: string) => {
+      failureTracked = true;
+      track("checkout_fallido", { motivo, valor, via: "comprar-ahora" });
+    };
+
+    if (line.variantId === null) {
+      toast.error(
+        "Este producto viene del catálogo de respaldo. Recarga la página para volver a conectarte con Shopify.",
+      );
+      trackFailure("catalogo-respaldo");
+      return;
+    }
+    if (!isValidCedula(cedula)) {
+      /* El botón pide la cédula en su diálogo antes de llegar acá; esto es
+         solo el respaldo por si algún camino se lo salta. */
+      toast.error("Ingresa tu cédula (solo números, de 6 a 10 dígitos) para continuar.");
+      trackFailure("cedula");
+      return;
+    }
+
+    setIsCheckingOut(true);
+    try {
+      const response = await fetch("/api/checkout/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lines: [{ merchandiseId: line.variantId, quantity: qty }],
+          cedula: normalizeCedula(cedula),
+        }),
+      });
+      const result: unknown = await response.json();
+      const resultObj =
+        typeof result === "object" && result !== null
+          ? (result as Record<string, unknown>)
+          : {};
+      const checkoutUrl = resultObj.checkoutUrl;
+      if (!response.ok || typeof checkoutUrl !== "string") {
+        if (response.status === 409 && Array.isArray(resultObj.shorted)) {
+          const shorted = resultObj.shorted.filter(isShortedLine);
+          if (shorted.length > 0) {
+            trackFailure("inventario");
+            throw new Error(
+              shortedCartMessage(shorted, (merchandiseId) =>
+                merchandiseId === line.variantId ? line.title : undefined,
+              ),
+            );
+          }
+        }
+        trackFailure("shopify");
+        const message = resultObj.error;
+        throw new Error(typeof message === "string" ? message : "No se pudo iniciar el pago.");
+      }
+      track("iniciar_checkout", { valor, unidades: qty, via: "comprar-ahora" });
+      window.location.assign(checkoutUrl);
+    } catch (error) {
+      if (!failureTracked) trackFailure("conexion");
+      toast.error(
+        error instanceof Error ? error.message : "No se pudo iniciar el pago. Inténtalo de nuevo.",
+      );
+      setIsCheckingOut(false);
+    }
+  }, [isCheckingOut, cedula]);
 
   const value = useMemo<CartContextValue>(() => {
     const count = items.reduce((acc, i) => acc + i.qty, 0);
@@ -376,6 +451,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       open,
       close,
       checkout,
+      buyNow,
       clearCheckoutError,
       cedula,
       setCedula,
@@ -394,6 +470,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     open,
     close,
     checkout,
+    buyNow,
     clearCheckoutError,
     cedula,
     setCedula,
