@@ -11,6 +11,7 @@ import {
   type ProductVariant,
 } from "@/lib/taxonomia";
 import { initialProductVariant } from "@/lib/product-variants";
+import { localReviewSummary, shopifyReviewSummary } from "@/lib/reviews";
 
 export * from "@/lib/taxonomia";
 
@@ -34,6 +35,12 @@ const PRODUCTS_QUERY = /* GraphQL */ `
         descriptionHtml
         availableForSale
         tags
+        reviewRating: metafield(namespace: "reviews", key: "rating") {
+          value
+        }
+        reviewCount: metafield(namespace: "reviews", key: "rating_count") {
+          value
+        }
         images(first: 12) {
           nodes {
             url
@@ -75,6 +82,8 @@ interface ShopifyProductNode {
   descriptionHtml: string | null;
   availableForSale: boolean;
   tags: string[];
+  reviewRating: { value: string } | null;
+  reviewCount: { value: string } | null;
   images: { nodes: Array<{ url: string }> };
   options: ProductOption[];
   variants: {
@@ -137,6 +146,10 @@ function mapShopifyProduct(node: ShopifyProductNode): Product {
     images: node.images.nodes.map((img) => img.url),
     options: node.options,
     variants,
+    reviewSummary: shopifyReviewSummary(
+      node.reviewRating?.value,
+      node.reviewCount?.value,
+    ),
   };
 }
 
@@ -192,7 +205,7 @@ interface LocalVariant {
   image?: string | null;
 }
 
-interface LocalProduct extends Omit<Product, "id" | "variantId" | "type" | "momentos" | "options" | "variants" | "descriptionKind" | "faqs"> {
+interface LocalProduct extends Omit<Product, "id" | "variantId" | "type" | "momentos" | "options" | "variants" | "descriptionKind" | "faqs" | "reviewSummary"> {
   id: number;
   type: string;
   momentos: string[];
@@ -252,6 +265,7 @@ function localProducts(): Product[] {
       inStock: variant?.inStock ?? p.inStock,
       options: p.options ?? [],
       variants,
+      reviewSummary: localReviewSummary(p.handle),
     };
   });
 }

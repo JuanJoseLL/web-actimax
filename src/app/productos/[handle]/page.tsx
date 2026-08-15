@@ -4,8 +4,10 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { BuyBox } from "@/components/BuyBox";
 import { ImageGallery } from "@/components/ImageGallery";
+import { PaymentMethods } from "@/components/PaymentMethods";
 import { ProductFaq } from "@/components/ProductFaq";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductRating } from "@/components/ProductRating";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,7 +21,7 @@ import {
 import { ProductReviews } from "@/components/ProductReviews";
 import { productFaq } from "@/lib/product-faq";
 import { canonicalProductPath } from "@/lib/product-paths";
-import { getProductReviews } from "@/lib/reviews";
+import { getProductReviews, reviewsSummary } from "@/lib/reviews";
 import {
   DEFAULT_OG_IMAGE,
   SITE_URL,
@@ -96,6 +98,7 @@ async function ProductPageContent({ handle }: { handle: string }) {
     getProductReviews(product.handle, product.id),
     getAllProducts(),
   ]);
+  const reviewSummary = reviewsSummary(reviews);
   const related = all
     .filter(
       (p) =>
@@ -148,6 +151,14 @@ async function ProductPageContent({ handle }: { handle: string }) {
           <h1 className="mt-2 font-display text-4xl font-extrabold uppercase italic leading-[0.95] sm:text-5xl">
             {product.title}
           </h1>
+          {reviewSummary !== null ? (
+            <ProductRating
+              rating={reviewSummary.rating}
+              count={reviewSummary.count}
+              href="#resenas"
+              className="mt-3"
+            />
+          ) : null}
 
           {product.momentos.length > 0 || product.deportes.length > 0 ? (
             <div className="mt-5 flex flex-wrap gap-2">
@@ -196,9 +207,7 @@ async function ProductPageContent({ handle }: { handle: string }) {
               showPrice
               stickyBar
             />
-            <p className="mt-3 font-mono text-[11px] uppercase tracking-wide text-tinta/50">
-              Envíos a toda Colombia · Checkout seguro con Shopify
-            </p>
+            <PaymentMethods className="mt-4" />
           </div>
         </div>
       </div>

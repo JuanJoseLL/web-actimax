@@ -2,7 +2,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   judgeMePage,
   reviewsAverage,
+  reviewsSummary,
   shopifyProductId,
+  shopifyReviewSummary,
   type ProductReview,
 } from "./reviews";
 
@@ -32,6 +34,29 @@ describe("reviewsAverage", () => {
       verified: false,
     };
     expect(reviewsAverage([{ ...base, rating: 5 }, { ...base, rating: 4 }, { ...base, rating: 4 }])).toBe(4.3);
+    expect(reviewsSummary([{ ...base, rating: 5 }, { ...base, rating: 4 }])).toEqual({
+      rating: 4.5,
+      count: 2,
+    });
+    expect(reviewsSummary([])).toBeNull();
+  });
+});
+
+describe("shopifyReviewSummary", () => {
+  it("convierte y redondea los metafields sincronizados por Judge.me", () => {
+    expect(
+      shopifyReviewSummary(
+        JSON.stringify({ scale_min: "1.0", scale_max: "5.0", value: "4.62" }),
+        "8",
+      ),
+    ).toEqual({ rating: 4.6, count: 8 });
+  });
+
+  it("descarta metafields ausentes o invalidos", () => {
+    expect(shopifyReviewSummary(undefined, "8")).toBeNull();
+    expect(shopifyReviewSummary("not-json", "8")).toBeNull();
+    expect(shopifyReviewSummary(JSON.stringify({ value: "6" }), "8")).toBeNull();
+    expect(shopifyReviewSummary(JSON.stringify({ value: "4.5" }), "0")).toBeNull();
   });
 });
 

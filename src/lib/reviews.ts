@@ -1,5 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 import reviewsData from "../data/reviews.json";
+import type { ProductReviewSummary } from "@/lib/taxonomia";
 
 export interface ProductReview {
   id?: string;
@@ -38,6 +39,41 @@ export function shopifyProductId(id: string): string | null {
 
 function localReviews(handle: string): ProductReview[] {
   return REVIEWS.filter((review) => review.handle === handle);
+}
+
+export function reviewsSummary(reviews: ProductReview[]): ProductReviewSummary | null {
+  if (reviews.length === 0) return null;
+  return { rating: reviewsAverage(reviews), count: reviews.length };
+}
+
+export function localReviewSummary(handle: string): ProductReviewSummary | null {
+  return reviewsSummary(localReviews(handle));
+}
+
+/** Convierte los metafields estándar que Judge.me sincroniza con Shopify. */
+export function shopifyReviewSummary(
+  ratingValue: string | null | undefined,
+  countValue: string | null | undefined,
+): ProductReviewSummary | null {
+  if (ratingValue == null || countValue == null) return null;
+
+  try {
+    const parsed = JSON.parse(ratingValue) as { value?: unknown };
+    const rating = Number(parsed.value);
+    const count = Number(countValue);
+    if (
+      !Number.isFinite(rating) ||
+      rating < 1 ||
+      rating > 5 ||
+      !Number.isInteger(count) ||
+      count < 1
+    ) {
+      return null;
+    }
+    return { rating: Math.round(rating * 10) / 10, count };
+  } catch {
+    return null;
+  }
 }
 
 class JudgeMeResponseError extends Error {

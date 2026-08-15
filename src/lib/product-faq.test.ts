@@ -32,6 +32,7 @@ function toProduct(p: RawProduct): Product {
     images: [],
     options: [],
     variants: [],
+    reviewSummary: null,
   };
 }
 

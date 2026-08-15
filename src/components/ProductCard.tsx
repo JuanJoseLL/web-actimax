@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ProductRating } from "@/components/ProductRating";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -63,6 +64,15 @@ export function ProductCard({ product }: { product: Product }) {
               {product.title}
             </h3>
           </Link>
+          {product.reviewSummary !== null ? (
+            <ProductRating
+              rating={product.reviewSummary.rating}
+              count={product.reviewSummary.count}
+              href={`${productPath}#resenas`}
+              compact
+              className="mt-2"
+            />
+          ) : null}
         </CardContent>
         <CardFooter className="mt-3 flex-col items-stretch gap-3 bg-transparent px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
           <div>

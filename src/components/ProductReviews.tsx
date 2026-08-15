@@ -1,5 +1,6 @@
 import { BadgeCheckIcon } from "lucide-react";
 import { ReviewForm } from "@/components/ReviewForm";
+import { formatReviewRating } from "@/components/ProductRating";
 import { Separator } from "@/components/ui/separator";
 import { reviewsAverage, type ProductReview } from "@/lib/reviews";
 
@@ -70,7 +71,7 @@ export function ProductReviews({
   const promedio = reviews.length > 0 ? reviewsAverage(reviews) : null;
 
   return (
-    <section className="mt-16 max-w-3xl">
+    <section id="resenas" className="mt-16 max-w-3xl scroll-mt-24">
       <EstrellaSprite />
       <Separator className="mb-8" />
       <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-azul">
@@ -82,7 +83,9 @@ export function ProductReviews({
       <div className="mt-5 flex flex-wrap items-start justify-between gap-5 sm:items-center">
         {promedio !== null ? (
           <div className="flex items-center gap-3">
-            <p className="font-display text-4xl font-extrabold italic leading-none">{promedio}</p>
+            <p className="font-display text-4xl font-extrabold italic leading-none">
+              {formatReviewRating(promedio)}
+            </p>
             <div>
               <Stars rating={Math.round(promedio)} />
               <p className="mt-1 font-mono text-[11px] uppercase tracking-wide text-tinta/50">

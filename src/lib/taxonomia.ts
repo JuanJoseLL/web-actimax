@@ -31,6 +31,11 @@ export interface ProductVariant {
   image: string | null;
 }
 
+export interface ProductReviewSummary {
+  rating: number;
+  count: number;
+}
+
 export interface Product {
   id: string;
   variantId: string | null;
@@ -53,6 +58,7 @@ export interface Product {
   images: string[];
   options: ProductOption[];
   variants: ProductVariant[];
+  reviewSummary: ProductReviewSummary | null;
 }
 
 export const TYPE_LABELS: Record<ProductType, string> = {

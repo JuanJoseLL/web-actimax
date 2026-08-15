@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FlagIcon, LoaderCircleIcon, TriangleAlertIcon, Trash2Icon } from "lucide-react";
+import { PaymentMethods } from "@/components/PaymentMethods";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { useCart } from "@/components/cart/CartProvider";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -243,6 +244,7 @@ export function CartDrawer() {
                   </p>
                 )}
               </div>
+              <PaymentMethods compact className="mt-1" />
               <Button
                 type="button"
                 variant="raceSun"
