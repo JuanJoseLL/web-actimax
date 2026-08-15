@@ -81,6 +81,7 @@ export function CartDrawer() {
     clearCheckoutError,
     cedula,
     setCedula,
+    cedulaError,
   } = useCart();
 
   const handleClose = () => {
@@ -211,21 +212,36 @@ export function CartDrawer() {
                   htmlFor="cedula-comprador"
                   className="font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-foreground"
                 >
-                  Cédula de quien compra
+                  Cédula de quien compra{" "}
+                  <span aria-hidden className="text-destructive">
+                    *
+                  </span>
                 </label>
+                {/* Con type="tel" Chrome ofrece autollenar el teléfono acá;
+                    autoComplete="off" lo evita y la recompra ya se cubre con
+                    la cédula guardada en localStorage. */}
                 <Input
                   id="cedula-comprador"
+                  type="tel"
                   inputMode="numeric"
                   autoComplete="off"
                   required
                   placeholder="Ej: 1035467890"
                   value={cedula}
                   onChange={(event) => setCedula(event.target.value)}
-                  className="mt-1.5 font-mono tabular-nums"
+                  aria-invalid={cedulaError !== null}
+                  aria-describedby={cedulaError !== null ? "cedula-error" : undefined}
+                  className="mt-1.5 h-11 font-mono tabular-nums"
                 />
-                <p className="mt-1 text-xs text-muted-foreground">
-                  La necesitamos para tu factura y la guía de envío.
-                </p>
+                {cedulaError !== null ? (
+                  <p id="cedula-error" className="mt-1 text-xs font-medium text-destructive">
+                    {cedulaError}
+                  </p>
+                ) : (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    La necesitamos para tu factura DIAN y la guía de envío.
+                  </p>
+                )}
               </div>
               <Button
                 type="button"

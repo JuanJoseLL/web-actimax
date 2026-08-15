@@ -48,6 +48,8 @@ interface CartContextValue {
   /** Cédula de quien compra: Shopify no la pide en el checkout, va como atributo. */
   cedula: string;
   setCedula: (value: string) => void;
+  /** Cédula faltante o mal escrita: se señala sobre el campo, no como falla del sistema. */
+  cedulaError: string | null;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -133,6 +135,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [cedulaError, setCedulaError] = useState<string | null>(null);
   const cedula = useSyncExternalStore(
     subscribeToCedula,
     getCedulaSnapshot,
@@ -140,6 +143,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const setCedula = useCallback((value: string) => {
+    setCedulaError(null);
     try {
       window.localStorage.setItem(CEDULA_STORAGE_KEY, value);
     } catch {
@@ -194,7 +198,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => setIsOpen(false), []);
 
-  const clearCheckoutError = useCallback(() => setCheckoutError(null), []);
+  const clearCheckoutError = useCallback(() => {
+    setCheckoutError(null);
+    setCedulaError(null);
+  }, []);
 
   /* Volver desde Shopify restaura la página del bfcache con el estado tal
      cual quedó: sin esto el botón se queda congelado en "Abriendo pago". */
@@ -250,6 +257,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const checkout = useCallback(async () => {
     if (isCheckingOut) return;
     setCheckoutError(null);
+    setCedulaError(null);
 
     const valor = items.reduce((acc, i) => acc + i.price * i.qty, 0);
     const unidades = items.reduce((acc, i) => acc + i.qty, 0);
@@ -277,8 +285,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
     if (!isValidCedula(cedula)) {
       /* La paleta también dispara el checkout: se abre el cajón para que el
-         campo de cédula quede a la vista junto al error. */
-      setCheckoutError("Ingresa tu cédula (solo números, de 6 a 10 dígitos) para continuar.");
+         campo de cédula quede a la vista con su error. */
+      setCedulaError(
+        normalizeCedula(cedula) === ""
+          ? "Falta tu cédula para continuar."
+          : "La cédula va solo con números, de 6 a 10 dígitos.",
+      );
       setIsOpen(true);
       trackFailure("cedula");
       return;
@@ -367,12 +379,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       clearCheckoutError,
       cedula,
       setCedula,
+      cedulaError,
     };
   }, [
     items,
     isOpen,
     isCheckingOut,
     checkoutError,
+    cedulaError,
     add,
     setQty,
     remove,
