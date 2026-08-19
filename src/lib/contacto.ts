@@ -3,8 +3,8 @@
  * WhatsApp y JSON-LD leen de aquí para no divergir entre sí.
  */
 
-export const TELEFONO_DISPLAY = "+57 300 329 9972";
-export const TELEFONO_E164 = "+573003299972";
+export const TELEFONO_DISPLAY = "+57 304 658 0298";
+export const TELEFONO_E164 = "+573046580298";
 
 export const EMAIL = "ventas@actimax.com.co";
 
