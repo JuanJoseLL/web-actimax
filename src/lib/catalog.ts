@@ -311,6 +311,27 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
   return (await getAllProducts()).find((p) => p.handle === handle);
 }
 
+/**
+ * El producto tal como está en Shopify ahora mismo, saltándose la caché.
+ *
+ * Solo lo usa /api/revalidar para decidir si un webhook trae algo que la web
+ * necesite redibujar. Reusa fetchShopifyProducts() a propósito en vez de una
+ * consulta más chica por handle: comparar contra getProduct() únicamente
+ * tiene sentido si los dos lados pasan por el mismo mapeo y por el mismo
+ * filtro de etiquetas, y a 6 webhooks al día el ahorro de traer un producto
+ * en vez del catálogo no compensa el riesgo de que las dos consultas se
+ * separen con el tiempo.
+ *
+ * Devuelve undefined tanto si el producto no existe como si Shopify falló;
+ * quien llama lo interpreta como "cambió" e invalida, que es el lado seguro.
+ */
+export async function getProductoFresco(
+  handle: string,
+): Promise<Product | undefined> {
+  const productos = await fetchShopifyProducts();
+  return productos?.find((p) => p.handle === handle);
+}
+
 export async function getProducts(handles: string[]): Promise<Product[]> {
   const all = await getAllProducts();
   const byHandle = new Map(all.map((p) => [p.handle, p]));

@@ -1,6 +1,8 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
+import { getProduct, getProductoFresco } from "@/lib/catalog";
+import { cambioVisible, handleDelPayload, tagsPorTopic } from "@/lib/revalidacion";
 
 /**
  * Fuerza el refresco del contenido cacheado (catálogo y blog).
@@ -23,13 +25,11 @@ import { NextResponse } from "next/server";
  *
  * La URL del webhook debe llevar barra final (/api/revalidar/): Next responde
  * 308 sin ella y Shopify no sigue redirects — el envío contaría como fallido.
+ *
+ * Un products/update que no cambia nada visible se descarta sin invalidar
+ * (ver más abajo): sin eso, cada venta reescribía el sitio entero porque el
+ * descuento de inventario llega como si el producto hubiera cambiado.
  */
-
-function tagsForTopic(topic: string): string[] {
-  if (topic.startsWith("articles/") || topic.startsWith("blogs/")) return ["blog"];
-  if (topic.startsWith("products/") || topic.startsWith("collections/")) return ["catalog"];
-  return ["catalog", "blog"];
-}
 
 /**
  * Compara en tiempo constante y sin filtrar la longitud del secreto: la
@@ -102,7 +102,40 @@ export async function POST(request: Request) {
   }
 
   const topic = request.headers.get("x-shopify-topic") ?? "";
-  const tags = tagsForTopic(topic);
+  const tags = tagsPorTopic(topic);
+
+  /* Casi todos los products/update son ruido: cada venta descuenta inventario
+     y Shopify lo manda como si el producto hubiera cambiado. De 63
+     invalidaciones entre el 11 y el 22 de agosto, 36 cayeron a menos de 15
+     min de un pedido, y 26 de los 28 pedidos del periodo dispararon una.
+     Pero el catálogo que lee la web sale de la Storefront API, que no expone
+     cantidades —solo availableForSale—, así que una venta que no agota el
+     producto no cambia nada de lo dibujado. Comparar cuesta una consulta al
+     catálogo; invalidar cuesta reescribir el sitio entero. */
+  if (topic === "products/update") {
+    const handle = handleDelPayload(body);
+    if (handle !== null) {
+      const [cacheado, fresco] = await Promise.all([
+        getProduct(handle),
+        getProductoFresco(handle),
+      ]);
+      if (!cambioVisible(cacheado, fresco)) {
+        console.log(`[revalidar] ${topic} ${handle}: sin cambios visibles`);
+        return NextResponse.json({
+          revalidado: false,
+          motivo: "sin-cambios-visibles",
+          topic,
+          handle,
+          fecha: new Date().toISOString(),
+        });
+      }
+    }
+  }
+
+  /* El topic no quedaba registrado en ningún lado y averiguar qué llegaba de
+     verdad costó reconstruirlo cruzando los logs de Vercel con la Admin API.
+     Una línea por webhook lo deja a mano en `vercel logs -x`. */
+  console.log(`[revalidar] ${topic}: invalidando ${tags.join(", ")}`);
   for (const tag of tags) revalidateTag(tag, "max");
 
   return NextResponse.json({ revalidado: true, topic, tags, fecha: new Date().toISOString() });
