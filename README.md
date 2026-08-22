@@ -125,8 +125,27 @@ Cada caché usa la ventana que le corresponde según cómo se entere de un cambi
 El marcador sigue siendo la forma de no esperar esos 10 min tras publicar.
 
 `SHOPIFY_CLIENT_ID` y `SHOPIFY_CLIENT_SECRET` pertenecen a la integración
-administrativa instalada en la tienda Actimax. Se usan únicamente en scripts de
-migración y mantenimiento; no se despliegan al frontend.
+administrativa instalada en la tienda Actimax. Se usan en los scripts de
+migración y mantenimiento y en el servidor para dar de alta suscriptores del
+boletín; nunca se exponen al navegador.
+
+### Suscripción al boletín
+
+El formulario del home (`src/components/NewsletterSection.tsx`) pide nombre y
+correo obligatorios, un cumpleaños opcional y la casilla de tratamiento de
+datos que exige la ley colombiana. `src/app/api/newsletter/route.ts` crea o
+actualiza el cliente en Shopify con consentimiento de email marketing —de ahí
+sale el correo de bienvenida con el descuento, automatizado desde Shopify— y
+guarda dos metafields de cliente ya definidos en la tienda (Configuración →
+Datos personalizados → Clientes):
+
+- `facts.birth_date` (*Birth date*, tipo fecha): el cumpleaños, para segmentar
+  la campaña de regalo.
+- `custom.politica_datos_aceptada` (tipo fecha y hora): cuándo aceptó la
+  política, que es la prueba de la autorización.
+
+Si Shopify rechazara un metafield, la suscripción igual queda registrada: el
+correo vale más que el dato accesorio, y el fallo se ve en los logs.
 
 Los productos deben estar activos y publicados en el canal asociado a la
 Storefront API. Cuando un producto tiene varias variantes, la página exige

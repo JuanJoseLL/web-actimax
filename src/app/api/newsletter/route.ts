@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { partirNombre, validarSuscripcion } from "@/lib/newsletter";
 
 /**
  * Suscripción al boletín: crea (o actualiza) el cliente en Shopify con
@@ -7,6 +8,12 @@ import { NextResponse } from "next/server";
  * migración: SHOPIFY_ADMIN_TOKEN si existe, o un token temporal canjeado
  * con las client credentials de la app (SHOPIFY_CLIENT_ID/SECRET). Sin
  * credenciales respondemos 503 con un mensaje amable en vez de romper.
+ *
+ * El cumpleaños y la autorización de tratamiento de datos se guardan como
+ * metafields del cliente (`facts.birth_date` y
+ * `custom.politica_datos_aceptada`), definidos en Configuración → Datos
+ * personalizados → Clientes para que se vean en la ficha y sirvan para
+ * segmentar campañas.
  */
 const STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const ADMIN_TOKEN = process.env.SHOPIFY_ADMIN_TOKEN;
@@ -47,7 +54,7 @@ async function getAdminToken(): Promise<string> {
 const CUSTOMER_SEARCH = /* GraphQL */ `
   query buscarCliente($q: String!) {
     customers(first: 1, query: $q) {
-      edges { node { id } }
+      edges { node { id firstName } }
     }
   }
 `;
@@ -65,6 +72,23 @@ const CONSENT_UPDATE = /* GraphQL */ `
   mutation actualizarConsentimiento($input: CustomerEmailMarketingConsentUpdateInput!) {
     customerEmailMarketingConsentUpdate(input: $input) {
       customer { id }
+      userErrors { field message }
+    }
+  }
+`;
+
+const CUSTOMER_UPDATE = /* GraphQL */ `
+  mutation completarPerfil($input: CustomerInput!) {
+    customerUpdate(input: $input) {
+      customer { id }
+      userErrors { field message }
+    }
+  }
+`;
+
+const METAFIELDS_SET = /* GraphQL */ `
+  mutation guardarDatos($metafields: [MetafieldsSetInput!]!) {
+    metafieldsSet(metafields: $metafields) {
       userErrors { field message }
     }
   }
@@ -124,6 +148,58 @@ function rateLimited(ip: string): boolean {
   return false;
 }
 
+/**
+ * Cumpleaños, autorización de datos y el nombre que le faltaba a un cliente
+ * viejo. Va aparte y sin romper la respuesta a propósito: si Shopify rechaza
+ * un metafield, el correo ya quedó suscrito y perder eso por un dato
+ * accesorio sería el peor negocio posible. Queda en el log para revisarlo.
+ */
+async function guardarDatosAdicionales(
+  customerId: string,
+  nacimiento: string | null,
+  nombre: string,
+  aceptadoEn: string,
+  faltaNombre: boolean,
+): Promise<void> {
+  const metafields = [
+    {
+      ownerId: customerId,
+      namespace: "custom",
+      key: "politica_datos_aceptada",
+      type: "date_time",
+      value: aceptadoEn,
+    },
+    ...(nacimiento !== null
+      ? [
+          {
+            ownerId: customerId,
+            namespace: "facts",
+            key: "birth_date",
+            type: "date",
+            value: nacimiento,
+          },
+        ]
+      : []),
+  ];
+
+  try {
+    const result = await adminGraphQL(METAFIELDS_SET, { metafields });
+    const errores = userErrorsDe(result.data, "metafieldsSet");
+    if (errores.length > 0) {
+      throw new Error(errores.map((e) => e.message).join("; "));
+    }
+
+    if (faltaNombre) {
+      const { firstName, lastName } = partirNombre(nombre);
+      await adminGraphQL(CUSTOMER_UPDATE, {
+        input: { id: customerId, firstName, ...(lastName !== "" ? { lastName } : {}) },
+      });
+    }
+  } catch (error) {
+    console.error("[newsletter] no se pudieron guardar los datos adicionales:", error);
+  }
+}
+
 export async function POST(request: Request) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
   if (rateLimited(ip)) {
@@ -133,7 +209,7 @@ export async function POST(request: Request) {
     );
   }
 
-  let body: { email?: unknown; nombre?: unknown; apodo?: unknown };
+  let body: Record<string, unknown>;
   try {
     body = await request.json();
   } catch {
@@ -145,14 +221,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
-  const nombre = typeof body.nombre === "string" ? body.nombre.trim().slice(0, 80) : "";
-  if (!/^[^\s@'"\\]+@[^\s@'"\\]+\.[^\s@'"\\]+$/.test(email)) {
-    return NextResponse.json(
-      { error: "Escribe un correo válido para suscribirte." },
-      { status: 400 },
-    );
+  const validacion = validarSuscripcion(body);
+  if (!validacion.ok) {
+    return NextResponse.json({ error: validacion.error }, { status: 400 });
   }
+  const { email, nombre, nacimiento } = validacion.datos;
 
   const hasCredentials =
     ADMIN_TOKEN !== undefined || (CLIENT_ID !== undefined && CLIENT_SECRET !== undefined);
@@ -163,17 +236,21 @@ export async function POST(request: Request) {
     );
   }
 
+  const aceptadoEn = new Date().toISOString();
   const consent = {
     marketingState: "SUBSCRIBED",
     marketingOptInLevel: "SINGLE_OPT_IN",
-    consentUpdatedAt: new Date().toISOString(),
+    consentUpdatedAt: aceptadoEn,
   };
+
+  let customerId: string;
+  let faltaNombre: boolean;
 
   try {
     const search = await adminGraphQL(CUSTOMER_SEARCH, { q: `email:'${email}'` });
     const existing = (
       search.data as
-        | { customers?: { edges?: Array<{ node: { id: string } }> } }
+        | { customers?: { edges?: Array<{ node: { id: string; firstName: string | null } }> } }
         | undefined
     )?.customers?.edges?.[0]?.node;
 
@@ -187,11 +264,17 @@ export async function POST(request: Request) {
           `userErrors al actualizar consentimiento: ${errores.map((e) => e.message).join("; ")}`,
         );
       }
+      customerId = existing.id;
+      /* Un cliente viejo puede venir sin nombre (por ejemplo, importado del
+         sitio anterior): esta es la ocasión de completarlo. */
+      faltaNombre = existing.firstName === null || existing.firstName.trim() === "";
     } else {
+      const { firstName, lastName } = partirNombre(nombre);
       const result = await adminGraphQL(CUSTOMER_CREATE, {
         input: {
           email,
-          ...(nombre !== "" ? { firstName: nombre } : {}),
+          firstName,
+          ...(lastName !== "" ? { lastName } : {}),
           tags: ["newsletter", "blog"],
           emailMarketingConsent: consent,
         },
@@ -202,6 +285,14 @@ export async function POST(request: Request) {
           `userErrors al crear el cliente: ${errores.map((e) => e.message).join("; ")}`,
         );
       }
+      const creado = (
+        result.data as { customerCreate?: { customer?: { id: string } | null } } | undefined
+      )?.customerCreate?.customer;
+      if (creado === undefined || creado === null) {
+        throw new Error("Shopify no devolvió el cliente creado");
+      }
+      customerId = creado.id;
+      faltaNombre = false;
     }
   } catch (error) {
     console.error("[newsletter] fallo la suscripción:", error);
@@ -210,6 +301,8 @@ export async function POST(request: Request) {
       { status: 502 },
     );
   }
+
+  await guardarDatosAdicionales(customerId, nacimiento, nombre, aceptadoEn, faltaNombre);
 
   return NextResponse.json({ ok: true });
 }
