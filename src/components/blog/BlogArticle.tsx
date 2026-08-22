@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatPostDate, type BlogPost } from "@/lib/blog";
 import { LegacyArticleEnhancements } from "@/components/blog/LegacyArticleEnhancements";
+import { BlogNewsletter } from "@/components/blog/BlogNewsletter";
 
 /**
  * Las tablas heredadas de WordPress se desbordan en móvil: cada una va dentro
@@ -87,6 +88,8 @@ export function BlogArticle({ post, related }: { post: BlogPost; related: BlogPo
           </Button>
         </CardContent>
       </Card>
+
+      <BlogNewsletter />
 
       {related.length > 0 ? (
         <aside className="mt-14">

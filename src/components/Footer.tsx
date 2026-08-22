@@ -43,6 +43,7 @@ const COLUMNS = [
       { label: "Nuestra historia", href: "/#historia" },
       { label: "Actimax Club", href: "/#club" },
       { label: "Blog", href: "/blog" },
+      { label: "Suscríbete al boletín", href: "/#suscribete" },
       { label: "Preguntas frecuentes", href: "/preguntas-frecuentes" },
       { label: "Mi cuenta", href: "/mi-cuenta/" },
       { label: "Políticas de la tienda", href: "/politicas-devolucion-privacidad" },
