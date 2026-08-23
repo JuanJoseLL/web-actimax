@@ -42,6 +42,17 @@ describe("searchKeywords", () => {
     ).toBe(true);
   });
 
+  it('"hidratante" e "hidratarse" encuentran las bebidas, no solo "hidratacion"', () => {
+    for (const consulta of ["hidratante", "hidratarse", "hidratación"]) {
+      expect(
+        matches(consulta, "bebida-deportiva-elite-tarro-500gr", "Bebida Élite", "bebidas", ["durante"]),
+      ).toBe(true);
+    }
+    expect(
+      matches("hidratante", "pre-race-en-tarro-400gr", "Bebida Pre Race", "bebidas", ["antes"]),
+    ).toBe(true);
+  });
+
   it("no inventa proteína en productos que no la aportan", () => {
     expect(
       matches("proteina", "gel-energetico-actimax-caja-x8", "Gel Energético – Caja x 8", "geles", ["durante"]),

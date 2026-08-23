@@ -22,7 +22,9 @@ export function searchKeywords(product: {
     keywords.push("kit", "pack", "combo");
   }
   if (product.type === "bebidas") {
-    keywords.push("bebida", "hidratacion");
+    /* La coincidencia es por subcadena: "hidratacion" no cubre "hidratante"
+       ni "hidratarse", que es como la mitad de la gente nombra una bebida. */
+    keywords.push("bebida", "hidratacion", "hidratante", "hidratarse");
     if (product.momentos.includes("antes")) {
       keywords.push("pre entreno", "preentreno", "pre-entreno", "pre workout", "energizante");
     }
