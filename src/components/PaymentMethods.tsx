@@ -112,9 +112,6 @@ export function PaymentMethods({
           </PaymentLogo>
         </ul>
       </div>
-      <p className="mt-2 font-mono text-[10px] uppercase tracking-wide text-tinta/45">
-        Envíos a toda Colombia · Pago seguro procesado por Wompi
-      </p>
     </section>
   );
 }

@@ -36,6 +36,20 @@ export interface ProductReviewSummary {
   count: number;
 }
 
+/**
+ * Un paso de la guía de uso de un pack ("cuándo tomar qué"). Viene del
+ * metafield `custom.guia_uso` (JSON); el formato se documenta en
+ * docs/metafields-packs.md. `cuando` es la etiqueta corta de la línea de
+ * tiempo ("Desayuno", "Km 7", "Cada 30 min", "Meta +30 min"); `momento`
+ * colorea el paso con el vocabulario de la tienda cuando Operaciones lo llena.
+ */
+export interface GuiaUsoPaso {
+  cuando: string;
+  que: string;
+  nota?: string;
+  momento?: Momento;
+}
+
 export interface Product {
   id: string;
   variantId: string | null;
@@ -55,6 +69,10 @@ export interface Product {
   descriptionKind: "recomendaciones" | "detalle";
   /** Q/A reales extraídas del bloque "Preguntas Frecuentes" de la descripción. */
   faqs: FaqItem[];
+  /** Qué trae el pack: metafield `custom.contenido` o, a falta, la lista de la descripción. Vacío fuera de los kits. */
+  contenido: string[];
+  /** Cuándo tomar qué: metafield `custom.guia_uso`. Vacío mientras Operaciones no lo cargue. */
+  guiaUso: GuiaUsoPaso[];
   images: string[];
   options: ProductOption[];
   variants: ProductVariant[];

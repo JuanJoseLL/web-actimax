@@ -53,50 +53,64 @@ export function ImageGallery({ images, alt }: { images: string[]; alt: string })
     <>
       <div>
         {images.length > 0 ? (
-          <div
-            ref={galleryRef}
-            onScroll={(event) => {
-              const gallery = event.currentTarget;
-              const next = Math.round(gallery.scrollLeft / gallery.clientWidth);
-              setActive(Math.max(0, Math.min(next, images.length - 1)));
-            }}
-            className="product-gallery-scroll flex aspect-square snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth rounded-xl bg-muted ring-1 ring-border motion-reduce:scroll-auto"
-          >
-            {images.map((src, index) => (
-              <button
-                type="button"
-                key={`${src}-${index}`}
-                onClick={() => openZoom(index)}
-                aria-label={`Ampliar imagen ${index + 1} de ${images.length}: ${alt}`}
-                className="group relative block aspect-square w-full shrink-0 snap-center cursor-zoom-in overflow-hidden"
+          <div className="relative">
+            <div
+              ref={galleryRef}
+              onScroll={(event) => {
+                const gallery = event.currentTarget;
+                const next = Math.round(gallery.scrollLeft / gallery.clientWidth);
+                setActive(Math.max(0, Math.min(next, images.length - 1)));
+              }}
+              /* En móvil la caja es 4:3 y nunca más de media pantalla: con la
+                 foto cuadrada a ancho completo, precio y botón quedaban a un
+                 scroll entero del H1. En escritorio vuelve al cuadrado. */
+              className="product-gallery-scroll flex aspect-[4/3] max-h-[48vh] snap-x snap-mandatory overflow-x-auto overscroll-x-contain scroll-smooth rounded-xl bg-muted ring-1 ring-border motion-reduce:scroll-auto lg:aspect-square lg:max-h-none"
+            >
+              {images.map((src, index) => (
+                <button
+                  type="button"
+                  key={`${src}-${index}`}
+                  onClick={() => openZoom(index)}
+                  aria-label={`Ampliar imagen ${index + 1} de ${images.length}: ${alt}`}
+                  className="group relative block h-full w-full shrink-0 snap-center cursor-zoom-in overflow-hidden"
+                >
+                  {/* La primera foto es el LCP de la ficha: precarga + prioridad
+                      alta. Las fotos son cuadradas, así que en la caja 4:3 de
+                      móvil ocupan el 75% del ancho; pedir 100vw traía un
+                      candidato más pesado del necesario. */}
+                  <Image
+                    src={src}
+                    alt={index === 0 ? alt : `${alt}, imagen ${index + 1}`}
+                    fill
+                    preload={index === 0}
+                    fetchPriority={index === 0 ? "high" : undefined}
+                    sizes="(min-width: 1280px) 580px, (min-width: 1024px) 50vw, 75vw"
+                    className="object-contain p-3 mix-blend-multiply transition-transform duration-300 group-hover:scale-[1.02] sm:p-8"
+                  />
+                  <span className="pointer-events-none absolute bottom-3 right-3 flex min-h-9 items-center gap-2 rounded-full bg-background/90 px-3 font-mono text-[10px] font-bold uppercase tracking-wider text-foreground shadow-sm backdrop-blur-sm">
+                    <ExpandIcon className="size-4" />
+                    Ampliar
+                  </span>
+                </button>
+              ))}
+            </div>
+            {images.length > 1 ? (
+              /* Contador dentro de la caja (y no debajo) para no empujar el
+                 botón de compra bajo el pliegue en móvil. */
+              <p
+                aria-live="polite"
+                className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-background/90 px-2.5 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-tinta/70 shadow-sm backdrop-blur-sm sm:hidden"
               >
-                <Image
-                  src={src}
-                  alt={index === 0 ? alt : `${alt}, imagen ${index + 1}`}
-                  fill
-                  preload={index === 0}
-                  sizes="(min-width: 1280px) 580px, (min-width: 1024px) 50vw, 100vw"
-                  className="object-contain p-4 mix-blend-multiply transition-transform duration-300 group-hover:scale-[1.02] sm:p-8"
-                />
-                <span className="pointer-events-none absolute bottom-3 right-3 flex min-h-9 items-center gap-2 rounded-full bg-background/90 px-3 font-mono text-[10px] font-bold uppercase tracking-wider text-foreground shadow-sm backdrop-blur-sm">
-                  <ExpandIcon className="size-4" />
-                  Ampliar
-                </span>
-              </button>
-            ))}
+                {active + 1} / {images.length} · Desliza
+              </p>
+            ) : null}
           </div>
         ) : (
-          <div className="aspect-square rounded-xl bg-muted ring-1 ring-border" />
+          <div className="aspect-[4/3] max-h-[48vh] rounded-xl bg-muted ring-1 ring-border lg:aspect-square lg:max-h-none" />
         )}
 
         {images.length > 1 ? (
           <>
-            <p
-              aria-live="polite"
-              className="mt-3 text-center font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground sm:hidden"
-            >
-              Imagen {active + 1} de {images.length} · Desliza para ver más
-            </p>
             <div className="product-gallery-scroll mt-3 hidden gap-2 overflow-x-auto pb-1 sm:flex">
               {images.map((src, index) => (
                 <Button

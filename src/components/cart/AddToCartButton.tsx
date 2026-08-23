@@ -79,7 +79,7 @@ export function AddToCartButton({
         disabled={disabled}
         variant="race"
         size="lg"
-        className="w-full py-4 text-xl"
+        className="w-full py-4 text-lg sm:text-xl"
       >
         <ShoppingBagIcon data-icon="inline-start" />
         {disabled ? "Agotado" : "Agregar al carrito"}

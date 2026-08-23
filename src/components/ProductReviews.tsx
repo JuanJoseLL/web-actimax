@@ -1,4 +1,5 @@
-import { BadgeCheckIcon } from "lucide-react";
+import { ArrowRightIcon, BadgeCheckIcon } from "lucide-react";
+import Link from "next/link";
 import { ReviewForm } from "@/components/ReviewForm";
 import { formatReviewRating } from "@/components/ProductRating";
 import { Separator } from "@/components/ui/separator";
@@ -53,6 +54,79 @@ function Stars({ rating, className }: { rating: number; className?: string }) {
 }
 
 const FECHA = new Intl.DateTimeFormat("es-CO", { month: "long", year: "numeric" });
+
+/**
+ * Las dos reseñas que mejor venden: con texto, mejor calificadas, compra
+ * verificada primero y, a igualdad, la más reciente.
+ */
+export function resenasDestacadas(reviews: ProductReview[], cantidad = 2): ProductReview[] {
+  return reviews
+    .filter((review) => review.text.trim() !== "")
+    .sort(
+      (a, b) =>
+        b.rating - a.rating ||
+        Number(b.verified) - Number(a.verified) ||
+        Date.parse(b.date) - Date.parse(a.date),
+    )
+    .slice(0, cantidad);
+}
+
+/**
+ * Modo compacto para debajo del botón de compra: la prueba social donde se
+ * toma la decisión, no tres pantallas abajo. Enlaza a la sección completa
+ * (#resenas), que sigue siendo la única con formulario y listado entero.
+ */
+export function ProductReviewsCompact({
+  reviews,
+  className,
+}: {
+  reviews: ProductReview[];
+  className?: string;
+}) {
+  const destacadas = resenasDestacadas(reviews);
+  if (destacadas.length === 0) return null;
+  const promedio = reviewsAverage(reviews);
+
+  return (
+    <section aria-labelledby="resenas-destacadas" className={className}>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <h2
+          id="resenas-destacadas"
+          className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-azul"
+        >
+          Lo que dicen los que ya lo corrieron
+        </h2>
+        <Link
+          href="#resenas"
+          className="inline-flex items-center gap-1 font-mono text-[11px] font-semibold text-tinta/60 underline-offset-4 hover:text-azul hover:underline"
+        >
+          {formatReviewRating(promedio)} ★ · {reviews.length === 1 ? "1 reseña" : `${reviews.length} reseñas`}
+          <ArrowRightIcon aria-hidden className="size-3" />
+        </Link>
+      </div>
+      <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+        {destacadas.map((review) => (
+          <li
+            key={review.id ?? `${review.reviewer}-${review.date}`}
+            className="rounded-md border border-tinta/10 bg-background px-3.5 py-3"
+          >
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <Stars rating={review.rating} />
+              <p className="text-sm font-bold text-tinta">{review.reviewer}</p>
+              {review.verified ? (
+                <p className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-wide text-azul">
+                  <BadgeCheckIcon aria-hidden className="size-3.5" />
+                  Verificada
+                </p>
+              ) : null}
+            </div>
+            <p className="mt-1.5 line-clamp-3 text-sm leading-relaxed text-tinta/75">{review.text}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
 
 /**
  * Reseñas reales de clientes en la página de producto. El JSON-LD con el

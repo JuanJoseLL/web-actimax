@@ -25,6 +25,8 @@ function producto(cambios: Partial<Product> = {}): Product {
     descriptionHtml: "<p>Modo de uso.</p>",
     descriptionKind: "detalle",
     faqs: [],
+    contenido: [],
+    guiaUso: [],
     images: ["https://cdn.shopify.com/1.jpg"],
     options: [{ name: "Sabor", values: ["Mora", "Limón"] }],
     variants: [

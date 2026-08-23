@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import catalog from "../data/catalog.json";
 import { descriptionFields } from "./description";
+import { contenidoDelPack } from "./pack";
 import { productFaq } from "./product-faq";
 import { isMomento, isProductType, type Product } from "./taxonomia";
 
@@ -16,6 +17,7 @@ interface RawProduct {
 
 /** Réplica mínima de localProducts(): mismas descripciones que ve la web. */
 function toProduct(p: RawProduct): Product {
+  const descripcion = descriptionFields((p.shortDescriptionHtml ?? "") + (p.descriptionHtml ?? ""));
   return {
     id: p.handle,
     variantId: null,
@@ -28,7 +30,9 @@ function toProduct(p: RawProduct): Product {
     regularPrice: 0,
     onSale: false,
     inStock: true,
-    ...descriptionFields((p.shortDescriptionHtml ?? "") + (p.descriptionHtml ?? "")),
+    ...descripcion,
+    contenido: p.type === "kits" ? contenidoDelPack(null, descripcion.shortDescriptionHtml) : [],
+    guiaUso: [],
     images: [],
     options: [],
     variants: [],

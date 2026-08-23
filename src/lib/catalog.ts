@@ -1,6 +1,6 @@
 import { cacheLife, cacheTag } from "next/cache";
 import localCatalog from "@/data/catalog.json";
-import { descriptionFields } from "./description";
+import { descriptionFields, sinListaDeContenido } from "./description";
 import {
   DEPORTE_LABELS,
   isMomento,
@@ -10,6 +10,7 @@ import {
   type ProductOptionValue,
   type ProductVariant,
 } from "@/lib/taxonomia";
+import { contenidoDelPack, parseGuiaUso } from "@/lib/pack";
 import { initialProductVariant } from "@/lib/product-variants";
 import { localReviewSummary, shopifyReviewSummary } from "@/lib/reviews";
 
@@ -39,6 +40,12 @@ const PRODUCTS_QUERY = /* GraphQL */ `
           value
         }
         reviewCount: metafield(namespace: "reviews", key: "rating_count") {
+          value
+        }
+        contenido: metafield(namespace: "custom", key: "contenido") {
+          value
+        }
+        guiaUso: metafield(namespace: "custom", key: "guia_uso") {
           value
         }
         images(first: 12) {
@@ -84,6 +91,10 @@ interface ShopifyProductNode {
   tags: string[];
   reviewRating: { value: string } | null;
   reviewCount: { value: string } | null;
+  /* Metafields de los packs (docs/metafields-packs.md). Llegan null mientras
+     Operaciones no los cargue o si la definición no tiene acceso Storefront. */
+  contenido: { value: string } | null;
+  guiaUso: { value: string } | null;
   images: { nodes: Array<{ url: string }> };
   options: ProductOption[];
   variants: {
@@ -114,6 +125,10 @@ function prices(
   return { price, regularPrice, onSale: regularPrice > price };
 }
 
+function contenidoHtml(shortDescriptionHtml: string, contenido: string[]): string {
+  return contenido.length > 0 ? sinListaDeContenido(shortDescriptionHtml) : shortDescriptionHtml;
+}
+
 function mapShopifyProduct(node: ShopifyProductNode): Product {
   const variants: ProductVariant[] = node.variants.nodes.map((variant) => ({
     id: variant.id,
@@ -129,6 +144,13 @@ function mapShopifyProduct(node: ShopifyProductNode): Product {
 
   const tags = node.tags.map((t) => t.toLowerCase().trim());
   const type = tags.find(isProductType) ?? null;
+  const descripcion = descriptionFields(node.descriptionHtml ?? "");
+  /* La lista de la descripción solo sirve de respaldo en los kits: en un
+     gel el primer <ul> son sabores o beneficios, no contenido. */
+  const contenido = contenidoDelPack(
+    node.contenido?.value,
+    type === "kits" ? descripcion.shortDescriptionHtml : "",
+  );
 
   return {
     id: node.id,
@@ -142,7 +164,12 @@ function mapShopifyProduct(node: ShopifyProductNode): Product {
     regularPrice,
     onSale: variant?.onSale ?? false,
     inStock: variant?.inStock ?? node.availableForSale,
-    ...descriptionFields(node.descriptionHtml ?? ""),
+    ...descripcion,
+    /* Con el bloque "Qué trae el pack" en la ficha, la misma lista dentro
+       del texto corto quedaba repetida a cuatro líneas de distancia. */
+    shortDescriptionHtml: contenidoHtml(descripcion.shortDescriptionHtml, contenido),
+    contenido,
+    guiaUso: parseGuiaUso(node.guiaUso?.value),
     images: node.images.nodes.map((img) => img.url),
     options: node.options,
     variants,
@@ -205,7 +232,7 @@ interface LocalVariant {
   image?: string | null;
 }
 
-interface LocalProduct extends Omit<Product, "id" | "variantId" | "type" | "momentos" | "options" | "variants" | "descriptionKind" | "faqs" | "reviewSummary"> {
+interface LocalProduct extends Omit<Product, "id" | "variantId" | "type" | "momentos" | "options" | "variants" | "descriptionKind" | "faqs" | "reviewSummary" | "contenido" | "guiaUso"> {
   id: number;
   type: string;
   momentos: string[];
@@ -249,15 +276,21 @@ function localProducts(): Product[] {
             },
           ];
     const variant = initialProductVariant(variants);
+    const type = isProductType(p.type) ? p.type : null;
+    /* El JSON local guarda la partición vieja (solo por marcador);
+       re-partir el cuerpo completo aplica las mismas reglas que Shopify. */
+    const descripcion = descriptionFields(p.shortDescriptionHtml + p.descriptionHtml);
+    const contenido = contenidoDelPack(null, type === "kits" ? descripcion.shortDescriptionHtml : "");
 
     return {
       ...p,
-      /* El JSON local guarda la partición vieja (solo por marcador);
-         re-partir el cuerpo completo aplica las mismas reglas que Shopify. */
-      ...descriptionFields(p.shortDescriptionHtml + p.descriptionHtml),
+      ...descripcion,
+      shortDescriptionHtml: contenidoHtml(descripcion.shortDescriptionHtml, contenido),
+      contenido,
+      guiaUso: [],
       id: String(p.id),
       variantId: variant?.id ?? null,
-      type: isProductType(p.type) ? p.type : null,
+      type,
       momentos: p.momentos.filter(isMomento),
       price: variant?.price ?? p.price,
       regularPrice: variant?.regularPrice ?? p.regularPrice,

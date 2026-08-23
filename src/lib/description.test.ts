@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { descriptionFields, extractFaqs, promoteLabelHeadings, splitDescription, stripTags } from "./description";
+import {
+  descriptionFields,
+  extractFaqs,
+  itemsDeLista,
+  promoteLabelHeadings,
+  sinListaDeContenido,
+  splitDescription,
+  stripTags,
+} from "./description";
 
 const parrafo = (chars: number) => `<p>${"palabra ".repeat(Math.ceil(chars / 8))}</p>`;
 
@@ -153,5 +161,41 @@ describe("descriptionFields con la ficha completa", () => {
     expect(f.descriptionKind).toBe("recomendaciones");
     expect(f.descriptionHtml).toBe(`<h3>Sabores de Recovery</h3> <p>Vainilla.</p>`);
     expect(f.faqs).toEqual([{ question: "¿Cuántas porciones trae?", answer: "Doce." }]);
+  });
+});
+
+describe("sinListaDeContenido", () => {
+  it("retira el <ul> y la etiqueta 'incluye:' que lo antecede", () => {
+    const html =
+      "<p>Intro.</p><p><b>El Energy Pack 15K incluye:</b></p><ul> <li>1 Sobre de Pre Race</li>\n<li>1 Energy Gel</li>\n</ul>";
+    expect(sinListaDeContenido(html)).toBe("<p>Intro.</p>");
+  });
+
+  it("retira las viñetas '•' en párrafo y deja el párrafo promocional que seguía", () => {
+    const html =
+      "<p>Intro.</p><p>El Energy Pack 10K incluye:</p><p>• 1 Sobre de Pre Race<br> • 1 Energy Gel<br> • 1 Sobre de Recovery Pro</p><p>*Pack con unidades limitadas.</p>";
+    expect(sinListaDeContenido(html)).toBe("<p>Intro.</p>\n<p>*Pack con unidades limitadas.</p>".replace("\n", ""));
+  });
+
+  it("en texto plano cada viñeta termina en su primera frase", () => {
+    const html =
+      "<strong>El Energy Pack incluye:</strong>\n• 1 Sobre de Bebida Élite.\n• 1 Termo plegable (250 ml).Lleva a todas partes la hidratación.";
+    expect(sinListaDeContenido(html)).toBe("Lleva a todas partes la hidratación.");
+  });
+
+  it("una lista sin etiqueta también sale; sin lista no toca nada", () => {
+    expect(sinListaDeContenido("<p>Intro.</p><ul><li>1 Sobre</li></ul><p>Cierre.</p>")).toBe(
+      "<p>Intro.</p><p>Cierre.</p>",
+    );
+    expect(sinListaDeContenido("<p>Solo texto.</p>")).toBe("<p>Solo texto.</p>");
+  });
+});
+
+describe("itemsDeLista", () => {
+  it("lee <li> y limpia promos pegadas al último item", () => {
+    expect(itemsDeLista("<ul><li>1 Sobre</li><li>2 Geles*Oferta por tiempo limitado</li></ul>")).toEqual([
+      "1 Sobre",
+      "2 Geles",
+    ]);
   });
 });

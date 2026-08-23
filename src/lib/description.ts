@@ -180,6 +180,79 @@ export function splitDescription(body: string): DescriptionSplit {
   return { shortDescriptionHtml: body, descriptionHtml: "", descriptionKind: "detalle" };
 }
 
+/* ------------------------------------------------------------------ */
+/* Lista de contenido de un kit.                                        */
+/* ------------------------------------------------------------------ */
+
+/** Promesas comerciales con fecha de caducidad: no van en datos estructurados ni en bloques fijos. */
+export const PROMO_PATTERN =
+  /oferta|tiempo limitado|unidades limitadas|agotar existencia|precio de una|promoci|2x1|gratis!|black friday/i;
+
+function limpiarItem(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/[.\s]+$/, "");
+}
+
+/**
+ * Solo la lista de contenido del kit: <li> cuando los hay, y si no, las
+ * viñetas "•" que algunos kits usan en <div>/<p> planos. El resto del HTML
+ * corto es copy de marketing y no responde "¿qué incluye?".
+ */
+export function itemsDeLista(html: string): string[] {
+  /* "*Pack con unidades limitadas…" y similares viajan pegados al último
+     item: fuera el asterisco promocional y fuera el item si es pura promo. */
+  const depurar = (items: string[]): string[] =>
+    items
+      .map((item) => item.replace(/\*.*$/, "").trim().replace(/[.\s]+$/, ""))
+      .filter((item) => item.length > 0 && !PROMO_PATTERN.test(item));
+
+  const lis = [...html.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi)].map((m) => limpiarItem(m[1]));
+  if (lis.length > 0) return depurar(lis);
+
+  const plano = limpiarItem(html);
+  if (!plano.includes("•")) return [];
+  /* Tras la última viñeta puede seguir el resto de la descripción: cada
+     item termina en su primera frase ("1 Termo plegable (250 ml)."). */
+  return depurar(
+    plano
+      .split("•")
+      .slice(1)
+      .map((item) => {
+        const puntoFinal = item.indexOf(".");
+        return puntoFinal === -1 ? item : item.slice(0, puntoFinal);
+      }),
+  );
+}
+
+/* La etiqueta que antecede a la lista ("El Energy Pack 15K incluye:", "El kit
+   consta de:"), como párrafo propio o como <strong> suelto. */
+const ETIQUETA_CONTENIDO = String.raw`(?:<p>\s*)?(?:<(?:b|strong)>)?\s*[^<•]{0,80}?(?:incluye|consta de|contiene)[^<•]{0,30}?:?\s*(?:<\/(?:b|strong)>)?\s*:?\s*(?:<\/p>)?\s*`;
+const LISTA_UL = String.raw`<ul[^>]*>[\s\S]*?<\/ul>`;
+/* Viñetas "•" dentro de un <p> o sueltas en texto plano (Pura Candela).
+   Cada viñeta termina en su primera frase: en texto plano nada más separa
+   el último item del párrafo que le sigue pegado. */
+const LISTA_VINETAS = String.raw`(?:<p>\s*)?(?:•[^•<.]*\.?\s*(?:<br\s*\/?>)?\s*)+(?:<\/p>)?`;
+const LISTA_DE_CONTENIDO = new RegExp(
+  `(?:${ETIQUETA_CONTENIDO})?(?:${LISTA_UL}|${LISTA_VINETAS})`,
+  "i",
+);
+
+/**
+ * Descripción corta sin la lista de contenido del kit: cuando la ficha la
+ * pinta como bloque propio ("Qué trae el pack"), dejarla también en el texto
+ * la duplicaba a cuatro líneas de distancia.
+ */
+export function sinListaDeContenido(html: string): string {
+  return html
+    .replace(LISTA_DE_CONTENIDO, "")
+    .replace(/<p>\s*<\/p>/g, "")
+    .trim();
+}
+
 export function descriptionFields(
   body: string,
 ): DescriptionSplit & { excerpt: string; faqs: FaqItem[] } {

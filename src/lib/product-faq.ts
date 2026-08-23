@@ -8,6 +8,7 @@
 /* Imports relativos: vitest no resuelve el alias "@/" y este módulo
    tiene test propio (product-faq.test.ts). */
 import type { FaqItem } from "../data/faq";
+import { PROMO_PATTERN } from "./description";
 import { ENVIO_GRATIS_UMBRAL } from "./envio";
 import { formatCOP } from "./format";
 import { normalize } from "./palette-search";
@@ -58,10 +59,6 @@ const EXTRA_FAQS: Record<string, FaqItem[]> = {
   ],
 };
 
-/** Promesas comerciales con fecha de caducidad: no van en datos estructurados. */
-const PROMO_PATTERN =
-  /oferta|tiempo limitado|unidades limitadas|agotar existencia|precio de una|promoci|2x1|gratis!|black friday/i;
-
 /**
  * Recorta a frases completas (el excerpt viene cortado a 280 caracteres
  * duros, a veces a mitad de palabra) y descarta las frases promocionales,
@@ -73,46 +70,6 @@ function frasesLimpias(text: string): string {
     .map((frase) => frase.trim())
     .filter((frase) => frase.length > 0 && !PROMO_PATTERN.test(frase))
     .join(" ");
-}
-
-function limpiarItem(html: string): string {
-  return html
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .replace(/[.\s]+$/, "");
-}
-
-/**
- * Solo la lista de contenido del kit: <li> cuando los hay, y si no, las
- * viñetas "•" que algunos kits usan en <div>/<p> planos. El resto del HTML
- * corto es copy de marketing y no responde "¿qué incluye?".
- */
-function itemsDeLista(html: string): string[] {
-  /* "*Pack con unidades limitadas…" y similares viajan pegados al último
-     item: fuera el asterisco promocional y fuera el item si es pura promo. */
-  const depurar = (items: string[]): string[] =>
-    items
-      .map((item) => item.replace(/\*.*$/, "").trim().replace(/[.\s]+$/, ""))
-      .filter((item) => item.length > 0 && !PROMO_PATTERN.test(item));
-
-  const lis = [...html.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi)].map((m) => limpiarItem(m[1]));
-  if (lis.length > 0) return depurar(lis);
-
-  const plano = limpiarItem(html);
-  if (!plano.includes("•")) return [];
-  /* Tras la última viñeta puede seguir el resto de la descripción: cada
-     item termina en su primera frase ("1 Termo plegable (250 ml)."). */
-  return depurar(
-    plano
-      .split("•")
-      .slice(1)
-      .map((item) => {
-        const puntoFinal = item.indexOf(".");
-        return puntoFinal === -1 ? item : item.slice(0, puntoFinal);
-      }),
-  );
 }
 
 /* Temas donde una FAQ real de la descripción deja obsoleta a la generada:
@@ -167,7 +124,7 @@ export function productFaq(product: Product): FaqItem[] {
   }
 
   if (product.type === "kits") {
-    const contenido = itemsDeLista(product.shortDescriptionHtml);
+    const contenido = product.contenido;
     if (contenido.length > 0) {
       items.push({
         question: `¿Qué incluye ${title}?`,

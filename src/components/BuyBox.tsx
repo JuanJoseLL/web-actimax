@@ -7,6 +7,7 @@ import { track } from "@/lib/track";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { BuyNowButton } from "@/components/cart/BuyNowButton";
 import type { CartLine } from "@/components/cart/CartProvider";
+import { useProductPurchase } from "@/components/ProductPurchase";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import {
   Select,
@@ -18,7 +19,6 @@ import {
 import { formatCOP } from "@/lib/format";
 import { ENVIO_GRATIS_UMBRAL } from "@/lib/envio";
 import {
-  initialProductVariant,
   selectableProductOptions,
   selectedOptionValue,
   selectProductVariant,
@@ -34,16 +34,19 @@ interface BuyBoxProduct extends CartLine {
 interface BuyBoxProps {
   product: BuyBoxProduct;
   inStock: boolean;
-  /** Permite mover el bloque de precio de la página sin duplicarlo mientras migra. */
-  showPrice?: boolean;
   /** Barra fija de compra al fondo de la pantalla cuando este bloque sale de vista. */
   stickyBar?: boolean;
 }
 
-export function BuyBox({ product, inStock, showPrice = false, stickyBar = false }: BuyBoxProps) {
-  const [qty, setQty] = useState(1);
-  const boxRef = useRef<HTMLDivElement | null>(null);
-  const [boxVisible, setBoxVisible] = useState(true);
+/**
+ * Selector de variante, cantidad y botones de compra. El precio grande ya no
+ * vive aquí: lo pinta <ProductPrice> junto al H1 leyendo el mismo estado
+ * (ProductPurchaseProvider), así que el componente exige ese provider arriba.
+ */
+export function BuyBox({ product, inStock, stickyBar = false }: BuyBoxProps) {
+  const { selectedVariant, setSelectedVariant, qty, setQty } = useProductPurchase();
+  const ctaRef = useRef<HTMLDivElement | null>(null);
+  const [ctaVisible, setCtaVisible] = useState(true);
 
   /* La otra mitad del embudo por producto: junto a agregar_al_carrito
      distingue "nadie lo ve" de "lo ven y nadie lo agrega" — problemas
@@ -54,18 +57,18 @@ export function BuyBox({ product, inStock, showPrice = false, stickyBar = false 
 
   useEffect(() => {
     if (!stickyBar) return;
-    const box = boxRef.current;
-    if (box === null) return;
-    const observer = new IntersectionObserver(([entry]) =>
-      setBoxVisible(entry.isIntersecting),
+    const cta = ctaRef.current;
+    if (cta === null) return;
+    /* El header pegajoso (~90 px) tapa lo que pasa por debajo: un botón
+       escondido detrás de él cuenta como fuera de vista. */
+    const observer = new IntersectionObserver(
+      ([entry]) => setCtaVisible(entry.isIntersecting),
+      { rootMargin: "-96px 0px 0px 0px" },
     );
-    observer.observe(box);
+    observer.observe(cta);
     return () => observer.disconnect();
   }, [stickyBar]);
   const variants = product.variants ?? [];
-  const [selectedVariant, setSelectedVariant] = useState(() =>
-    initialProductVariant(variants),
-  );
   const options = selectableProductOptions(product.options ?? [], variants);
   const selectedPrice = selectedVariant?.price ?? product.price;
   const selectedRegularPrice =
@@ -80,31 +83,10 @@ export function BuyBox({ product, inStock, showPrice = false, stickyBar = false 
     image: selectedVariant?.image ?? product.image,
   };
 
-  const showBar = stickyBar && !boxVisible;
+  const showBar = stickyBar && !ctaVisible;
 
   return (
-    <div ref={boxRef} className="grid gap-4">
-      {showPrice ? (
-        <div aria-live="polite">
-          <div className="flex items-baseline gap-3">
-            <p className="font-mono text-3xl font-bold tabular-nums">
-              {formatCOP(selectedPrice)}
-            </p>
-            {selectedRegularPrice > selectedPrice ? (
-              <p className="font-mono text-base tabular-nums text-tinta/40 line-through">
-                {formatCOP(selectedRegularPrice)}
-              </p>
-            ) : null}
-          </div>
-          <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-primary">
-            <TruckIcon aria-hidden className="size-4" />
-            {selectedPrice * qty >= ENVIO_GRATIS_UMBRAL
-              ? "Envío gratis incluido en este pedido"
-              : `Envío gratis desde ${formatCOP(ENVIO_GRATIS_UMBRAL)}`}
-          </p>
-        </div>
-      ) : null}
-
+    <div className="grid gap-4">
       {options.length > 0 ? (
         <div className="grid gap-3 sm:grid-cols-2">
           {options.map((option, index) => {
@@ -147,17 +129,28 @@ export function BuyBox({ product, inStock, showPrice = false, stickyBar = false 
         </div>
       ) : null}
 
-      <p
-        aria-live="polite"
-        className={`font-mono text-[11px] font-bold uppercase tracking-wider ${
-          selectedInStock ? "text-primary" : "text-destructive"
-        }`}
-      >
-        {selectedInStock ? "Disponible" : "Agotado"}
-      </p>
+      <div className="grid gap-1.5">
+        <p
+          aria-live="polite"
+          className={`font-mono text-[11px] font-bold uppercase tracking-wider ${
+            selectedInStock ? "text-primary" : "text-destructive"
+          }`}
+        >
+          {selectedInStock ? "Disponible" : "Agotado"}
+        </p>
+        <p className="flex items-center gap-1.5 text-[13px] font-semibold text-primary">
+          <TruckIcon aria-hidden className="size-4" />
+          {selectedPrice * qty >= ENVIO_GRATIS_UMBRAL
+            ? "Envío gratis en este pedido"
+            : `Envío gratis desde ${formatCOP(ENVIO_GRATIS_UMBRAL)}`}
+        </p>
+      </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <QuantitySelector value={qty} onChange={setQty} label="cantidad" className="sm:w-36" />
+      {/* La barra fija vigila esta fila y no el bloque entero: con el
+          precio arriba y "qué trae el pack" antes, el botón es lo primero
+          que cae bajo el pliegue mientras el bloque sigue "visible". */}
+      <div ref={ctaRef} className="flex gap-3">
+        <QuantitySelector value={qty} onChange={setQty} label="cantidad" className="shrink-0 sm:w-36" />
         <div className="flex-1">
           <AddToCartButton
             product={cartLine}
@@ -171,10 +164,10 @@ export function BuyBox({ product, inStock, showPrice = false, stickyBar = false 
       <BuyNowButton product={cartLine} qty={qty} disabled={!selectedInStock} />
 
       {stickyBar ? (
-        /* Barra fija de compra: en una columna (por debajo de lg) el precio y
-           el botón quedan a un scroll completo de las reseñas y el FAQ; la
-           barra recupera ese momento de decisión. Se mantiene montada para
-           animar la entrada, e `inert` evita tabular sobre botones ocultos. */
+        /* Barra fija de compra: en una columna (por debajo de lg) el botón
+           queda a un scroll completo de las reseñas y el FAQ; la barra
+           recupera ese momento de decisión. Se mantiene montada para animar
+           la entrada, e `inert` evita tabular sobre botones ocultos. */
         <div
           data-buy-bar
           aria-hidden={!showBar}
