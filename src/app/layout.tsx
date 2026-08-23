@@ -6,14 +6,15 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { MetaPixel } from "@/components/MetaPixel";
 import { CartDrawer } from "@/components/cart/CartDrawer";
-import { CartProvider, type CartLine } from "@/components/cart/CartProvider";
+import { CartProvider } from "@/components/cart/CartProvider";
 import { CommandPalette, type PaletteProduct } from "@/components/CommandPalette";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { Toaster } from "@/components/ui/sonner";
 import { getAllProducts, type Product } from "@/lib/catalog";
-import { initialProductVariant } from "@/lib/product-variants";
+import type { UpsellProduct } from "@/lib/envio-gratis";
+import { initialProductVariant, selectableProductOptions } from "@/lib/product-variants";
 import { DEFAULT_OG_IMAGE, SITE_URL, jsonLd, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
@@ -117,29 +118,39 @@ export default function RootLayout({
   );
 }
 
-function cartUpsellProducts(products: Product[]): CartLine[] {
-  return products
-    .flatMap((product) => {
-      const variant = initialProductVariant(product.variants);
-      if (
-        product.variants.length !== 1 ||
-        variant === undefined ||
-        !product.inStock ||
-        !variant.inStock ||
-        variant.price <= 0
-      ) {
-        return [];
-      }
-      return [{
-        variantId: variant.id ?? product.variantId,
-        variantTitle: variant.title,
-        handle: product.handle,
-        title: product.title,
-        price: variant.price,
-        image: variant.image ?? product.images[0] ?? null,
-      }];
-    })
-    .sort((a, b) => a.price - b.price);
+/**
+ * Catálogo que puede aparecer como sugerencia para completar el envío gratis.
+ *
+ * Antes exigía una sola variante, y eso dejaba fuera a todas las bebidas y
+ * los geles —cada uno tiene sabores—, así que lo único proponible eran
+ * Energy Packs: a quien ya llevaba un pack se le ofrecía otro pack. Ahora
+ * entran los multivariante con solo sus sabores disponibles, y el sabor se
+ * elige dentro del carrito.
+ */
+function cartUpsellProducts(products: Product[]): UpsellProduct[] {
+  return products.flatMap((product) => {
+    if (!product.inStock) return [];
+    const variants = product.variants.filter(
+      (variant) => variant.inStock && variant.price > 0,
+    );
+    const variant = initialProductVariant(variants);
+    if (variant === undefined) return [];
+
+    return [{
+      variantId: variant.id ?? product.variantId,
+      handle: product.handle,
+      title: product.title,
+      type: product.type,
+      /* La brecha se mide contra el sabor más barato: hoy todos cuestan
+         igual, pero si un día no, la sugerencia no debe prometer de más. */
+      price: Math.min(...variants.map((available) => available.price)),
+      image: variant.image ?? product.images[0] ?? null,
+      /* Las opciones se rearman desde las variantes disponibles para que el
+         selector no ofrezca un sabor agotado. */
+      options: selectableProductOptions([], variants),
+      variants,
+    }];
+  });
 }
 
 async function StoreCommandPalette({

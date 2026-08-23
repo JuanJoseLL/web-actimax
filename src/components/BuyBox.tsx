@@ -9,20 +9,9 @@ import { BuyNowButton } from "@/components/cart/BuyNowButton";
 import type { CartLine } from "@/components/cart/CartProvider";
 import { useProductPurchase } from "@/components/ProductPurchase";
 import { QuantitySelector } from "@/components/QuantitySelector";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { VariantOptions } from "@/components/VariantOptions";
 import { formatCOP } from "@/lib/format";
 import { ENVIO_GRATIS_UMBRAL } from "@/lib/envio";
-import {
-  selectableProductOptions,
-  selectedOptionValue,
-  selectProductVariant,
-} from "@/lib/product-variants";
 import type { ProductOption, ProductVariant } from "@/lib/taxonomia";
 
 interface BuyBoxProduct extends CartLine {
@@ -69,7 +58,6 @@ export function BuyBox({ product, inStock, stickyBar = false }: BuyBoxProps) {
     return () => observer.disconnect();
   }, [stickyBar]);
   const variants = product.variants ?? [];
-  const options = selectableProductOptions(product.options ?? [], variants);
   const selectedPrice = selectedVariant?.price ?? product.price;
   const selectedRegularPrice =
     selectedVariant?.regularPrice ?? product.regularPrice ?? product.price;
@@ -87,47 +75,14 @@ export function BuyBox({ product, inStock, stickyBar = false }: BuyBoxProps) {
 
   return (
     <div className="grid gap-4">
-      {options.length > 0 ? (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {options.map((option, index) => {
-            const labelId = `buybox-${product.handle}-${index}`;
-            return (
-              <div key={option.name} className="grid gap-2">
-                <p
-                  id={labelId}
-                  className="font-mono text-[11px] font-bold uppercase tracking-wider text-muted-foreground"
-                >
-                  {option.name}
-                </p>
-                <Select
-                  value={selectedOptionValue(selectedVariant, option.name)}
-                  onValueChange={(value) =>
-                    setSelectedVariant((current) =>
-                      selectProductVariant(
-                        variants,
-                        current,
-                        option.name,
-                        value,
-                      ),
-                    )
-                  }
-                >
-                  <SelectTrigger aria-labelledby={labelId} className="h-11 w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {option.values.map((value) => (
-                      <SelectItem key={value} value={value}>
-                        {value}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            );
-          })}
-        </div>
-      ) : null}
+      <VariantOptions
+        idPrefix={`buybox-${product.handle}`}
+        options={product.options ?? []}
+        variants={variants}
+        selected={selectedVariant}
+        onSelect={setSelectedVariant}
+        className="sm:grid-cols-2"
+      />
 
       <div className="grid gap-1.5">
         <p

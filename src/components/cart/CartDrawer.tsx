@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense, use } from "react";
+import { Suspense, use, useState } from "react";
 import { FlagIcon, LoaderCircleIcon, TriangleAlertIcon, Trash2Icon } from "lucide-react";
 import { QuantitySelector } from "@/components/QuantitySelector";
+import { VariantOptions } from "@/components/VariantOptions";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import {
   useCart,
@@ -23,7 +24,9 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { ENVIO_GRATIS_UMBRAL } from "@/lib/envio";
+import { sugerenciaEnvioGratis, type UpsellProduct } from "@/lib/envio-gratis";
 import { cartLineId } from "@/lib/cart";
+import { initialProductVariant } from "@/lib/product-variants";
 import { formatCOP } from "@/lib/format";
 import { canonicalProductPath } from "@/lib/product-paths";
 
@@ -72,31 +75,63 @@ function EnvioGratisMeta({ subtotal }: { subtotal: number }) {
   );
 }
 
+/**
+ * La otra mitad de la barra de envío gratis: con qué se cierra la brecha.
+ * La barra sola dice "te faltan $37.000" y deja al cliente buscando en el
+ * catálogo; esto le pone el producto y el botón al lado del mensaje.
+ */
 function CartShippingUpsell({
   productsPromise,
   items,
   subtotal,
   onNavigate,
 }: {
-  productsPromise: Promise<CartLine[]>;
+  productsPromise: Promise<UpsellProduct[]>;
   items: CartItem[];
   subtotal: number;
   onNavigate: () => void;
 }) {
   const products = use(productsPromise);
-  const missing = ENVIO_GRATIS_UMBRAL - subtotal;
-  if (missing <= 0) return null;
-
-  const cartHandles = new Set(items.map((item) => item.handle));
-  const product = products.find(
-    (candidate) => !cartHandles.has(candidate.handle) && candidate.price >= missing,
+  const falta = ENVIO_GRATIS_UMBRAL - subtotal;
+  const sugerencia = sugerenciaEnvioGratis(
+    products,
+    items.map((item) => item.handle),
+    falta,
   );
-  if (product === undefined) return null;
+  if (sugerencia === undefined) return null;
+
+  /* `key`: al cambiar la sugerencia hay que reiniciar el sabor elegido. */
+  return (
+    <CartShippingSuggestion
+      key={sugerencia.handle}
+      product={sugerencia}
+      onNavigate={onNavigate}
+    />
+  );
+}
+
+function CartShippingSuggestion({
+  product,
+  onNavigate,
+}: {
+  product: UpsellProduct;
+  onNavigate: () => void;
+}) {
+  const [variant, setVariant] = useState(() => initialProductVariant(product.variants));
+  const line: CartLine = {
+    variantId: variant?.id ?? product.variantId,
+    variantTitle: variant?.title,
+    handle: product.handle,
+    title: product.title,
+    price: variant?.price ?? product.price,
+    image: variant?.image ?? product.image,
+  };
 
   return (
-    <aside className="mx-4 mb-4 rounded-md border border-primary/20 bg-primary/[0.04] p-3.5 sm:mx-5">
+    <aside className="mx-4 mt-4 rounded-md border border-primary/20 bg-primary/[0.04] p-3.5 sm:mx-5">
+      {/* La barra de arriba ya dice cuánto falta; acá basta con qué agregar. */}
       <p className="font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-primary">
-        Una opción para llegar a la meta
+        Completa el envío gratis
       </p>
       <div className="mt-3 grid grid-cols-[3.5rem_minmax(0,1fr)] gap-3">
         <Link
@@ -104,9 +139,9 @@ function CartShippingUpsell({
           onClick={onNavigate}
           className="relative size-14 overflow-hidden rounded-md bg-background"
         >
-          {product.image !== null ? (
+          {line.image !== null ? (
             <Image
-              src={product.image}
+              src={line.image}
               alt=""
               fill
               sizes="56px"
@@ -123,18 +158,28 @@ function CartShippingUpsell({
             {product.title}
           </Link>
           <p className="mt-1 font-mono text-sm font-bold tabular-nums">
-            {formatCOP(product.price)}
+            {formatCOP(line.price)}
           </p>
         </div>
       </div>
+      <VariantOptions
+        idPrefix={`carrito-envio-${product.handle}`}
+        options={product.options}
+        variants={product.variants}
+        selected={variant}
+        onSelect={setVariant}
+        className="mt-3"
+      />
       <div className="mt-3 [&_[data-slot=button]]:w-full">
-        <AddToCartButton product={product} origin="carrito" />
+        {/* `origen` propio: mide cuántas ventas trae la sugerencia, que es lo
+            que hay que poder comparar contra el resto del carrito. */}
+        <AddToCartButton product={line} origin="carrito-envio-gratis" />
       </div>
     </aside>
   );
 }
 
-export function CartDrawer({ productsPromise }: { productsPromise: Promise<CartLine[]> }) {
+export function CartDrawer({ productsPromise }: { productsPromise: Promise<UpsellProduct[]> }) {
   const {
     items,
     subtotal,
@@ -199,6 +244,17 @@ export function CartDrawer({ productsPromise }: { productsPromise: Promise<CartL
           <>
             <EnvioGratisMeta subtotal={subtotal} />
             <div className="flex-1 overflow-y-auto overscroll-contain">
+              {/* Pegado a la barra que dice cuánto falta, no al fondo del
+                  cajón: la decisión se toma leyendo el mensaje, no después
+                  de repasar cada línea del carrito. */}
+              <Suspense fallback={null}>
+                <CartShippingUpsell
+                  productsPromise={productsPromise}
+                  items={items}
+                  subtotal={subtotal}
+                  onNavigate={handleClose}
+                />
+              </Suspense>
               <ul className="px-4 sm:px-5">
                 {items.map((item) => (
                   <li
@@ -261,14 +317,6 @@ export function CartDrawer({ productsPromise }: { productsPromise: Promise<CartL
                   </li>
                 ))}
               </ul>
-              <Suspense fallback={null}>
-                <CartShippingUpsell
-                  productsPromise={productsPromise}
-                  items={items}
-                  subtotal={subtotal}
-                  onNavigate={handleClose}
-                />
-              </Suspense>
             </div>
 
             <SheetFooter className="border-t border-border bg-background px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5">
