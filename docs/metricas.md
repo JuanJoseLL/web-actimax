@@ -104,8 +104,19 @@ Instagram 7 · Facebook 2.
   que las compras salen como «directo». La calidad por fuente se mide en
   ficha → checkout, que ocurre dentro de la misma sesión.
 - **Visitantes reales = visitantes − los de `/en`.** `/en` no existe (404) y
-  recibió 1.581 visitantes bot el 13–14 de agosto. El script los descuenta;
-  cuando se bloquee en el Firewall de Vercel el descuento va a dar cero.
+  recibió 1.581 visitantes bot el 13–14 de agosto y otros 91 el 18–19. Desde
+  el 24 ago 2026 el sitio no envía a Vercel las vistas del 404
+  (`src/components/WebAnalytics.tsx`), así que en ventanas nuevas el descuento
+  da cero y los bots que sondean URLs inventadas ya no cuentan; el script lo
+  conserva para comparar con las semanas anteriores. Como capa adicional hay
+  una regla del Firewall de Vercel sobre `/en` (primero en modo `log`).
+- **Tráfico de fuera de Colombia: se segmenta, no se bloquea.** El 27% de los
+  visitantes (US, MX, ES, AR) son casi todos lectores del blog; solo 4 de 70
+  checkouts de la semana del 16–22 ago vinieron de fuera y ningún pedido.
+  Bloquear por país tumbaría a Googlebot, Merchant Center, el rastreador de
+  Meta, los webhooks de Shopify y los rastreadores de IA, todos con IP
+  extranjera. El tablero muestra la fila «en Colombia» para leer la
+  conversión con el denominador que importa.
 - **Ventanas en UTC, y cada endpoint de Vercel normaliza `until` distinto.**
   Verificado el 23 ago 2026: en `visits/count` y `events/count`,
   `until=2026-08-22` es inclusivo (hasta el 23 a las 00:00) y pasarle hora

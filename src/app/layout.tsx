@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Archivo, Barlow_Condensed, Chivo_Mono } from "next/font/google";
 import { Suspense } from "react";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { MetaPixel } from "@/components/MetaPixel";
+import { WebAnalytics } from "@/components/WebAnalytics";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { CommandPalette, type PaletteProduct } from "@/components/CommandPalette";
@@ -106,7 +106,7 @@ export default function RootLayout({
           </Suspense>
           <Toaster position="top-right" offset={{ top: 108 }} mobileOffset={{ top: 108 }} />
         </CartProvider>
-        <Analytics />
+        <WebAnalytics />
         {process.env.NEXT_PUBLIC_META_PIXEL_ID ? (
           <MetaPixel pixelId={process.env.NEXT_PUBLIC_META_PIXEL_ID} />
         ) : null}

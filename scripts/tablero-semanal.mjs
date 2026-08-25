@@ -133,10 +133,13 @@ async function eventoPorFuente(nombre, ventana) {
 }
 
 async function datosVercel(ventana) {
-  const [visitas, bots, ficha, carrito, checkout, compra, fallido, origenCarrito, fichaFuente, checkoutFuente] =
+  const [visitas, bots, colombia, ficha, carrito, checkout, compra, fallido, origenCarrito, fichaFuente, checkoutFuente] =
     await Promise.all([
       vercel("visits/count", {}, ventana),
+      /* Desde el 24 ago 2026 el sitio no envía las vistas del 404, así que
+         esto da cero en ventanas nuevas; queda para comparar con las viejas. */
       vercel("visits/count", { filter: "requestPath eq '/en'" }, ventana),
+      vercel("visits/count", { filter: "country eq 'CO'" }, ventana),
       eventoPorDispositivo("producto_visto", ventana),
       eventoPorDispositivo("agregar_al_carrito", ventana),
       eventoPorDispositivo("iniciar_checkout", ventana),
@@ -150,6 +153,7 @@ async function datosVercel(ventana) {
     visitantes: visitas.visitors,
     visitantesBots: bots.visitors,
     visitantesReales: visitas.visitors - bots.visitors,
+    visitantesColombia: colombia.visitors,
     ficha,
     carrito,
     checkout,
@@ -284,6 +288,7 @@ function imprimirMarkdown(ventana, v, s) {
   console.log(`| Etapa | Total | Móvil | Escritorio |`);
   console.log(`|---|---:|---:|---:|`);
   console.log(`| Visitantes reales | ${v.visitantesReales} | | | `);
+  console.log(`| — en Colombia | ${v.visitantesColombia} (${pct(v.visitantesColombia, v.visitantesReales)}) | | |`);
   console.log(`| Vieron ficha | ${v.ficha.total.visitors} | ${v.ficha.mobile.visitors} | ${v.ficha.desktop.visitors} |`);
   console.log(
     `| Agregaron al carrito | ${v.carrito.total.visitors} (${pct(v.carrito.total.visitors, v.ficha.total.visitors)}) | ${v.carrito.mobile.visitors} (${pct(v.carrito.mobile.visitors, v.ficha.mobile.visitors)}) | ${v.carrito.desktop.visitors} (${pct(v.carrito.desktop.visitors, v.ficha.desktop.visitors)}) |`,

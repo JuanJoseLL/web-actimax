@@ -7,8 +7,11 @@ export const metadata: Metadata = {
 };
 
 export default function NotFound() {
+  /* data-pagina-404 lo lee WebAnalytics para no contar esta vista. */
   return (
-    <div className="mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6 md:py-32">
+    <div
+      data-pagina-404=""
+      className="mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6 md:py-32">
       <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-azul">
         Error 404
       </p>
