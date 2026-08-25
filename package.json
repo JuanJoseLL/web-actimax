@@ -18,7 +18,8 @@
     "photos:plan": "node --env-file-if-exists=.env.local scripts/update-product-photos.mjs plan",
     "photos:apply": "node --env-file-if-exists=.env.local scripts/update-product-photos.mjs apply",
     "photos:verify": "node --env-file-if-exists=.env.local scripts/update-product-photos.mjs verify",
-    "packs:metafields": "node --env-file-if-exists=.env.local scripts/create-pack-metafields.mjs"
+    "packs:metafields": "node --env-file-if-exists=.env.local scripts/create-pack-metafields.mjs",
+    "tablero": "node --env-file-if-exists=.env.local scripts/tablero-semanal.mjs"
   },
   "dependencies": {
     "@next/third-parties": "^16.3.1",
