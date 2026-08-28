@@ -3,6 +3,7 @@ import legacyUrlRedirects from "./src/data/legacy-url-redirects.json";
 import {
   legacyProductRewrites,
   productAliasRedirects,
+  retiredProductRedirects,
   wordpressIdRedirects,
 } from "./src/lib/product-paths";
 
@@ -48,6 +49,7 @@ const nextConfig: NextConfig = {
       },
       ...legacyUrlRedirects,
       ...productAliasRedirects,
+      ...retiredProductRedirects,
       ...wordpressIdRedirects,
     ];
   },

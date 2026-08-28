@@ -36,7 +36,7 @@
   },
   {
     "source": "/combo-recarga-total-actimax/",
-    "destination": "/productos/natacion/combo-recarga-total/",
+    "destination": "/productos/?deporte=natacion",
     "permanent": true
   },
   {
@@ -106,7 +106,7 @@
   },
   {
     "source": "/producto/recovery-en-tarro/",
-    "destination": "/productos/bebidas-deportivas/recovery-tarro-400gr/",
+    "destination": "/productos/bebidas-deportivas/recovery-pro-tarro-400gr/",
     "permanent": true
   },
   {
@@ -316,6 +316,11 @@
   },
   {
     "source": "/ventas-mayoristas/",
+    "destination": "/#mayoristas",
+    "permanent": true
+  },
+  {
+    "source": "/store/:slug*",
     "destination": "/#mayoristas",
     "permanent": true
   }
