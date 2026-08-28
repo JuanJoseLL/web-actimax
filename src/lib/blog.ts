@@ -2,7 +2,13 @@ import { cacheLife, cacheTag } from "next/cache";
 import { fallbackPosts } from "@/data/blog";
 import blogPaths from "@/data/blog-paths.json";
 import { POSTS_PER_PAGE } from "@/lib/blog-pagination";
-import type { BlogCategory, BlogImage, BlogPost } from "@/lib/blog-types";
+import {
+  isFeaturedBlogTag,
+  prioritizeFeaturedBlogPost,
+  type BlogCategory,
+  type BlogImage,
+  type BlogPost,
+} from "@/lib/blog-types";
 
 export * from "@/lib/blog-types";
 export { getBlogPageParams, POSTS_PER_PAGE } from "@/lib/blog-pagination";
@@ -149,14 +155,16 @@ function postPath(slug: string): string {
 function mapArticle(node: ShopifyArticleNode): BlogPost {
   const plainText = node.contentHtml !== undefined ? stripHtml(node.contentHtml) : (node.content ?? "");
   const excerpt = node.excerpt?.trim() || plainText.replace(/\s+/g, " ").slice(0, 280).trim();
+  const tags = node.tags.filter((tag) => !isFeaturedBlogTag(tag));
 
   return {
     id: node.id,
     slug: node.handle,
     path: postPath(node.handle),
     title: node.title,
-    category: node.tags[0] ?? "Nutrición deportiva",
-    tags: node.tags,
+    featured: tags.length !== node.tags.length,
+    category: tags[0] ?? "Nutrición deportiva",
+    tags,
     excerpt,
     date: node.publishedAt,
     minutes: readingMinutes(plainText),
@@ -256,7 +264,7 @@ export async function getBlogPostsPage(page: number): Promise<{
   posts: BlogPost[];
   totalPages: number;
 }> {
-  const all = await getAllBlogPosts();
+  const all = prioritizeFeaturedBlogPost(await getAllBlogPosts());
   const totalPages = Math.max(1, Math.ceil(all.length / POSTS_PER_PAGE));
   return {
     posts: all.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE),

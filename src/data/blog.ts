@@ -8,6 +8,7 @@ export const fallbackPosts: BlogPost[] = [
     slug: "cuantos-geles-llevar-maraton",
     path: "/blog/cuantos-geles-llevar-maraton/",
     title: "¿Cuántos geles llevar a tu primera maratón?",
+    featured: false,
     category: "Running",
     tags: ["Running"],
     excerpt:
@@ -34,6 +35,7 @@ export const fallbackPosts: BlogPost[] = [
     slug: "hidratacion-clima-caliente",
     path: "/blog/hidratacion-clima-caliente/",
     title: "Hidratación en clima caliente: lo que cambia cuando entrenas en tierra caliente",
+    featured: false,
     category: "Hidratación",
     tags: ["Hidratación"],
     excerpt:
@@ -61,6 +63,7 @@ export const fallbackPosts: BlogPost[] = [
     slug: "ventana-recuperacion-30-minutos",
     path: "/blog/ventana-recuperacion-30-minutos/",
     title: "La ventana de los 30 minutos: por qué la recuperación empieza en la meta",
+    featured: false,
     category: "Recuperación",
     tags: ["Recuperación"],
     excerpt:
