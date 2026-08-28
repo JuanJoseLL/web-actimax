@@ -32,8 +32,8 @@ const NAV = [
 
 const MOBILE_CATEGORIES = [
   { label: "Geles", href: categoriaPath("geles") },
-  { label: "Bebidas", href: "/productos?tipo=bebidas" },
-  { label: "Barras", href: "/productos?tipo=barras" },
+  { label: "Bebidas", href: categoriaPath("bebidas") },
+  { label: "Barras", href: categoriaPath("barras") },
   { label: "Energy Packs", href: "/productos?tipo=kits" },
 ];
 

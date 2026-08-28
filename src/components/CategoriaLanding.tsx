@@ -116,7 +116,7 @@ export async function CategoriaLandingContent({ categoria }: { categoria: Catego
         {categoria.kicker}
       </p>
       <h1 className="mt-2 font-display text-5xl font-extrabold uppercase italic leading-none sm:text-7xl">
-        {categoria.nombre}
+        {categoria.titular ?? categoria.nombre}
       </h1>
       <p className="mt-3 font-mono text-xs uppercase tracking-wider text-tinta/50">
         {propios.length === 1 ? "1 producto" : `${propios.length} productos`}
@@ -181,12 +181,12 @@ export async function CategoriaLandingContent({ categoria }: { categoria: Catego
         {retos.length > 0 ? (
           <section>
             <h2 className="font-display text-3xl font-extrabold uppercase italic leading-tight">
-              Cuántos {categoria.nombre.toLocaleLowerCase("es-CO")} según la distancia
+              {categoria.retosTitulo ??
+                `Cuántos ${categoria.nombre.toLocaleLowerCase("es-CO")} según la distancia`}
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-tinta/80">
-              Cada Energy Pack trae los {categoria.nombre.toLocaleLowerCase("es-CO")} ya contados
-              para su reto, junto con la bebida de antes y la recuperación de después. Esta es la
-              referencia que usan:
+              {categoria.retosIntro ??
+                `Cada Energy Pack trae ${categoria.articulo} ${categoria.nombre.toLocaleLowerCase("es-CO")} ya contados para su reto, junto con la bebida de antes y la recuperación de después. Esta es la referencia que usan:`}
             </p>
             <ul className="mt-5 divide-y divide-tinta/10 border-y border-tinta/10">
               {retos.map((reto) => (

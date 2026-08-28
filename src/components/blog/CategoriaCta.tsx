@@ -23,7 +23,7 @@ export function CategoriaCta({ post }: { post: { slug: string; title: string } }
             {categoria.kicker}
           </p>
           <p className="mt-2 text-[15px] leading-relaxed text-tinta/80">
-            Todo lo de este artículo aplica a los{" "}
+            Todo lo de este artículo aplica a {categoria.articulo}{" "}
             <Link
               href={categoria.path}
               className="font-semibold text-azul underline-offset-4 hover:underline"

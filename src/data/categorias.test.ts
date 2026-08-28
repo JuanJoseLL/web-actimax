@@ -51,7 +51,18 @@ describe("landings de categoría", () => {
   it("resuelve la ruta de una categoría: landing si existe, filtro si no", () => {
     expect(categoriaPath("geles")).toBe("/productos/geles-energeticos/");
     expect(categoriaPorTipo("geles")?.nombre).toBe("Geles energéticos");
-    expect(categoriaPath("bebidas")).toBe("/productos/?tipo=bebidas");
+    expect(categoriaPath("bebidas")).toBe("/productos/bebidas-deportivas/");
+    expect(categoriaPath("barras")).toBe("/productos/barras-de-proteina/");
+    expect(categoriaPath("kits")).toBe("/productos/?tipo=kits");
+  });
+
+  it("solo enlaza a packs publicados y en stock en la guía de retos", () => {
+    for (const categoria of CATEGORIAS) {
+      for (const reto of categoria.retos) {
+        const pack = catalog.find((p) => p.handle === reto.handle);
+        expect(pack?.inStock, `${reto.handle} está agotado`).toBe(true);
+      }
+    }
   });
 
   it("detecta los posts de geles por slug o título, sin falsos positivos", () => {
@@ -67,5 +78,31 @@ describe("landings de categoría", () => {
     expect(categoriaParaPost({ slug: "post-nuevo", title: "Qué gel llevar al maratón" })?.tipo).toBe("geles");
     expect(categoriaParaPost({ slug: "sandra-lorena-arenas-medalla", title: "Ángel del atletismo" })).toBeUndefined();
     expect(categoriaParaPost({ slug: "talla-de-bicicleta-adecuada", title: "Talla de bicicleta" })).toBeUndefined();
+  });
+
+  it("detecta los posts de bebidas y de barras, y geles gana si coinciden", () => {
+    const bebidas = [
+      "agua-versus-bebida-isotonica-para-correr-cuando-usar-cada-una-segun-tu-entrenamiento",
+      "hidratacion-deportiva-para-corredores-estrategia-de-fluidos-y-electrolitos-en-clima-tropical",
+      "sodio-para-corredores-cuanto-necesitas-segun-la-duracion-e-intensidad-de-tu-carrera",
+      "pastilla-electrolitos-vs-bebidas-deportivas",
+    ];
+    for (const slug of bebidas) {
+      expect(categoriaParaPost({ slug, title: "" })?.tipo, slug).toBe("bebidas");
+    }
+    const barras = [
+      "guia-completa-sobre-las-barras-de-proteina-en-realidad-son-saludables-y-efectivas",
+      "proteina-para-corredores-cuando-y-cuanta-consumir-segun-tu-entrenamiento",
+    ];
+    for (const slug of barras) {
+      expect(categoriaParaPost({ slug, title: "" })?.tipo, slug).toBe("barras");
+    }
+    /* Un post de geles que también habla de hidratación sigue enlazando a geles. */
+    expect(
+      categoriaParaPost({ slug: "geles-e-hidratacion-en-maraton", title: "Geles y bebida isotónica" })?.tipo,
+    ).toBe("geles");
+    /* "Hidratante" en el título basta; "sobreentrenamiento" no dispara nada. */
+    expect(categoriaParaPost({ slug: "post", title: "Bebida hidratante y rendimiento" })?.tipo).toBe("bebidas");
+    expect(categoriaParaPost({ slug: "sobreentrenamiento-sintomas", title: "Sobreentrenamiento" })).toBeUndefined();
   });
 });

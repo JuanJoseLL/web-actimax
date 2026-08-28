@@ -125,63 +125,53 @@
     "permanent": true
   },
   {
-    "source": "/productos/barras-de-proteina/",
-    "destination": "/productos/?tipo=barras",
-    "permanent": true
-  },
-  {
-    "source": "/productos/bebidas-deportivas/",
-    "destination": "/productos/?tipo=bebidas",
-    "permanent": true
-  },
-  {
     "source": "/productos/bebidas-deportivas/bebida-deportiva-elite-con-cafeina-tarro-de-500gr/",
     "destination": "/productos/bebidas-deportivas/bebida-deportiva-elite-con-cafeina-500gr/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-barranquilla/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-bogota/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-bucaramanga/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-cali/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-cartagena/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-medellin/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-pereira/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-rehidratantes/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {

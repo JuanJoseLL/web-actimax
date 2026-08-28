@@ -24,8 +24,8 @@ const COLUMNS = [
     title: "Productos",
     links: [
       { label: "Geles energéticos", href: categoriaPath("geles") },
-      { label: "Bebidas deportivas", href: "/productos?tipo=bebidas" },
-      { label: "Barras de proteína", href: "/productos?tipo=barras" },
+      { label: "Bebidas deportivas", href: categoriaPath("bebidas") },
+      { label: "Barras de proteína", href: categoriaPath("barras") },
       { label: "Energy Packs", href: "/productos?tipo=kits" },
       { label: "Comparar Energy Packs", href: "/productos/comparar" },
     ],

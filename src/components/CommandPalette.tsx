@@ -93,16 +93,8 @@ function selectedValue(root: HTMLElement): string | null {
 const RUTAS = [
   { label: "Crear mi Plan Actimax", href: "/mi-plan", icon: RouteIcon },
   { label: "Geles energéticos", href: categoriaPath("geles"), icon: ZapIcon },
-  {
-    label: "Bebidas deportivas",
-    href: "/productos?tipo=bebidas",
-    icon: CupSodaIcon,
-  },
-  {
-    label: "Barras de proteína",
-    href: "/productos?tipo=barras",
-    icon: CookieIcon,
-  },
+  { label: "Bebidas deportivas", href: categoriaPath("bebidas"), icon: CupSodaIcon },
+  { label: "Barras de proteína", href: categoriaPath("barras"), icon: CookieIcon },
   { label: "Energy Packs", href: "/productos?tipo=kits", icon: PackageIcon },
   {
     label: "Comparar kits",
