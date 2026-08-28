@@ -235,7 +235,7 @@ export function CartDrawer({ productsPromise }: { productsPromise: Promise<Upsel
               Agrega geles, bebidas o un Energy Pack para tu próxima carrera.
             </p>
             <Button asChild variant="race" size="lg">
-              <Link href="/productos" onClick={handleClose}>
+              <Link href="/productos/" onClick={handleClose}>
                 Ver productos
               </Link>
             </Button>

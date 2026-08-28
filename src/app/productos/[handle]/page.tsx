@@ -23,6 +23,9 @@ import {
   typeLabel,
 } from "@/lib/catalog";
 import { ProductReviews, ProductReviewsCompact } from "@/components/ProductReviews";
+import { categoriaPath } from "@/data/categorias";
+import { deportePath } from "@/data/deportes";
+import { productoSeo } from "@/data/seo-productos";
 import { productFaq } from "@/lib/product-faq";
 import { canonicalProductPath } from "@/lib/product-paths";
 import { getProductReviews, reviewsSummary } from "@/lib/reviews";
@@ -54,13 +57,14 @@ export async function generateMetadata({
   const { handle } = await params;
   const product = await getProduct(handle);
   if (product === undefined) return { title: "Producto no encontrado — Actimax" };
+  const seo = productoSeo(product);
   return {
-    title: `${product.title} — Actimax`,
-    description: product.excerpt,
+    title: seo.title,
+    description: seo.description,
     alternates: { canonical: canonicalProductPath(product.handle) },
     openGraph: {
-      title: `${product.title} — Actimax`,
-      description: product.excerpt,
+      title: seo.title,
+      description: seo.description,
       url: canonicalProductPath(product.handle),
       images:
         product.images.length > 0
@@ -103,6 +107,10 @@ async function ProductPageContent({ handle }: { handle: string }) {
     getAllProducts(),
   ]);
   const reviewSummary = reviewsSummary(reviews);
+  /* La miga y el kicker enlazan a la landing de la categoría (la página que
+     posiciona por "geles energéticos"), no al filtro: cada ficha le pasa
+     autoridad a su categoría y el rastreador llega a ella desde cualquiera. */
+  const categoriaHref = product.type !== null ? categoriaPath(product.type) : "/productos/";
   const related = all
     .filter(
       (p) =>
@@ -124,7 +132,7 @@ async function ProductPageContent({ handle }: { handle: string }) {
           __html: jsonLd(
             breadcrumbJsonLd([
               { name: "Inicio", url: `${SITE_URL}/` },
-              { name: typeLabel(product.type), url: `${SITE_URL}/productos/` },
+              { name: typeLabel(product.type), url: `${SITE_URL}${categoriaHref}` },
               { name: product.title, url: productUrl(product.handle) },
             ]),
           ),
@@ -135,10 +143,7 @@ async function ProductPageContent({ handle }: { handle: string }) {
           Inicio
         </Link>
         {" / "}
-        <Link
-          href={product.type !== null ? `/productos?tipo=${product.type}` : "/productos"}
-          className="hover:text-azul hover:underline"
-        >
+        <Link href={categoriaHref} className="hover:text-azul hover:underline">
           {typeLabel(product.type)}
         </Link>
         {" / "}
@@ -154,7 +159,9 @@ async function ProductPageContent({ handle }: { handle: string }) {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-x-14 lg:gap-y-0">
           <header className="lg:col-start-2 lg:row-start-1">
             <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-azul">
-              {typeLabel(product.type)}
+              <Link href={categoriaHref} className="hover:underline">
+                {typeLabel(product.type)}
+              </Link>
             </p>
             <h1 className="mt-2 font-display text-4xl font-extrabold uppercase italic leading-[0.95] sm:text-5xl">
               {product.title}
@@ -191,7 +198,7 @@ async function ProductPageContent({ handle }: { handle: string }) {
                         asChild
                         className="h-10 rounded-sm bg-accent/35 px-3 font-mono text-[11px] font-bold uppercase tracking-wider text-accent-foreground hover:bg-accent sm:h-6"
                       >
-                        <Link href={`/productos?momento=${m}`}>{MOMENTO_LABELS[m]} del esfuerzo</Link>
+                        <Link href={`/productos/?momento=${m}`}>{MOMENTO_LABELS[m]} del esfuerzo</Link>
                       </Badge>
                     ))}
                     {product.deportes.map((d) => (
@@ -201,7 +208,7 @@ async function ProductPageContent({ handle }: { handle: string }) {
                         variant="secondary"
                         className="h-10 rounded-sm px-3 font-mono text-[11px] font-bold uppercase tracking-wider hover:bg-primary hover:text-primary-foreground sm:h-6"
                       >
-                        <Link href={`/productos?deporte=${d}`}>{DEPORTE_LABELS[d] ?? d}</Link>
+                        <Link href={deportePath(d)}>{DEPORTE_LABELS[d] ?? d}</Link>
                       </Badge>
                     ))}
                   </div>

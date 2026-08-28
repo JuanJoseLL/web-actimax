@@ -24,6 +24,7 @@ import { formatPostDate, getAllBlogPosts } from "@/lib/blog";
 import { getAllProducts, getProducts } from "@/lib/catalog";
 import { formatCOP } from "@/lib/format";
 import { canonicalProductPath } from "@/lib/product-paths";
+import { categoriaPath } from "@/data/categorias";
 
 /* Título, descripción y Open Graph vienen del layout raíz; el canonical
    defiende el home de duplicados por query (?utm_*, ?fbclid, …). */
@@ -102,7 +103,7 @@ function Hero() {
             style={{ animationDelay: "0.24s" }}
           >
             <Button asChild variant="raceSun" size="lg" className="h-auto px-8 py-4 text-lg">
-              <Link href="/productos">
+              <Link href="/productos/">
                 Ver todos los productos
                 <ArrowRightIcon data-icon="inline-end" />
               </Link>
@@ -263,7 +264,7 @@ async function ChallengeSection() {
                 <Link
                   href={
                     product === undefined
-                      ? "/productos?tipo=kits"
+                      ? "/productos/?tipo=kits"
                       : canonicalProductPath(challenge.handle)
                   }
                   className="block h-full"
@@ -402,7 +403,7 @@ const RITUALS = [
     headline: "Carga la intención",
     copy: "Prepara tus reservas para que el cuerpo responda desde el primer esfuerzo.",
     handle: "pre-race-en-tarro-400gr",
-    href: "/productos?momento=antes",
+    href: "/productos/?momento=antes",
     timing: "15–20 min antes",
   },
   {
@@ -411,7 +412,7 @@ const RITUALS = [
     headline: "Protege tu ritmo",
     copy: "Repón energía y electrolitos antes de sentir que ya es demasiado tarde.",
     handle: "gl-energetico-actimax-sachets-x24-con-cafeina",
-    href: "/productos?momento=durante",
+    href: "/productos/?momento=durante",
     timing: "Cada 30–45 min",
   },
   {
@@ -420,7 +421,7 @@ const RITUALS = [
     headline: "Honra el esfuerzo",
     copy: "Recupera lo que diste hoy para que mañana puedas volver a construir.",
     handle: "recovery-pro-tarro-400gr",
-    href: "/productos?momento=despues",
+    href: "/productos/?momento=despues",
     timing: "Primeros 30 min",
   },
 ] as const;
@@ -514,7 +515,7 @@ async function BestSellersSection() {
             </h2>
           </div>
           <Button asChild variant="race" className="h-auto px-6 py-3">
-            <Link href="/productos">
+            <Link href="/productos/">
               Ver los {all.length} productos
               <ArrowRightIcon data-icon="inline-end" />
             </Link>
@@ -527,6 +528,17 @@ async function BestSellersSection() {
             </div>
           ))}
         </div>
+        {/* Enlace interno con el texto que posiciona: el home es la página
+            con más autoridad y la landing de geles, la que debe rankear. */}
+        <p className="reveal mt-10 text-base text-tinta/70">
+          ¿Vienes por los geles?{" "}
+          <Link
+            href={categoriaPath("geles")}
+            className="font-semibold text-azul underline-offset-4 hover:underline"
+          >
+            Ver todos los geles energéticos, con y sin cafeína →
+          </Link>
+        </p>
       </div>
     </section>
   );
@@ -642,7 +654,7 @@ async function JournalSection() {
             </h2>
           </div>
           <Link
-            href="/blog"
+            href="/blog/"
             className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-azul"
           >
             Ver todo el blog <ArrowRightIcon className="size-4" />
@@ -709,7 +721,7 @@ function TeamSection() {
           </h2>
         </div>
         <Button asChild variant="raceInk" size="lg" className="h-auto shrink-0 px-8 py-4 text-lg">
-          <Link href="/productos">
+          <Link href="/productos/">
             Explorar el catálogo
             <ArrowRightIcon data-icon="inline-end" />
           </Link>

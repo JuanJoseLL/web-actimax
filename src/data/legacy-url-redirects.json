@@ -175,11 +175,6 @@
     "permanent": true
   },
   {
-    "source": "/productos/ciclismo/",
-    "destination": "/productos/?deporte=ciclismo",
-    "permanent": true
-  },
-  {
     "source": "/productos/credit/",
     "destination": "/productos/",
     "permanent": true
@@ -225,16 +220,6 @@
     "permanent": true
   },
   {
-    "source": "/productos/gym/",
-    "destination": "/productos/?deporte=gym",
-    "permanent": true
-  },
-  {
-    "source": "/productos/natacion/",
-    "destination": "/productos/?deporte=natacion",
-    "permanent": true
-  },
-  {
     "source": "/productos/nutricion-deportiva-medellin/",
     "destination": "/productos/",
     "permanent": true
@@ -245,18 +230,8 @@
     "permanent": true
   },
   {
-    "source": "/productos/running/",
-    "destination": "/productos/?deporte=running",
-    "permanent": true
-  },
-  {
     "source": "/productos/sin-categorizar/",
     "destination": "/productos/",
-    "permanent": true
-  },
-  {
-    "source": "/productos/triatlon/",
-    "destination": "/productos/?deporte=triatlon",
     "permanent": true
   },
   {

@@ -18,7 +18,9 @@ import {
   whatsappUrl,
 } from "@/lib/contacto";
 import { categoriaPath } from "@/data/categorias";
+import { DEPORTES } from "@/data/deportes";
 
+/* Los enlaces llevan slash final: sin él cada clic pasa por un 308. */
 const COLUMNS = [
   {
     title: "Productos",
@@ -26,16 +28,20 @@ const COLUMNS = [
       { label: "Geles energéticos", href: categoriaPath("geles") },
       { label: "Bebidas deportivas", href: categoriaPath("bebidas") },
       { label: "Barras de proteína", href: categoriaPath("barras") },
-      { label: "Energy Packs", href: "/productos?tipo=kits" },
-      { label: "Comparar Energy Packs", href: "/productos/comparar" },
+      { label: "Energy Packs", href: "/productos/?tipo=kits" },
+      { label: "Comparar Energy Packs", href: "/productos/comparar/" },
     ],
+  },
+  {
+    title: "Por deporte",
+    links: DEPORTES.map((deporte) => ({ label: deporte.nombre, href: deporte.path })),
   },
   {
     title: "Por momento",
     links: [
-      { label: "Antes del esfuerzo", href: "/productos?momento=antes" },
-      { label: "Durante el esfuerzo", href: "/productos?momento=durante" },
-      { label: "Después del esfuerzo", href: "/productos?momento=despues" },
+      { label: "Antes del esfuerzo", href: "/productos/?momento=antes" },
+      { label: "Durante el esfuerzo", href: "/productos/?momento=durante" },
+      { label: "Después del esfuerzo", href: "/productos/?momento=despues" },
     ],
   },
   {
@@ -193,7 +199,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="grid gap-9 pt-10 sm:grid-cols-3 sm:gap-8 lg:gap-16">
+        <div className="grid gap-9 pt-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4 lg:gap-12">
           {COLUMNS.map((col) => (
             <nav key={col.title} aria-label={col.title}>
               <div className="flex items-center gap-3">

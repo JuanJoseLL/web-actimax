@@ -23,10 +23,11 @@ import {
 import { categoriaPath } from "@/data/categorias";
 
 const NAV = [
-  { label: "Comprar", href: "/productos" },
+  { label: "Comprar", href: "/productos/" },
+  { label: "Geles", href: categoriaPath("geles") },
   { label: "Mi plan", href: "/mi-plan/" },
   { label: "El método", href: "/#metodo" },
-  { label: "Blog", href: "/blog" },
+  { label: "Blog", href: "/blog/" },
   { label: "Club", href: "/#club" },
 ];
 
@@ -34,7 +35,7 @@ const MOBILE_CATEGORIES = [
   { label: "Geles", href: categoriaPath("geles") },
   { label: "Bebidas", href: categoriaPath("bebidas") },
   { label: "Barras", href: categoriaPath("barras") },
-  { label: "Energy Packs", href: "/productos?tipo=kits" },
+  { label: "Energy Packs", href: "/productos/?tipo=kits" },
 ];
 
 export function Header() {

@@ -5,17 +5,17 @@ import {
   CategoriaLandingSkeleton,
   landingMetadata,
 } from "@/components/CategoriaLanding";
-import { categoriaRequerida } from "@/data/categorias";
+import { deporteRequerido } from "@/data/deportes";
 
-/* La URL que WordPress posicionaba por "bebidas isotónicas"; las landings por
-   ciudad (bebidas-isotonicas-medellin, …) redirigen aquí. Convive con los
-   rewrites de las fichas (/productos/bebidas-deportivas/<handle>/): la ruta
-   literal solo atiende la raíz. El contenido vive en src/data/categorias.ts. */
-const landing = categoriaRequerida("bebidas");
+/* La categoría de WordPress de gym (396 impresiones al mes en agosto de 2026), que desde el corte era un 308 a un filtro.
+   Una ruta literal gana al segmento dinámico [handle], y la vista filtrada
+   /productos/?deporte=gym declara esta como canónica. El contenido vive en
+   src/data/deportes.ts; esta ruta solo lo elige. */
+const landing = deporteRequerido("gym");
 
 export const metadata: Metadata = landingMetadata(landing);
 
-export default function BebidasDeportivasPage() {
+export default function GymPage() {
   return (
     <div
       data-catalog-page

@@ -6,36 +6,71 @@ import { ProductFaq } from "@/components/ProductFaq";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { CategoriaLanding as Categoria } from "@/data/categorias";
+import { categoriaPath } from "@/data/categorias";
+import { deportePath, esCategoria, esProductoDe, type Landing } from "@/data/deportes";
+import type { FaqItem } from "@/data/faq";
 import { getAllBlogPosts } from "@/lib/blog";
-import { DEPORTE_LABELS, getAllProducts } from "@/lib/catalog";
+import { DEPORTE_LABELS, TYPE_LABELS, getAllProducts } from "@/lib/catalog";
+import { ENVIO_GRATIS_UMBRAL } from "@/lib/envio";
 import { formatCOP } from "@/lib/format";
 import { canonicalProductPath } from "@/lib/product-paths";
 import { SITE_URL, breadcrumbJsonLd, itemListJsonLd, jsonLd, pageMetadata } from "@/lib/seo";
-import type { Product } from "@/lib/taxonomia";
+import type { Product, ProductType } from "@/lib/taxonomia";
 
 /**
- * Landing de categoría: la grilla de /productos/?tipo=… más el texto que una
- * vista filtrada no tiene (qué es, cuándo se toma, cuántos por distancia,
- * preguntas frecuentes). Todo sale de src/data/categorias.ts; la ruta de cada
- * categoría solo elige cuál pintar.
+ * Landing con URL propia —de categoría (src/data/categorias.ts) o de deporte
+ * (src/data/deportes.ts)—: la grilla de /productos/?tipo=… o ?deporte=… más
+ * el texto que una vista filtrada no tiene (qué es, cuándo se toma, cuántos
+ * por distancia, preguntas frecuentes). La ruta de cada landing solo elige
+ * cuál pintar.
  *
  * Los datos vienen de getAllProducts y getAllBlogPosts, ambos "use cache",
  * así que la página entera entra en el shell estático y se revalida con las
  * etiquetas `catalog` y `blog` como el home. No añade escrituras ISR nuevas.
  */
-export function categoriaMetadata(categoria: Categoria): Metadata {
+export function landingMetadata(landing: Landing): Metadata {
   return pageMetadata({
-    title: categoria.title,
-    description: categoria.description,
-    path: categoria.path,
+    title: landing.title,
+    description: landing.description,
+    path: landing.path,
   });
 }
 
 /* El mismo orden que el catálogo: en stock primero, luego precio. */
-function ordenCategoria(a: Product, b: Product): number {
+function ordenLanding(a: Product, b: Product): number {
   if (a.inStock !== b.inStock) return a.inStock ? -1 : 1;
   return a.price - b.price || a.title.localeCompare(b.title, "es");
+}
+
+/**
+ * Respuesta de precio armada con la grilla, para las consultas "… precio"
+ * sin escribir cifras que caducan: los 8 más baratos en stock.
+ */
+function faqPrecio(landing: Landing, propios: Product[]): FaqItem | null {
+  if (landing.precioPregunta === undefined) return null;
+  const enStock = propios.filter((p) => p.inStock).toSorted((a, b) => a.price - b.price).slice(0, 8);
+  if (enStock.length === 0) return null;
+  const lista = enStock.map((p) => `${p.title}: ${formatCOP(p.price)}`).join("; ");
+  return {
+    question: landing.precioPregunta,
+    answer: `Precios vigentes en la tienda oficial: ${lista}. Envío gratis en compras desde ${formatCOP(ENVIO_GRATIS_UMBRAL)} y pago seguro procesado por Shopify; la lista se actualiza con el catálogo.`,
+  };
+}
+
+/**
+ * La faceta complementaria: en una categoría, los deportes con producto; en
+ * un deporte, los tipos con producto. Cada chip lleva a la landing hermana si
+ * existe (enlace interno con texto útil) y si no, a la vista filtrada.
+ */
+function facetas(landing: Landing, propios: Product[]): Array<{ href: string; label: string }> {
+  if (esCategoria(landing)) {
+    return Object.entries(DEPORTE_LABELS)
+      .filter(([slug]) => propios.some((p) => p.deportes.includes(slug)))
+      .map(([slug, label]) => ({ href: deportePath(slug), label }));
+  }
+  return (Object.keys(TYPE_LABELS) as ProductType[])
+    .filter((tipo) => propios.some((p) => p.type === tipo))
+    .map((tipo) => ({ href: categoriaPath(tipo), label: TYPE_LABELS[tipo] }));
 }
 
 export function CategoriaLandingSkeleton() {
@@ -57,25 +92,24 @@ export function CategoriaLandingSkeleton() {
   );
 }
 
-export async function CategoriaLandingContent({ categoria }: { categoria: Categoria }) {
+export async function CategoriaLandingContent({ landing }: { landing: Landing }) {
   const [products, posts] = await Promise.all([getAllProducts(), getAllBlogPosts()]);
-  const propios = products.filter((p) => p.type === categoria.tipo).toSorted(ordenCategoria);
+  const propios = products.filter((p) => esProductoDe(landing, p)).toSorted(ordenLanding);
   const porHandle = new Map(products.map((p) => [p.handle, p]));
   /* Un reto solo se muestra si su pack sigue publicado en Shopify. */
-  const retos = categoria.retos
+  const retos = landing.retos
     .map((reto) => ({ ...reto, pack: porHandle.get(reto.handle) }))
     .filter((reto): reto is typeof reto & { pack: Product } => reto.pack !== undefined);
-  const articulos = categoria.articulos
+  const articulos = landing.articulos
     .map((slug) => posts.find((post) => post.slug === slug))
     .filter((post): post is NonNullable<typeof post> => post !== undefined);
   const disponibles = propios.filter((p) => p.inStock);
   const desde =
     disponibles.length > 0 ? Math.min(...disponibles.map((p) => p.price)) : null;
-  /* Los deportes por los que se puede afinar la grilla: solo los que tienen
-     producto, para no enlazar a combinaciones vacías. */
-  const deportes = Object.entries(DEPORTE_LABELS).filter(([slug]) =>
-    propios.some((p) => p.deportes.includes(slug)),
-  );
+  const chips = facetas(landing, propios);
+  const precio = faqPrecio(landing, propios);
+  const faqs = precio !== null ? [...landing.faqs, precio] : landing.faqs;
+  const nombreMinuscula = landing.nombre.toLocaleLowerCase("es-CO");
 
   return (
     <>
@@ -83,7 +117,7 @@ export async function CategoriaLandingContent({ categoria }: { categoria: Catego
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: jsonLd(itemListJsonLd(`Actimax · ${categoria.nombre}`, propios)),
+            __html: jsonLd(itemListJsonLd(`Actimax · ${landing.nombre}`, propios)),
           }}
         />
       ) : null}
@@ -94,7 +128,7 @@ export async function CategoriaLandingContent({ categoria }: { categoria: Catego
             breadcrumbJsonLd([
               { name: "Inicio", url: `${SITE_URL}/` },
               { name: "Productos", url: `${SITE_URL}/productos/` },
-              { name: categoria.nombre, url: `${SITE_URL}${categoria.path}` },
+              { name: landing.nombre, url: `${SITE_URL}${landing.path}` },
             ]),
           ),
         }}
@@ -109,14 +143,14 @@ export async function CategoriaLandingContent({ categoria }: { categoria: Catego
           Productos
         </Link>
         {" / "}
-        <span className="text-tinta/80">{categoria.nombre}</span>
+        <span className="text-tinta/80">{landing.nombre}</span>
       </nav>
 
       <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-azul">
-        {categoria.kicker}
+        {landing.kicker}
       </p>
       <h1 className="mt-2 font-display text-5xl font-extrabold uppercase italic leading-none sm:text-7xl">
-        {categoria.titular ?? categoria.nombre}
+        {landing.titular ?? landing.nombre}
       </h1>
       <p className="mt-3 font-mono text-xs uppercase tracking-wider text-tinta/50">
         {propios.length === 1 ? "1 producto" : `${propios.length} productos`}
@@ -125,23 +159,23 @@ export async function CategoriaLandingContent({ categoria }: { categoria: Catego
       </p>
 
       <div className="mt-6 flex max-w-3xl flex-col gap-4 text-base leading-relaxed text-tinta/80">
-        {categoria.intro.map((parrafo) => (
+        {landing.intro.map((parrafo) => (
           <p key={parrafo}>{parrafo}</p>
         ))}
       </div>
 
-      {deportes.length > 0 ? (
+      {chips.length > 0 ? (
         <div className="mt-8 flex flex-wrap items-center gap-2">
           <span className="w-full font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-tinta/55 sm:w-auto sm:pr-2">
-            Ver por deporte
+            {esCategoria(landing) ? "Ver por deporte" : "Ver por tipo"}
           </span>
-          {deportes.map(([slug, label]) => (
+          {chips.map((chip) => (
             <Link
-              key={slug}
-              href={`/productos/?tipo=${categoria.tipo}&deporte=${slug}`}
+              key={chip.href}
+              href={chip.href}
               className="rounded-sm border border-tinta/15 px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-tinta/70 transition-colors hover:border-azul hover:text-azul"
             >
-              {label}
+              {chip.label}
             </Link>
           ))}
         </div>
@@ -165,7 +199,7 @@ export async function CategoriaLandingContent({ categoria }: { categoria: Catego
       )}
 
       <div className="mt-16 flex max-w-3xl flex-col gap-12">
-        {categoria.secciones.map((seccion) => (
+        {landing.secciones.map((seccion) => (
           <section key={seccion.titulo}>
             <h2 className="font-display text-3xl font-extrabold uppercase italic leading-tight">
               {seccion.titulo}
@@ -181,12 +215,11 @@ export async function CategoriaLandingContent({ categoria }: { categoria: Catego
         {retos.length > 0 ? (
           <section>
             <h2 className="font-display text-3xl font-extrabold uppercase italic leading-tight">
-              {categoria.retosTitulo ??
-                `Cuántos ${categoria.nombre.toLocaleLowerCase("es-CO")} según la distancia`}
+              {landing.retosTitulo ?? `Cuántos ${nombreMinuscula} según la distancia`}
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-tinta/80">
-              {categoria.retosIntro ??
-                `Cada Energy Pack trae ${categoria.articulo} ${categoria.nombre.toLocaleLowerCase("es-CO")} ya contados para su reto, junto con la bebida de antes y la recuperación de después. Esta es la referencia que usan:`}
+              {landing.retosIntro ??
+                `Cada Energy Pack trae ${landing.articulo} ${nombreMinuscula} ya contados para su reto, junto con la bebida de antes y la recuperación de después. Esta es la referencia que usan:`}
             </p>
             <ul className="mt-5 divide-y divide-tinta/10 border-y border-tinta/10">
               {retos.map((reto) => (
@@ -210,7 +243,7 @@ export async function CategoriaLandingContent({ categoria }: { categoria: Catego
         ) : null}
       </div>
 
-      <ProductFaq items={categoria.faqs} />
+      <ProductFaq items={faqs} />
 
       {articulos.length > 0 ? (
         <aside className="mt-16 max-w-3xl">

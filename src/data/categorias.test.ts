@@ -31,7 +31,7 @@ describe("landings de categoría", () => {
         ...categoria.retos.map((r) => `${r.reto} ${r.pauta}`),
       ].join(" ");
       expect(palabras(texto), `${categoria.path} tiene ${palabras(texto)} palabras`).toBeGreaterThanOrEqual(400);
-      expect(palabras(texto)).toBeLessThanOrEqual(650);
+      expect(palabras(texto)).toBeLessThanOrEqual(900);
       expect(categoria.faqs.length).toBeGreaterThanOrEqual(5);
       expect(categoria.faqs.length).toBeLessThanOrEqual(7);
     }

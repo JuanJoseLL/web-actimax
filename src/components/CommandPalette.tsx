@@ -91,17 +91,17 @@ function selectedValue(root: HTMLElement): string | null {
 }
 
 const RUTAS = [
-  { label: "Crear mi Plan Actimax", href: "/mi-plan", icon: RouteIcon },
+  { label: "Crear mi Plan Actimax", href: "/mi-plan/", icon: RouteIcon },
   { label: "Geles energéticos", href: categoriaPath("geles"), icon: ZapIcon },
   { label: "Bebidas deportivas", href: categoriaPath("bebidas"), icon: CupSodaIcon },
   { label: "Barras de proteína", href: categoriaPath("barras"), icon: CookieIcon },
-  { label: "Energy Packs", href: "/productos?tipo=kits", icon: PackageIcon },
+  { label: "Energy Packs", href: "/productos/?tipo=kits", icon: PackageIcon },
   {
     label: "Comparar kits",
-    href: "/productos/comparar",
+    href: "/productos/comparar/",
     icon: ArrowRightLeftIcon,
   },
-  { label: "Consejos del equipo", href: "/blog", icon: NewspaperIcon },
+  { label: "Consejos del equipo", href: "/blog/", icon: NewspaperIcon },
 ] as const;
 
 const MOMENTOS = [

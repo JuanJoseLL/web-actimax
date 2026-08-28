@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { CATEGORIAS } from "@/data/categorias";
+import { DEPORTES } from "@/data/deportes";
 import { getAllBlogPosts, getBlogCategories } from "@/lib/blog";
 import { getAllProducts } from "@/lib/catalog";
 import { SITE_URL, productUrl } from "@/lib/seo";
@@ -15,6 +16,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}${categoria.path}`,
       changeFrequency: "weekly" as const,
       priority: 0.9,
+    })),
+    ...DEPORTES.map((deporte) => ({
+      url: `${SITE_URL}${deporte.path}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
     })),
     { url: `${SITE_URL}/productos/comparar/`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE_URL}/preguntas-frecuentes/`, changeFrequency: "monthly", priority: 0.8 },

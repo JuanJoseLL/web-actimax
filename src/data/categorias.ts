@@ -28,16 +28,20 @@ export interface CategoriaReto {
   handle: string;
 }
 
-export interface CategoriaLanding {
-  tipo: ProductType;
+/**
+ * Lo que comparten todas las landings con URL propia: las de categoría
+ * (este archivo) y las de deporte (src/data/deportes.ts). La plantilla
+ * (CategoriaLanding.tsx) pinta cualquiera de las dos.
+ */
+export interface LandingBase {
   /** Ruta canónica, con slash final como todo el sitio. */
   path: string;
   /** Nombre corto: migas, ancla del CTA, sitemap, H1 si no hay titular. */
   nombre: string;
   /** H1 más largo que el nombre cuando la consulta lo pide ("isotónicas e hidratantes"). */
   titular?: string;
-  /** Artículo del plural, para las frases que nombran la categoría. */
-  articulo: "los" | "las";
+  /** Artículo que precede al nombre en las frases que lo mencionan. */
+  articulo: "los" | "las" | "el" | "la";
   title: string;
   description: string;
   kicker: string;
@@ -55,15 +59,36 @@ export interface CategoriaLanding {
   articulos: string[];
   /**
    * Palabras que, en el slug o el título de un post, activan el CTA hacia
-   * esta categoría. Se comparan como palabras completas y sin tildes.
+   * esta landing. Se comparan como palabras completas y sin tildes.
    */
   palabrasBlog: string[];
+  /**
+   * Texto del CTA en los posts: `antes` + enlace con el nombre en minúscula
+   * + `despues`. Cada landing lo redacta para que concuerde en género.
+   */
+  cta: { antes: string; despues: string };
+  /**
+   * Si está, la FAQ cierra con esta pregunta y una respuesta armada con los
+   * precios vigentes de la grilla (para las búsquedas "… precio"), sin
+   * escribir cifras que se desactualizan.
+   */
+  precioPregunta?: string;
+  /**
+   * Handles que entran en la grilla aunque su etiqueta no coincida (los
+   * packs 10K y 15K no llevan deporte en Shopify pero son de running).
+   */
+  incluir?: string[];
+}
+
+export interface CategoriaLanding extends LandingBase {
+  tipo: ProductType;
 }
 
 const GELES: CategoriaLanding = {
   tipo: "geles",
   path: "/productos/geles-energeticos/",
   nombre: "Geles energéticos",
+  titular: "Geles energéticos con y sin cafeína",
   articulo: "los",
   title: "Geles energéticos con y sin cafeína | Actimax Colombia",
   description:
@@ -93,6 +118,13 @@ const GELES: CategoriaLanding = {
       parrafos: [
         "La caja de 8 geles de 90 g es la presentación para entrenar: con tapa, para guardar entre tomas. La caja de 24 sachets de 30 g es la de carrera: un sachet por toma, sin cargar peso de más. Los sabores son fresa, manzana, mango y fresa-banano según la referencia, todos con fruta y sin colorantes artificiales.",
         "El Energy Gel es la referencia de alto impacto: energía inmediata y fácil digestión para momentos puntuales de alta intensidad —un puerto, el final de una etapa o carrera, una pájara—, planificado para tomarlo justo antes del tramo más exigente.",
+      ],
+    },
+    {
+      titulo: "Geles para correr, para ciclismo, triatlón y natación",
+      parrafos: [
+        "La ficha del producto los recomienda para deportes de largo aliento y resistencia de más de dos horas: ciclismo de fondo y ciclomontañismo, media maratón, maratón y ultramaratón, trail de montaña, triatlón de media y larga distancia y natación de aguas abiertas. Para correr, el sachet de 30 g es el gel de carrera —uno por toma, sin peso de más—; para la bici, el gel de 90 g con tapa va en el jersey o la caramañola y se toma por porciones sin derramarse. En un triatlón se combinan: geles de fruta cada 30 minutos en la bici y en la carrera a pie, y un Energy Gel para arrancar la natación.",
+        "Cada deporte tiene su guía con los productos, los packs y la pauta de consumo: nutrición para running, para ciclismo, para triatlón, para natación y para gym. Y si lo que buscas es cuántos geles llevar a una distancia concreta, los Energy Packs de abajo ya los traen contados.",
       ],
     },
   ],
@@ -178,6 +210,11 @@ const GELES: CategoriaLanding = {
     "como-tomar-geles-sin-malestar-estomacal-estrategia-de-tolerancia-para-atletas",
   ],
   palabrasBlog: ["gel", "geles"],
+  cta: {
+    antes: "Todo lo de este artículo aplica a los",
+    despues: "Actimax: hechos en Colombia, con envío a todo el país.",
+  },
+  precioPregunta: "¿Cuánto cuestan los geles energéticos Actimax?",
 };
 
 const BEBIDAS: CategoriaLanding = {
@@ -292,6 +329,11 @@ const BEBIDAS: CategoriaLanding = {
     "electrolitos",
     "sodio",
   ],
+  cta: {
+    antes: "Todo lo de este artículo aplica a las",
+    despues: "Actimax: hechas en Colombia, con envío a todo el país.",
+  },
+  precioPregunta: "¿Cuánto cuestan las bebidas deportivas Actimax?",
 };
 
 const BARRAS: CategoriaLanding = {
@@ -370,6 +412,10 @@ const BARRAS: CategoriaLanding = {
     "deficiencia-de-proteinas-senales-que-no-consumes-las-suficientes",
   ],
   palabrasBlog: ["barra", "barras", "proteina", "proteinas"],
+  cta: {
+    antes: "Todo lo de este artículo aplica a las",
+    despues: "Actimax: hechas en Colombia, con envío a todo el país.",
+  },
 };
 
 /**
@@ -395,7 +441,7 @@ export function categoriaPath(tipo: ProductType): string {
   return categoriaPorTipo(tipo)?.path ?? `/productos/?tipo=${tipo}`;
 }
 
-function palabras(texto: string): Set<string> {
+export function palabras(texto: string): Set<string> {
   return new Set(normalize(texto).split(/[^a-z0-9]+/).filter((p) => p !== ""));
 }
 

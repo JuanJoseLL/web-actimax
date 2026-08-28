@@ -15,6 +15,7 @@ import {
   isProductType,
 } from "@/lib/catalog";
 import { categoriaPorTipo } from "@/data/categorias";
+import { deportePorSlug, type Landing } from "@/data/deportes";
 import { itemListJsonLd, jsonLd, pageMetadata } from "@/lib/seo";
 import type { Momento, Product, ProductType } from "@/lib/taxonomia";
 
@@ -53,9 +54,18 @@ function filterUrl(current: Filters, patch: Partial<Filters>): string {
 /* Las landings viejas de categoría y de ciudad (bebidas-isotonicas-bogota,
    …) redirigen a estas vistas filtradas; cada una necesita canonical, título
    y descripción propios para no consolidarse todas en /productos/ y perder
-   lo que rankeaban. Cuando el tipo tiene landing propia
-   (src/data/categorias.ts), la vista filtrada por ese único tipo declara la
-   landing como canónica: es la misma grilla con el texto que posiciona. */
+   lo que rankeaban. Cuando el tipo o el deporte tiene landing propia
+   (src/data/categorias.ts, src/data/deportes.ts), la vista filtrada por ese
+   único criterio declara la landing como canónica: es la misma grilla con el
+   texto que posiciona. */
+
+/** La landing que equivale a la vista filtrada, si el único filtro la tiene. */
+function landingDe({ tipo, momento, deporte }: Filters): Landing | undefined {
+  if (momento !== undefined) return undefined;
+  if (tipo !== undefined && deporte === undefined) return categoriaPorTipo(tipo);
+  if (deporte !== undefined && tipo === undefined) return deportePorSlug(deporte);
+  return undefined;
+}
 const TYPE_DESCRIPTIONS: Record<ProductType, string> = {
   geles:
     "Geles energéticos colombianos con y sin cafeína para running, ciclismo y triatlón. Compra en línea con envíos a Bogotá, Medellín, Cali y toda Colombia.",
@@ -116,7 +126,7 @@ export async function generateMetadata({
   const description = soloTipo
     ? TYPE_DESCRIPTIONS[tipo]
     : `${head}${momentoPart}${deportePart} de Actimax: nutrición deportiva hecha en Colombia, con envíos a todo el país.`;
-  const landing = soloTipo ? categoriaPorTipo(tipo) : undefined;
+  const landing = landingDe(filters);
 
   return pageMetadata({ title, description, path: landing?.path ?? filterUrl(filters, {}) });
 }
@@ -221,7 +231,7 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
     .toSorted(catalogOrder);
 
   const hasFilters = tipo !== undefined || momento !== undefined || deporte !== undefined;
-  const landing = tipo !== undefined ? categoriaPorTipo(tipo) : undefined;
+  const landing = landingDe(current);
 
   /* La lista estructurada debe describir lo que se ve: con filtros activos
      anunciar el catálogo entero le declara a los buscadores una página que
