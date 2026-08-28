@@ -20,6 +20,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { categoriaPath } from "@/data/categorias";
 
 const NAV = [
   { label: "Comprar", href: "/productos" },
@@ -30,7 +31,7 @@ const NAV = [
 ];
 
 const MOBILE_CATEGORIES = [
-  { label: "Geles", href: "/productos?tipo=geles" },
+  { label: "Geles", href: categoriaPath("geles") },
   { label: "Bebidas", href: "/productos?tipo=bebidas" },
   { label: "Barras", href: "/productos?tipo=barras" },
   { label: "Energy Packs", href: "/productos?tipo=kits" },

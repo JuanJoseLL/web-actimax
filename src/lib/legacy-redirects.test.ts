@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import legacyUrlRedirects from "../data/legacy-url-redirects.json";
 import productIdentities from "../data/product-identities.json";
 import retiredProducts from "../data/retired-products.json";
+import { CATEGORIAS } from "../data/categorias";
 import {
   flatProductPath,
   legacyProductRewrites,
@@ -28,6 +29,7 @@ const appRoutes = new Set([
   "/politicas-devolucion-privacidad/",
   "/mi-plan/",
   "/sitemap.xml",
+  ...CATEGORIAS.map((categoria) => categoria.path),
 ]);
 
 function pathOnly(destination: string): string {
@@ -35,6 +37,12 @@ function pathOnly(destination: string): string {
 }
 
 describe("legacy redirects", () => {
+  it("no redirige las landings de categoría: son rutas de la aplicación", () => {
+    for (const categoria of CATEGORIAS) {
+      expect(allSources).not.toContain(categoria.path);
+    }
+  });
+
   it("has no duplicate sources", () => {
     expect(new Set(allSources).size).toBe(allSources.length);
   });

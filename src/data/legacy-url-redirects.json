@@ -235,11 +235,6 @@
     "permanent": true
   },
   {
-    "source": "/productos/geles-energeticos/",
-    "destination": "/productos/?tipo=geles",
-    "permanent": true
-  },
-  {
     "source": "/productos/gym/",
     "destination": "/productos/?deporte=gym",
     "permanent": true

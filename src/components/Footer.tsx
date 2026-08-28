@@ -17,12 +17,13 @@ import {
   TELEFONO_E164,
   whatsappUrl,
 } from "@/lib/contacto";
+import { categoriaPath } from "@/data/categorias";
 
 const COLUMNS = [
   {
     title: "Productos",
     links: [
-      { label: "Geles energéticos", href: "/productos?tipo=geles" },
+      { label: "Geles energéticos", href: categoriaPath("geles") },
       { label: "Bebidas deportivas", href: "/productos?tipo=bebidas" },
       { label: "Barras de proteína", href: "/productos?tipo=barras" },
       { label: "Energy Packs", href: "/productos?tipo=kits" },

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatPostDate, type BlogPost } from "@/lib/blog";
+import { CategoriaCta } from "@/components/blog/CategoriaCta";
 import { LegacyArticleEnhancements } from "@/components/blog/LegacyArticleEnhancements";
 import { BlogNewsletter } from "@/components/blog/BlogNewsletter";
 
@@ -79,6 +80,8 @@ export function BlogArticle({ post, related }: { post: BlogPost; related: BlogPo
           posición del árbol, así que React lo reusaría y su efecto no volvería
           a correr sobre el HTML nuevo. */}
       <LegacyArticleEnhancements key={post.slug} />
+
+      <CategoriaCta post={post} />
 
       <Card className="mt-12 bg-muted py-0 text-center">
         <CardContent className="p-8">
