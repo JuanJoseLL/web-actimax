@@ -10,6 +10,7 @@ import { CartProvider } from "@/components/cart/CartProvider";
 import { CommandPalette, type PaletteProduct } from "@/components/CommandPalette";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { SECUENCIA_TEXTO } from "@/components/SecuenciaNumerica";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { Toaster } from "@/components/ui/sonner";
 import { getAllProducts, type Product } from "@/lib/catalog";
@@ -86,7 +87,7 @@ export default function RootLayout({
       lang="es"
       className={cn("h-full", "antialiased", archivo.variable, barlowCondensed.variable, chivoMono.variable, "font-sans")}
     >
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col" data-secuencia={SECUENCIA_TEXTO}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLd(organizationJsonLd()) }}

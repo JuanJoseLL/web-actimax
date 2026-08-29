@@ -8,6 +8,7 @@ import {
   WhatsAppIcon,
   YouTubeIcon,
 } from "@/components/BrandIcons";
+import { SecuenciaNumerica } from "@/components/SecuenciaNumerica";
 import { Separator } from "@/components/ui/separator";
 import {
   EMAIL,
@@ -223,9 +224,12 @@ export function Footer() {
         </div>
       </div>
       <Separator className="bg-white/10" />
-      <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 pr-20 font-mono text-[10px] tracking-[0.04em] text-white/35 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:pr-20 lg:px-8 lg:pr-8">
-        <p>© 2026 Actimax · Nutrición deportiva especializada</p>
-        <p>Hecho en Colombia · Envíos a todo el país</p>
+      <div className="mx-auto max-w-7xl px-4 py-5 pr-20 sm:px-6 sm:pr-20 lg:px-8 lg:pr-8">
+        <div className="flex flex-col gap-2 font-mono text-[10px] tracking-[0.04em] text-white/35 sm:flex-row sm:items-center sm:justify-between">
+          <p>© 2026 Actimax · Nutrición deportiva especializada</p>
+          <p>Hecho en Colombia · Envíos a todo el país</p>
+        </div>
+        <SecuenciaNumerica className="mt-4" />
       </div>
     </footer>
   );
