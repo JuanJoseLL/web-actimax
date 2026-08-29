@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { CATEGORIAS } from "@/data/categorias";
 import { DEPORTES } from "@/data/deportes";
+import { INDICE_LEGAL_PATH, PAGINAS_LEGALES_ORDENADAS } from "@/data/politicas";
 import { getAllBlogPosts, getBlogCategories } from "@/lib/blog";
 import { getAllProducts } from "@/lib/catalog";
 import { SITE_URL, productUrl } from "@/lib/seo";
@@ -24,7 +25,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     { url: `${SITE_URL}/productos/comparar/`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE_URL}/preguntas-frecuentes/`, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${SITE_URL}/politicas-devolucion-privacidad/`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${SITE_URL}${INDICE_LEGAL_PATH}`, changeFrequency: "yearly", priority: 0.3 },
+    ...PAGINAS_LEGALES_ORDENADAS.map((pagina) => ({
+      url: `${SITE_URL}${pagina.path}`,
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
+    })),
     ...products.map((product) => ({
       url: productUrl(product.handle),
       changeFrequency: "weekly" as const,

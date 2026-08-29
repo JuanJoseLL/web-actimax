@@ -51,9 +51,12 @@ export function GET(request: Request) {
 
   // Incluye `reviews` porque Judge.me no tiene webhook: con la caché en 24 h,
   // este marcador es la única forma de adelantar una reseña recién aprobada.
+  // `policies` está por lo mismo: Shopify no avisa cuando se edita una
+  // política, y ahora son cinco páginas legales las que penden de ese texto.
   revalidateTag("catalog", "max");
   revalidateTag("blog", "max");
   revalidateTag("reviews", "max");
+  revalidateTag("policies", "max");
 
   if (request.headers.get("accept")?.includes("text/html") === true) {
     return new Response(

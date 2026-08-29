@@ -4,9 +4,18 @@ const STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const STOREFRONT_TOKEN = process.env.SHOPIFY_STOREFRONT_TOKEN;
 const API_VERSION = "2026-01";
 
+/**
+ * Ranuras de política que Shopify expone por Storefront API. No hay ninguna
+ * para cookies —ni para el aviso legal, que solo existe en la Admin API—, así
+ * que ese texto vive en el repo (ver src/data/politicas.ts).
+ */
+export type PolicySlot =
+  | "refundPolicy"
+  | "privacyPolicy"
+  | "shippingPolicy"
+  | "termsOfService";
+
 export interface StorePolicy {
-  /** Ancla histórica de WordPress: el sitio viejo enlazaba #devolucion, #privacidad y #envios. */
-  anchor: string;
   title: string;
   bodyHtml: string;
 }
@@ -17,6 +26,7 @@ const POLICIES_QUERY = /* GraphQL */ `
       refundPolicy { title body }
       privacyPolicy { title body }
       shippingPolicy { title body }
+      termsOfService { title body }
     }
   }
 `;
@@ -26,23 +36,27 @@ interface PolicyNode {
   body: string;
 }
 
-interface PoliciesResponse {
-  data?: {
-    shop?: {
-      refundPolicy: PolicyNode | null;
-      privacyPolicy: PolicyNode | null;
-      shippingPolicy: PolicyNode | null;
-    };
-  };
-}
+type PoliciesResponse = {
+  data?: { shop?: Record<PolicySlot, PolicyNode | null> };
+};
+
+const SLOTS: PolicySlot[] = [
+  "refundPolicy",
+  "privacyPolicy",
+  "shippingPolicy",
+  "termsOfService",
+];
 
 /** Las políticas se administran en Shopify (Configuración → Políticas). */
-export async function getStorePolicies(): Promise<StorePolicy[]> {
+export async function getStorePolicies(): Promise<Partial<Record<PolicySlot, StorePolicy>>> {
   "use cache";
   cacheTag("policies");
-  cacheLife({ stale: 3600, revalidate: 3600, expire: 604800 });
+  /* Una política se edita dos veces al año, y ahora son cinco páginas las que
+     se reescribirían en cada revalidación. Con /api/revalidar para adelantar
+     un cambio, una hora de ventana solo gastaría escrituras de ISR. */
+  cacheLife({ stale: 86400, revalidate: 86400, expire: 604800 });
 
-  if (STORE_DOMAIN === undefined || STOREFRONT_TOKEN === undefined) return [];
+  if (STORE_DOMAIN === undefined || STOREFRONT_TOKEN === undefined) return {};
 
   try {
     const response = await fetch(`https://${STORE_DOMAIN}/api/${API_VERSION}/graphql.json`, {
@@ -53,31 +67,31 @@ export async function getStorePolicies(): Promise<StorePolicy[]> {
       },
       body: JSON.stringify({ query: POLICIES_QUERY }),
     });
-    if (!response.ok) return [];
+    if (!response.ok) return {};
 
     const result: PoliciesResponse = await response.json();
     const shop = result.data?.shop;
-    if (shop === undefined) return [];
+    if (shop === undefined) return {};
 
-    return [
-      { anchor: "devolucion", node: shop.refundPolicy },
-      { anchor: "privacidad", node: shop.privacyPolicy },
-      { anchor: "envios", node: shop.shippingPolicy },
-    ]
-      .filter(
-        (section): section is { anchor: string; node: PolicyNode } =>
-          section.node !== null &&
-          section.node.body.trim() !== "" &&
-          /* La política autogestionada por Shopify llega como plantilla Liquid
-             sin renderizar ({{ shop_name }}); no es contenido publicable. */
-          !section.node.body.includes("{{"),
-      )
-      .map((section) => ({
-        anchor: section.anchor,
-        title: section.node.title,
-        bodyHtml: section.node.body,
-      }));
+    const policies: Partial<Record<PolicySlot, StorePolicy>> = {};
+    for (const slot of SLOTS) {
+      const node = shop[slot];
+      if (node === null || node === undefined) continue;
+      /* La política autogestionada por Shopify llega como plantilla Liquid
+         sin renderizar ({{ shop_name }}); no es contenido publicable. */
+      if (node.body.trim() === "" || node.body.includes("{{")) continue;
+      policies[slot] = { title: node.title, bodyHtml: node.body };
+    }
+    return policies;
   } catch {
-    return [];
+    return {};
   }
+}
+
+/**
+ * Una sola política. Comparte la petición cacheada de getStorePolicies, así
+ * que las cinco páginas legales no son cinco viajes a Shopify.
+ */
+export async function getStorePolicy(slot: PolicySlot): Promise<StorePolicy | undefined> {
+  return (await getStorePolicies())[slot];
 }

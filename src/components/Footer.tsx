@@ -20,6 +20,7 @@ import {
 } from "@/lib/contacto";
 import { categoriaPath } from "@/data/categorias";
 import { DEPORTES } from "@/data/deportes";
+import { INDICE_LEGAL_PATH, PAGINAS_LEGALES_ORDENADAS } from "@/data/politicas";
 
 /* Los enlaces llevan slash final: sin él cada clic pasa por un 308. */
 const COLUMNS = [
@@ -54,7 +55,7 @@ const COLUMNS = [
       { label: "Suscríbete al boletín", href: "/#suscribete" },
       { label: "Preguntas frecuentes", href: "/preguntas-frecuentes" },
       { label: "Mi cuenta", href: "/mi-cuenta/" },
-      { label: "Políticas de la tienda", href: "/politicas-devolucion-privacidad" },
+      { label: "Políticas de la tienda", href: INDICE_LEGAL_PATH },
       { label: "Equipos y tiendas", href: "/#mayoristas" },
     ],
   },
@@ -225,7 +226,23 @@ export function Footer() {
       </div>
       <Separator className="bg-white/10" />
       <div className="mx-auto max-w-7xl px-4 py-5 pr-20 sm:px-6 sm:pr-20 lg:px-8 lg:pr-8">
-        <div className="flex flex-col gap-2 font-mono text-[10px] tracking-[0.04em] text-white/35 sm:flex-row sm:items-center sm:justify-between">
+        {/* La revisión legal pidió las cinco políticas enlazadas una por una
+            desde el pie, no escondidas tras un único "Políticas". */}
+        <nav aria-label="Políticas y condiciones">
+          <ul className="flex flex-col sm:flex-row sm:flex-wrap sm:gap-x-6">
+            {PAGINAS_LEGALES_ORDENADAS.map((pagina) => (
+              <li key={pagina.path}>
+                <Link
+                  href={pagina.path}
+                  className="flex min-h-9 items-center text-[11px] font-medium leading-tight text-white/55 transition-colors hover:text-amarillo"
+                >
+                  {pagina.navLabel}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div className="mt-4 flex flex-col gap-2 font-mono text-[10px] tracking-[0.04em] text-white/35 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 Actimax · Nutrición deportiva especializada</p>
           <p>Hecho en Colombia · Envíos a todo el país</p>
         </div>
