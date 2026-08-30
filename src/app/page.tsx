@@ -25,6 +25,7 @@ import { getAllProducts, getProducts } from "@/lib/catalog";
 import { formatCOP } from "@/lib/format";
 import { canonicalProductPath } from "@/lib/product-paths";
 import { categoriaPath } from "@/data/categorias";
+import { BEST_SELLERS } from "@/data/destacados";
 
 /* Título, descripción y Open Graph vienen del layout raíz; el canonical
    defiende el home de duplicados por query (?utm_*, ?fbclid, …). */
@@ -490,13 +491,6 @@ async function RitualSection() {
     </section>
   );
 }
-
-const BEST_SELLERS = [
-  "gel-energetico-actimax-caja-x8-con-cafeina",
-  "bebida-deportiva-elite-con-cafeina-tarro-de-500gr",
-  "protein-bar-caja-x18",
-  "recovery-pro-tarro-400gr",
-];
 
 async function BestSellersSection() {
   const [featured, all] = await Promise.all([
