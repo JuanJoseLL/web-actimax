@@ -95,34 +95,41 @@ export async function ProductosDelArticulo({ post }: { post: BlogPost }) {
 }
 
 /**
- * El mismo criterio de las landings —solo lo que hay en stock, del más barato
- * al más caro— recortado a cuatro. Si la landing deja menos de tres (o el post
- * no tiene landing), completa con los favoritos del home sin repetir.
+ * Los cuatro que se muestran, en este orden de preferencia:
+ *
+ * 1. La vitrina que la landing fija para el blog (`destacadosBlog`). Ordenar
+ *    por precio como la landing dejaba arriba lo más barato, que en running
+ *    son los packs de 10K y 15K; la vitrina la escribe quien hace campaña.
+ * 2. Si la landing no fija vitrina, su grilla con el criterio de la landing:
+ *    en stock, del más barato al más caro.
+ * 3. Los favoritos del home, para no dejar el bloque a medias cuando el post
+ *    no habla de ninguna landing o cuando la vitrina se quedó sin stock.
  */
 function recomendados(landing: Landing | undefined, todos: Product[]): Product[] {
   const disponibles = todos.filter((producto) => producto.inStock);
-  const orden = (a: Product, b: Product) =>
-    a.price - b.price || a.title.localeCompare(b.title, "es");
+  const elegidos: Product[] = [];
+  const puestos = new Set<string>();
 
-  const elegidos =
-    landing === undefined
-      ? []
-      : disponibles
-          .filter((producto) => esProductoDe(landing, producto))
-          .toSorted(orden)
-          .slice(0, 4);
+  const añadir = (producto: Product | undefined) => {
+    if (producto === undefined) return;
+    if (elegidos.length === 4 || puestos.has(producto.handle)) return;
+    elegidos.push(producto);
+    puestos.add(producto.handle);
+  };
+  const porHandle = (handle: string) =>
+    disponibles.find((producto) => producto.handle === handle);
 
-  if (elegidos.length >= 3) return elegidos;
+  for (const handle of landing?.destacadosBlog ?? []) añadir(porHandle(handle));
 
-  const puestos = new Set(elegidos.map((producto) => producto.handle));
-  for (const handle of BEST_SELLERS) {
-    if (elegidos.length === 4) break;
-    if (puestos.has(handle)) continue;
-    const favorito = disponibles.find((producto) => producto.handle === handle);
-    if (favorito === undefined) continue;
-    elegidos.push(favorito);
-    puestos.add(handle);
+  if (elegidos.length === 0 && landing !== undefined) {
+    const grilla = disponibles
+      .filter((producto) => esProductoDe(landing, producto))
+      .toSorted((a, b) => a.price - b.price || a.title.localeCompare(b.title, "es"));
+    for (const producto of grilla) añadir(producto);
   }
+
+  if (elegidos.length < 3) for (const handle of BEST_SELLERS) añadir(porHandle(handle));
+
   return elegidos;
 }
 

@@ -78,6 +78,13 @@ export interface LandingBase {
    * packs 10K y 15K no llevan deporte en Shopify pero son de running).
    */
   incluir?: string[];
+  /**
+   * Vitrina fija del bloque de producto del blog (ProductosDelArticulo), por
+   * handle y en este orden. Sin ella el bloque ordena por precio como la
+   * landing, y eso deja arriba lo más barato: en running, los packs de 10K y
+   * 15K. Solo afecta al blog; la grilla de la landing no cambia.
+   */
+  destacadosBlog?: string[];
 }
 
 export interface CategoriaLanding extends LandingBase {

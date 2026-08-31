@@ -72,6 +72,19 @@ const RUNNING: DeporteLanding = {
       ],
     },
   ],
+  /* Vitrina del blog: la Maratón de Medellín es el 6 de septiembre de 2026 y
+     el bloque de producto de los posts de running encabeza con los dos packs
+     de 42K, no con los de 10K y 15K, que por ser los más baratos salían
+     primero. Deja fuera también los packs "Running" duplicados, que convierten
+     2,7% contra el 6,7% de estos. No caduca solo —las rutas del blog se
+     prerenderizan y cualquier chequeo de fecha quedaría congelado en la del
+     build—, así que pasada la carrera se revierte editando esta lista. */
+  destacadosBlog: [
+    "energy-pack-maraton-42k",
+    "energy-pack-42k-sub-3",
+    "energy-pack-media-maraton-21k",
+    "gel-energetico-actimax-caja-x8-con-cafeina",
+  ],
   retosTitulo: "Energy Packs para correr, por distancia",
   retosIntro:
     "Cada pack trae Pre Race para antes, los geles del recorrido y Recovery Pro para después, con la pauta por kilómetro en la ficha:",
@@ -151,6 +164,12 @@ const RUNNING: DeporteLanding = {
     "corredores",
     "corredora",
     "corredoras",
+    /* Los posts que solo dicen "runners" caían en el respaldo de favoritos:
+       sin landing no tenían ni enlace interno ni vitrina. "atletismo" no
+       entra, es demasiado ancho —lo cubre deportes.test.ts con el perfil de
+       Sandra Lorena Arenas, que no es un post de nutrición. */
+    "runner",
+    "runners",
     "maraton",
     "maratones",
     "10k",
