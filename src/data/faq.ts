@@ -43,7 +43,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   {
     question: "¿Dónde comprar productos Actimax y hacen envíos?",
     answer:
-      "En la tienda oficial actimax.com.co, con pago seguro procesado por Shopify y envíos a toda Colombia: Bogotá, Medellín, Cali, Barranquilla y el resto del país. La marca también tiene punto físico en Envigado, Antioquia.",
+      "En la tienda oficial actimax.com.co, con pago seguro procesado por Shopify y envíos a toda Colombia: Bogotá, Medellín, Cali, Barranquilla y el resto del país. En Medellín y el área metropolitana el pedido se despacha el mismo día y llega en 1 a 2 días hábiles; en el resto del país la entrega toma de 3 a 5 días hábiles. El envío es gratis desde $120.000. La marca también tiene punto físico en Envigado, Antioquia.",
   },
   {
     question: "¿Los geles y bebidas Actimax sirven para ciclismo y otros deportes?",
