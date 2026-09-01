@@ -10,6 +10,7 @@ import { CartProvider } from "@/components/cart/CartProvider";
 import { CommandPalette, type PaletteProduct } from "@/components/CommandPalette";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { HideOnDestinos } from "@/components/HideOnDestinos";
 import { SECUENCIA_TEXTO } from "@/components/SecuenciaNumerica";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { Toaster } from "@/components/ui/sonner";
@@ -99,8 +100,10 @@ export default function RootLayout({
         <CartProvider>
           <Header />
           <main className="flex-1">{children}</main>
-          <Footer />
-          <WhatsAppButton />
+          <HideOnDestinos>
+            <Footer />
+            <WhatsAppButton />
+          </HideOnDestinos>
           <CartDrawer productsPromise={productsPromise.then(cartUpsellProducts)} />
           <Suspense fallback={null}>
             <StoreCommandPalette productsPromise={productsPromise} />

@@ -29,6 +29,7 @@ const NAV = [
   { label: "El método", href: "/#metodo" },
   { label: "Blog", href: "/blog/" },
   { label: "Club", href: "/#club" },
+  { label: "Destinos", href: "/destinos/" },
 ];
 
 const MOBILE_CATEGORIES = [
