@@ -2,15 +2,35 @@ import type { MetadataRoute } from "next";
 import { CATEGORIAS } from "@/data/categorias";
 import { DEPORTES } from "@/data/deportes";
 import { INDICE_LEGAL_PATH, PAGINAS_LEGALES_ORDENADAS } from "@/data/politicas";
+import { getDestinosData } from "@/app/destinos/shopify-data";
 import { getAllBlogPosts, getBlogCategories } from "@/lib/blog";
 import { getAllProducts } from "@/lib/catalog";
 import { SITE_URL, productUrl } from "@/lib/seo";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [posts, products] = await Promise.all([getAllBlogPosts(), getAllProducts()]);
+  const [posts, products, destinos] = await Promise.all([
+    getAllBlogPosts(),
+    getAllProducts(),
+    getDestinosData(),
+  ]);
+  const includeDestinos =
+    process.env.DESTINOS_PUBLIC === "true" &&
+    destinos.seo.values.include_in_sitemap === true;
 
   return [
     { url: `${SITE_URL}/`, changeFrequency: "weekly", priority: 1 },
+    ...(includeDestinos
+      ? [
+          {
+            url: `${SITE_URL}/destinos/`,
+            changeFrequency: "weekly" as const,
+            priority: 0.8,
+            images: destinos.seo.media.og_image
+              ? [destinos.seo.media.og_image]
+              : undefined,
+          },
+        ]
+      : []),
     { url: `${SITE_URL}/mi-plan/`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE_URL}/productos/`, changeFrequency: "daily", priority: 0.9 },
     ...CATEGORIAS.map((categoria) => ({

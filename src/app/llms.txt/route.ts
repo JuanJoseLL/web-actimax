@@ -1,6 +1,7 @@
 import { CATEGORIAS } from "@/data/categorias";
 import { DEPORTES } from "@/data/deportes";
 import { FAQ_ITEMS } from "@/data/faq";
+import { getDestinosData } from "@/app/destinos/shopify-data";
 import { getAllProducts } from "@/lib/catalog";
 import { BRAND_DESCRIPTION, SITE_URL, productUrl } from "@/lib/seo";
 import { TYPE_LABELS, type Product, type ProductType } from "@/lib/taxonomia";
@@ -22,7 +23,13 @@ function productLine(product: Product): string {
 }
 
 export async function GET(): Promise<Response> {
-  const products = await getAllProducts();
+  const [products, destinos] = await Promise.all([
+    getAllProducts(),
+    getDestinosData(),
+  ]);
+  const includeDestinos =
+    process.env.DESTINOS_PUBLIC === "true" &&
+    destinos.seo.values.include_in_llms === true;
 
   const lines: string[] = [
     "# Actimax",
@@ -59,6 +66,11 @@ export async function GET(): Promise<Response> {
     ...DEPORTES.map(
       (deporte) => `- [${deporte.nombre}](${SITE_URL}${deporte.path}): ${deporte.description}`,
     ),
+    ...(includeDestinos
+      ? [
+          `- [${String(destinos.seo.values.schema_name ?? "Destinos Actimax × WOPU Travel")}](${SITE_URL}/destinos/): ${String(destinos.seo.values.schema_description ?? "Viajes deportivos a Europa para corredores y ciclistas.")}`,
+        ]
+      : []),
     `- [Comparador de Energy Packs](${SITE_URL}/productos/comparar/): kits de nutrición por distancia (10K a maratón, Gran Fondo, triatlón).`,
     `- [Blog](${SITE_URL}/blog/): guías de nutrición deportiva, hidratación y estrategia de carrera.`,
     "",
