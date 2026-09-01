@@ -1,3 +1,5 @@
+import { CATEGORIAS } from "@/data/categorias";
+import { DEPORTES } from "@/data/deportes";
 import { FAQ_ITEMS } from "@/data/faq";
 import { getAllProducts } from "@/lib/catalog";
 import { BRAND_DESCRIPTION, SITE_URL, productUrl } from "@/lib/seo";
@@ -51,6 +53,12 @@ export async function GET(): Promise<Response> {
     "## Recursos",
     "",
     `- [Catálogo completo](${SITE_URL}/productos/): filtrable por tipo, momento del esfuerzo (antes, durante, después) y deporte.`,
+    ...CATEGORIAS.map(
+      (categoria) => `- [${categoria.nombre}](${SITE_URL}${categoria.path}): ${categoria.description}`,
+    ),
+    ...DEPORTES.map(
+      (deporte) => `- [${deporte.nombre}](${SITE_URL}${deporte.path}): ${deporte.description}`,
+    ),
     `- [Comparador de Energy Packs](${SITE_URL}/productos/comparar/): kits de nutrición por distancia (10K a maratón, Gran Fondo, triatlón).`,
     `- [Blog](${SITE_URL}/blog/): guías de nutrición deportiva, hidratación y estrategia de carrera.`,
     "",

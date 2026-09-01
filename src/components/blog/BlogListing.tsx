@@ -38,7 +38,7 @@ export function BlogListing({
             <Link href={first.path} className="group grid min-h-96 md:grid-cols-[1.15fr_0.85fr]">
               <div className="flex flex-col justify-center p-6 sm:p-12">
                 <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
-                  {first.category} · Más reciente
+                  {first.category} · {first.featured ? "Destacado" : "Más reciente"}
                 </span>
                 <h2 className="mt-4 max-w-3xl font-display text-4xl font-extrabold uppercase italic leading-[0.98] group-hover:text-accent sm:text-6xl">
                   {first.title}

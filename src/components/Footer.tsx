@@ -8,6 +8,7 @@ import {
   WhatsAppIcon,
   YouTubeIcon,
 } from "@/components/BrandIcons";
+import { SecuenciaNumerica } from "@/components/SecuenciaNumerica";
 import { Separator } from "@/components/ui/separator";
 import {
   EMAIL,
@@ -17,24 +18,32 @@ import {
   TELEFONO_E164,
   whatsappUrl,
 } from "@/lib/contacto";
+import { categoriaPath } from "@/data/categorias";
+import { DEPORTES } from "@/data/deportes";
+import { INDICE_LEGAL_PATH, PAGINAS_LEGALES_ORDENADAS } from "@/data/politicas";
 
+/* Los enlaces llevan slash final: sin él cada clic pasa por un 308. */
 const COLUMNS = [
   {
     title: "Productos",
     links: [
-      { label: "Geles energéticos", href: "/productos?tipo=geles" },
-      { label: "Bebidas deportivas", href: "/productos?tipo=bebidas" },
-      { label: "Barras de proteína", href: "/productos?tipo=barras" },
-      { label: "Energy Packs", href: "/productos?tipo=kits" },
-      { label: "Comparar Energy Packs", href: "/productos/comparar" },
+      { label: "Geles energéticos", href: categoriaPath("geles") },
+      { label: "Bebidas deportivas", href: categoriaPath("bebidas") },
+      { label: "Barras de proteína", href: categoriaPath("barras") },
+      { label: "Energy Packs", href: "/productos/?tipo=kits" },
+      { label: "Comparar Energy Packs", href: "/productos/comparar/" },
     ],
+  },
+  {
+    title: "Por deporte",
+    links: DEPORTES.map((deporte) => ({ label: deporte.nombre, href: deporte.path })),
   },
   {
     title: "Por momento",
     links: [
-      { label: "Antes del esfuerzo", href: "/productos?momento=antes" },
-      { label: "Durante el esfuerzo", href: "/productos?momento=durante" },
-      { label: "Después del esfuerzo", href: "/productos?momento=despues" },
+      { label: "Antes del esfuerzo", href: "/productos/?momento=antes" },
+      { label: "Durante el esfuerzo", href: "/productos/?momento=durante" },
+      { label: "Después del esfuerzo", href: "/productos/?momento=despues" },
     ],
   },
   {
@@ -46,7 +55,7 @@ const COLUMNS = [
       { label: "Suscríbete al boletín", href: "/#suscribete" },
       { label: "Preguntas frecuentes", href: "/preguntas-frecuentes" },
       { label: "Mi cuenta", href: "/mi-cuenta/" },
-      { label: "Políticas de la tienda", href: "/politicas-devolucion-privacidad" },
+      { label: "Políticas de la tienda", href: INDICE_LEGAL_PATH },
       { label: "Equipos y tiendas", href: "/#mayoristas" },
     ],
   },
@@ -192,7 +201,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="grid gap-9 pt-10 sm:grid-cols-3 sm:gap-8 lg:gap-16">
+        <div className="grid gap-9 pt-10 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4 lg:gap-12">
           {COLUMNS.map((col) => (
             <nav key={col.title} aria-label={col.title}>
               <div className="flex items-center gap-3">
@@ -216,9 +225,28 @@ export function Footer() {
         </div>
       </div>
       <Separator className="bg-white/10" />
-      <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 pr-20 font-mono text-[10px] tracking-[0.04em] text-white/35 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:pr-20 lg:px-8 lg:pr-8">
-        <p>© 2026 Actimax · Nutrición deportiva especializada</p>
-        <p>Hecho en Colombia · Envíos a todo el país</p>
+      <div className="mx-auto max-w-7xl px-4 py-5 pr-20 sm:px-6 sm:pr-20 lg:px-8 lg:pr-8">
+        {/* La revisión legal pidió las cinco políticas enlazadas una por una
+            desde el pie, no escondidas tras un único "Políticas". */}
+        <nav aria-label="Políticas y condiciones">
+          <ul className="flex flex-col sm:flex-row sm:flex-wrap sm:gap-x-6">
+            {PAGINAS_LEGALES_ORDENADAS.map((pagina) => (
+              <li key={pagina.path}>
+                <Link
+                  href={pagina.path}
+                  className="flex min-h-9 items-center text-[11px] font-medium leading-tight text-white/55 transition-colors hover:text-amarillo"
+                >
+                  {pagina.navLabel}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div className="mt-4 flex flex-col gap-2 font-mono text-[10px] tracking-[0.04em] text-white/35 sm:flex-row sm:items-center sm:justify-between">
+          <p>© 2026 Actimax · Nutrición deportiva especializada</p>
+          <p>Hecho en Colombia · Envíos a todo el país</p>
+        </div>
+        <SecuenciaNumerica className="mt-4" />
       </div>
     </footer>
   );

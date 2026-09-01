@@ -3,6 +3,7 @@ import legacyUrlRedirects from "./src/data/legacy-url-redirects.json";
 import {
   legacyProductRewrites,
   productAliasRedirects,
+  retiredProductRedirects,
   wordpressIdRedirects,
 } from "./src/lib/product-paths";
 
@@ -46,8 +47,19 @@ const nextConfig: NextConfig = {
         destination: `https://${process.env.SHOPIFY_STORE_DOMAIN ?? "actimax-hzfavz8j.myshopify.com"}/account`,
         permanent: false,
       },
+      // El WordPress viejo servía el sitio en inglés bajo /en/ y Google sigue
+      // mostrando esas URLs (1.964 impresiones al mes en agosto de 2026); el
+      // 301 le pasa esa autoridad a la página en español equivalente. Hoy la
+      // regla del firewall sobre /en reta a todo el mundo con un 429: para
+      // que Googlebot y bingbot lleguen a este redirect hay que excluirlos
+      // de esa regla (sigue retando al resto, que es tráfico bot).
+      // `:path+` con el slash final en el destino evita la cadena
+      // /en/x/ → /x → /x/ (dos saltos) que deja el 308 de trailingSlash.
+      { source: "/en", destination: "/", permanent: true },
+      { source: "/en/:path+", destination: "/:path+/", permanent: true },
       ...legacyUrlRedirects,
       ...productAliasRedirects,
+      ...retiredProductRedirects,
       ...wordpressIdRedirects,
     ];
   },

@@ -10,6 +10,7 @@ export interface BlogPost {
   slug: string;
   path: string;
   title: string;
+  featured: boolean;
   category: string;
   tags: string[];
   excerpt: string;
@@ -20,6 +21,21 @@ export interface BlogPost {
   seoTitle: string | null;
   seoDescription: string | null;
   bodyHtml: string;
+}
+
+export function isFeaturedBlogTag(tag: string): boolean {
+  return tag.trim().toLowerCase() === "destacado";
+}
+
+export function prioritizeFeaturedBlogPost<T extends { featured: boolean }>(posts: readonly T[]): T[] {
+  const featuredIndex = posts.findIndex((post) => post.featured);
+  if (featuredIndex <= 0) return [...posts];
+
+  return [
+    posts[featuredIndex],
+    ...posts.slice(0, featuredIndex),
+    ...posts.slice(featuredIndex + 1),
+  ];
 }
 
 export interface BlogCategory {

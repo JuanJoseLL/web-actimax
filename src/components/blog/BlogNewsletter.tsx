@@ -4,30 +4,33 @@ import { NewsletterForm } from "@/components/NewsletterForm";
  * Cierre de cada artículo. Quien acaba de leer una guía de nutrición es
  * justo quien quiere la siguiente, y hasta ahora el único formulario del
  * sitio estaba al final del home, donde un lector del blog no llega nunca.
+ *
+ * Va a sangre y con la misma caja (max-w-7xl) que NewsletterSection en el
+ * home: antes vivía dentro de la columna del artículo y el azul se cortaba a
+ * media página, que era lo que se veía raro.
  */
 export function BlogNewsletter() {
   return (
-    <section
-      aria-labelledby="boletin-articulo"
-      className="mt-8 rounded-xl bg-azul px-6 py-8 text-white sm:px-8"
-    >
-      <div className="grid gap-8 md:grid-cols-2 md:items-center md:gap-10">
-        <div>
-          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-amarillo">
-            Boletín Actimax
-          </p>
+    <section aria-labelledby="boletin-articulo" className="bg-azul text-white">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-8">
+        <div className="reveal">
+          <p className="section-kicker section-kicker-dark">Boletín Actimax</p>
           <h2
             id="boletin-articulo"
-            className="mt-3 font-display text-3xl font-extrabold uppercase italic leading-[0.95] sm:text-4xl"
+            className="mt-4 max-w-2xl font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-6xl lg:text-7xl"
           >
-            ¿Te sirvió? El siguiente te llega al correo.
+            ¿Te sirvió?
+            <span className="block text-amarillo">El siguiente te llega al correo.</span>
           </h2>
-          <p className="mt-4 text-sm font-medium leading-relaxed text-white/70">
+          <p className="mt-6 max-w-xl text-lg font-medium leading-relaxed text-white/70">
             Estrategia de nutrición, planes por distancia y un descuento de
             bienvenida para tu primera compra.
           </p>
         </div>
-        <NewsletterForm origen="blog" />
+
+        <div className="reveal">
+          <NewsletterForm origen="blog" />
+        </div>
       </div>
     </section>
   );

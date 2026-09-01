@@ -14,6 +14,8 @@ import {
   isMomento,
   isProductType,
 } from "@/lib/catalog";
+import { categoriaPorTipo } from "@/data/categorias";
+import { deportePorSlug, type Landing } from "@/data/deportes";
 import { itemListJsonLd, jsonLd, pageMetadata } from "@/lib/seo";
 import type { Momento, Product, ProductType } from "@/lib/taxonomia";
 
@@ -49,10 +51,21 @@ function filterUrl(current: Filters, patch: Partial<Filters>): string {
   return qs === "" ? "/productos/" : `/productos/?${qs}`;
 }
 
-/* Las landings viejas de categoría y de ciudad (geles-energeticos,
-   bebidas-isotonicas-bogota, …) redirigen a estas vistas filtradas; cada una
-   necesita canonical, título y descripción propios para no consolidarse
-   todas en /productos/ y perder lo que rankeaban. */
+/* Las landings viejas de categoría y de ciudad (bebidas-isotonicas-bogota,
+   …) redirigen a estas vistas filtradas; cada una necesita canonical, título
+   y descripción propios para no consolidarse todas en /productos/ y perder
+   lo que rankeaban. Cuando el tipo o el deporte tiene landing propia
+   (src/data/categorias.ts, src/data/deportes.ts), la vista filtrada por ese
+   único criterio declara la landing como canónica: es la misma grilla con el
+   texto que posiciona. */
+
+/** La landing que equivale a la vista filtrada, si el único filtro la tiene. */
+function landingDe({ tipo, momento, deporte }: Filters): Landing | undefined {
+  if (momento !== undefined) return undefined;
+  if (tipo !== undefined && deporte === undefined) return categoriaPorTipo(tipo);
+  if (deporte !== undefined && tipo === undefined) return deportePorSlug(deporte);
+  return undefined;
+}
 const TYPE_DESCRIPTIONS: Record<ProductType, string> = {
   geles:
     "Geles energéticos colombianos con y sin cafeína para running, ciclismo y triatlón. Compra en línea con envíos a Bogotá, Medellín, Cali y toda Colombia.",
@@ -109,12 +122,13 @@ export async function generateMetadata({
       : "";
 
   const title = `${head}${momentoPart}${deportePart} — Catálogo Actimax`;
-  const description =
-    tipo !== undefined && momento === undefined && deporte === undefined
-      ? TYPE_DESCRIPTIONS[tipo]
-      : `${head}${momentoPart}${deportePart} de Actimax: nutrición deportiva hecha en Colombia, con envíos a todo el país.`;
+  const soloTipo = tipo !== undefined && momento === undefined && deporte === undefined;
+  const description = soloTipo
+    ? TYPE_DESCRIPTIONS[tipo]
+    : `${head}${momentoPart}${deportePart} de Actimax: nutrición deportiva hecha en Colombia, con envíos a todo el país.`;
+  const landing = landingDe(filters);
 
-  return pageMetadata({ title, description, path: filterUrl(filters, {}) });
+  return pageMetadata({ title, description, path: landing?.path ?? filterUrl(filters, {}) });
 }
 
 /** La faceta que aplica un chip: `tipo=geles`, `momento=todos`, … */
@@ -217,6 +231,7 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
     .toSorted(catalogOrder);
 
   const hasFilters = tipo !== undefined || momento !== undefined || deporte !== undefined;
+  const landing = landingDe(current);
 
   /* La lista estructurada debe describir lo que se ve: con filtros activos
      anunciar el catálogo entero le declara a los buscadores una página que
@@ -250,6 +265,17 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
         {momento !== undefined ? ` · para ${MOMENTO_LABELS[momento].toLowerCase()} del esfuerzo` : ""}
         {deporte !== undefined ? ` · ${DEPORTE_LABELS[deporte]}` : ""}
       </p>
+      {landing !== undefined ? (
+        <p className="mt-3 text-sm text-tinta/70">
+          Cuándo, cuánto y preguntas frecuentes:{" "}
+          <Link
+            href={landing.path}
+            className="font-semibold text-azul underline-offset-4 hover:underline"
+          >
+            guía de {landing.nombre.toLocaleLowerCase("es-CO")} →
+          </Link>
+        </p>
+      ) : null}
 
       <div className="mt-8 flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">

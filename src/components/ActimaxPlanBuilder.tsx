@@ -804,7 +804,7 @@ export function ActimaxPlanBuilder({
                   <PackageIcon />
                   <AlertTitle>Estamos preparando el pack recomendado</AlertTitle>
                   <AlertDescription>
-                    Puedes revisar todos los <Link href="/productos?tipo=kits">Energy Packs disponibles</Link>.
+                    Puedes revisar todos los <Link href="/productos/?tipo=kits">Energy Packs disponibles</Link>.
                   </AlertDescription>
                 </Alert>
               )}

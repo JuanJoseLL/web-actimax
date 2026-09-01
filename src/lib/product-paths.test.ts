@@ -36,9 +36,10 @@ describe("product paths", () => {
     );
   });
 
-  it("genera 31 rewrites y alias sin ciclos", () => {
-    expect(legacyProductRewrites).toHaveLength(31);
-    expect(productAliasRedirects).toHaveLength(31);
+  // 35 identidades − 4 con ruta plana − 8 retiradas (ver retired-products.json)
+  it("genera 23 rewrites y alias sin ciclos", () => {
+    expect(legacyProductRewrites).toHaveLength(23);
+    expect(productAliasRedirects).toHaveLength(23);
     expect(
       productAliasRedirects.every(
         (redirect) => redirect.source !== redirect.destination,

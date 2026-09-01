@@ -36,7 +36,7 @@
   },
   {
     "source": "/combo-recarga-total-actimax/",
-    "destination": "/productos/natacion/combo-recarga-total/",
+    "destination": "/productos/?deporte=natacion",
     "permanent": true
   },
   {
@@ -106,7 +106,7 @@
   },
   {
     "source": "/producto/recovery-en-tarro/",
-    "destination": "/productos/bebidas-deportivas/recovery-tarro-400gr/",
+    "destination": "/productos/bebidas-deportivas/recovery-pro-tarro-400gr/",
     "permanent": true
   },
   {
@@ -125,68 +125,53 @@
     "permanent": true
   },
   {
-    "source": "/productos/barras-de-proteina/",
-    "destination": "/productos/?tipo=barras",
-    "permanent": true
-  },
-  {
-    "source": "/productos/bebidas-deportivas/",
-    "destination": "/productos/?tipo=bebidas",
-    "permanent": true
-  },
-  {
     "source": "/productos/bebidas-deportivas/bebida-deportiva-elite-con-cafeina-tarro-de-500gr/",
     "destination": "/productos/bebidas-deportivas/bebida-deportiva-elite-con-cafeina-500gr/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-barranquilla/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-bogota/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-bucaramanga/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-cali/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-cartagena/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-medellin/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas-pereira/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-isotonicas/",
-    "destination": "/productos/?tipo=bebidas",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
     "source": "/productos/bebidas-rehidratantes/",
-    "destination": "/productos/?tipo=bebidas",
-    "permanent": true
-  },
-  {
-    "source": "/productos/ciclismo/",
-    "destination": "/productos/?deporte=ciclismo",
+    "destination": "/productos/bebidas-deportivas/",
     "permanent": true
   },
   {
@@ -235,21 +220,6 @@
     "permanent": true
   },
   {
-    "source": "/productos/geles-energeticos/",
-    "destination": "/productos/?tipo=geles",
-    "permanent": true
-  },
-  {
-    "source": "/productos/gym/",
-    "destination": "/productos/?deporte=gym",
-    "permanent": true
-  },
-  {
-    "source": "/productos/natacion/",
-    "destination": "/productos/?deporte=natacion",
-    "permanent": true
-  },
-  {
     "source": "/productos/nutricion-deportiva-medellin/",
     "destination": "/productos/",
     "permanent": true
@@ -260,18 +230,8 @@
     "permanent": true
   },
   {
-    "source": "/productos/running/",
-    "destination": "/productos/?deporte=running",
-    "permanent": true
-  },
-  {
     "source": "/productos/sin-categorizar/",
     "destination": "/productos/",
-    "permanent": true
-  },
-  {
-    "source": "/productos/triatlon/",
-    "destination": "/productos/?deporte=triatlon",
     "permanent": true
   },
   {
@@ -316,6 +276,11 @@
   },
   {
     "source": "/ventas-mayoristas/",
+    "destination": "/#mayoristas",
+    "permanent": true
+  },
+  {
+    "source": "/store/:slug*",
     "destination": "/#mayoristas",
     "permanent": true
   }

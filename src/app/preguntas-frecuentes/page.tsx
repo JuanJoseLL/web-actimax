@@ -65,7 +65,7 @@ export default function FaqPage() {
       <Separator className="mt-14" />
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Button asChild variant="race" size="lg">
-          <Link href="/productos">Ver todos los productos</Link>
+          <Link href="/productos/">Ver todos los productos</Link>
         </Button>
         <Button asChild variant="outline" size="lg">
           <Link href="/productos/comparar">Comparar Energy Packs</Link>

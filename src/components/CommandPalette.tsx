@@ -46,6 +46,7 @@ import {
   type ProductType,
 } from "@/lib/taxonomia";
 import { useIsMac } from "@/lib/useIsMac";
+import { categoriaPath } from "@/data/categorias";
 
 /** Datos mínimos de un producto para buscarlo desde la paleta. */
 export interface PaletteProduct {
@@ -90,25 +91,17 @@ function selectedValue(root: HTMLElement): string | null {
 }
 
 const RUTAS = [
-  { label: "Crear mi Plan Actimax", href: "/mi-plan", icon: RouteIcon },
-  { label: "Geles energéticos", href: "/productos?tipo=geles", icon: ZapIcon },
-  {
-    label: "Bebidas deportivas",
-    href: "/productos?tipo=bebidas",
-    icon: CupSodaIcon,
-  },
-  {
-    label: "Barras de proteína",
-    href: "/productos?tipo=barras",
-    icon: CookieIcon,
-  },
-  { label: "Energy Packs", href: "/productos?tipo=kits", icon: PackageIcon },
+  { label: "Crear mi Plan Actimax", href: "/mi-plan/", icon: RouteIcon },
+  { label: "Geles energéticos", href: categoriaPath("geles"), icon: ZapIcon },
+  { label: "Bebidas deportivas", href: categoriaPath("bebidas"), icon: CupSodaIcon },
+  { label: "Barras de proteína", href: categoriaPath("barras"), icon: CookieIcon },
+  { label: "Energy Packs", href: "/productos/?tipo=kits", icon: PackageIcon },
   {
     label: "Comparar kits",
-    href: "/productos/comparar",
+    href: "/productos/comparar/",
     icon: ArrowRightLeftIcon,
   },
-  { label: "Consejos del equipo", href: "/blog", icon: NewspaperIcon },
+  { label: "Consejos del equipo", href: "/blog/", icon: NewspaperIcon },
 ] as const;
 
 const MOMENTOS = [

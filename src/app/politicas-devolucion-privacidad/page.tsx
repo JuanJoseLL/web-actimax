@@ -1,34 +1,36 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
-import { getStorePolicies } from "@/lib/policies";
+import { ArrowRightIcon } from "lucide-react";
+import { RedirigirAnclaLegada } from "@/components/RedirigirAnclaLegada";
+import {
+  INDICE_LEGAL_PATH,
+  PAGINAS_LEGALES_ORDENADAS,
+} from "@/data/politicas";
 import { SITE_URL, breadcrumbJsonLd, jsonLd, pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Políticas de devolución, privacidad y envíos — Actimax",
+  title: "Políticas de la tienda — Actimax",
   description:
-    "Condiciones de devolución y cambios, tratamiento de datos personales y política de envíos de Actimax: envío gratis desde $120.000 en Colombia.",
-  path: "/politicas-devolucion-privacidad/",
+    "Términos y condiciones, cambios y garantía, derecho de retracto, tratamiento de datos personales, envíos y cookies de Actimax.",
+  path: INDICE_LEGAL_PATH,
 });
 
-const SECTION_LABELS: Record<string, string> = {
-  devolucion: "Devoluciones y cambios",
-  privacidad: "Privacidad y datos personales",
-  envios: "Envíos",
-};
-
-export default async function PoliticasPage() {
-  const policies = await getStorePolicies();
-
+/**
+ * Índice de las políticas. Esta URL era el documento único de WordPress: sigue
+ * indexada y enlazada desde fuera, así que en vez de borrarla al separar el
+ * contenido se quedó como puerta de entrada a las cinco páginas.
+ */
+export default function PoliticasPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 md:py-16">
+      <RedirigirAnclaLegada />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: jsonLd(
             breadcrumbJsonLd([
               { name: "Inicio", url: `${SITE_URL}/` },
-              { name: "Políticas", url: `${SITE_URL}/politicas-devolucion-privacidad/` },
+              { name: "Políticas", url: `${SITE_URL}${INDICE_LEGAL_PATH}` },
             ]),
           ),
         }}
@@ -48,45 +50,35 @@ export default async function PoliticasPage() {
       <h1 className="mt-2 font-display text-5xl font-extrabold uppercase italic leading-[0.95] sm:text-6xl">
         Políticas de la tienda
       </h1>
+      <p className="mt-5 max-w-2xl text-base font-medium leading-relaxed text-tinta/70">
+        Estas son las condiciones aplicables a las compras hechas en actimax.com.co, de
+        acuerdo con la legislación colombiana vigente. Cada una tiene su propia página para
+        que encuentres rápido lo que buscas.
+      </p>
 
-      {policies.length === 0 ? (
-        <p className="mt-8 text-base font-medium leading-relaxed text-tinta/70">
-          No pudimos cargar las políticas en este momento. Escríbenos a{" "}
-          <a href="mailto:ventas@actimax.com.co" className="text-azul underline">
-            ventas@actimax.com.co
-          </a>{" "}
-          y con gusto resolvemos tus dudas sobre devoluciones, privacidad o envíos.
-        </p>
-      ) : (
-        <>
-          <nav aria-label="Secciones" className="mt-6 flex flex-wrap gap-x-5 gap-y-2">
-            {policies.map((policy) => (
-              <a
-                key={policy.anchor}
-                href={`#${policy.anchor}`}
-                className="font-mono text-[11px] font-bold uppercase tracking-[0.15em] text-azul hover:underline"
-              >
-                {SECTION_LABELS[policy.anchor] ?? policy.title}
-              </a>
-            ))}
-          </nav>
-
-          <div className="mt-10 flex flex-col gap-12">
-            {policies.map((policy, index) => (
-              <section key={policy.anchor} id={policy.anchor} className="scroll-mt-28">
-                {index > 0 ? <Separator className="mb-10" /> : null}
-                <h2 className="font-display text-3xl font-extrabold uppercase italic leading-tight">
-                  {SECTION_LABELS[policy.anchor] ?? policy.title}
-                </h2>
-                <div
-                  className="prose-actimax mt-4 text-[15px] text-foreground/85"
-                  dangerouslySetInnerHTML={{ __html: policy.bodyHtml }}
-                />
-              </section>
-            ))}
-          </div>
-        </>
-      )}
+      <ul className="mt-10 flex flex-col gap-3">
+        {PAGINAS_LEGALES_ORDENADAS.map((pagina) => (
+          <li key={pagina.path}>
+            <Link
+              href={pagina.path}
+              className="group flex items-start gap-4 rounded-sm border border-tinta/10 p-5 transition-colors hover:border-azul/40 hover:bg-niebla"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block font-display text-2xl font-extrabold uppercase italic leading-tight text-tinta">
+                  {pagina.titulo}
+                </span>
+                <span className="mt-1.5 block text-sm leading-relaxed text-tinta/65">
+                  {pagina.description}
+                </span>
+              </span>
+              <ArrowRightIcon
+                aria-hidden
+                className="mt-1 size-5 shrink-0 text-tinta/30 transition-colors group-hover:text-azul"
+              />
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
