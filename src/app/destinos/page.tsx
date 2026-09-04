@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Lato, Rubik, Space_Mono } from "next/font/google";
 import { DestinosPreview } from "./DestinosClient";
 import { getDestinosData } from "./shopify-data";
@@ -66,6 +67,22 @@ export default async function DestinosPage() {
   const canonical = String(
     seo.canonical_url ?? "https://actimax.com.co/destinos/",
   );
+
+  const analyticsEnabled =
+    seo.analytics_enabled === true || seo.analytics_enabled === "true";
+  const requestedAnalyticsId = String(seo.analytics_id ?? "")
+    .trim()
+    .toUpperCase();
+  const primaryAnalyticsId = String(process.env.NEXT_PUBLIC_GA_ID ?? "")
+    .trim()
+    .toUpperCase();
+  const secondaryAnalyticsId =
+    analyticsEnabled &&
+    /^G-[A-Z0-9]+$/.test(requestedAnalyticsId) &&
+    requestedAnalyticsId !== primaryAnalyticsId
+      ? requestedAnalyticsId
+      : "";
+
   const webPageJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -94,6 +111,17 @@ export default async function DestinosPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
       />
+      {secondaryAnalyticsId ? (
+        <Script id="destinos-secondary-google-analytics" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+window.gtag("config", ${JSON.stringify(secondaryAnalyticsId)}, {
+  page_path: window.location.pathname,
+  page_location: window.location.href,
+  page_title: document.title
+});`}
+        </Script>
+      ) : null}
       <DestinosPreview data={data} />
     </div>
   );
