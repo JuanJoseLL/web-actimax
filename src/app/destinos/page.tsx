@@ -64,13 +64,15 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DestinosPage() {
   const data = await getDestinosData();
   const seo = data.seo.values;
+  const settings = data.settings.values;
+  
   const canonical = String(
     seo.canonical_url ?? "https://actimax.com.co/destinos/",
   );
 
   const analyticsEnabled =
-    seo.analytics_enabled === true || seo.analytics_enabled === "true";
-  const requestedAnalyticsId = String(seo.analytics_id ?? "")
+    settings.analytics_enabled === true || settings.analytics_enabled === "true";
+  const requestedAnalyticsId = String(settings.analytics_id ?? "")
     .trim()
     .toUpperCase();
   const primaryAnalyticsId = String(process.env.NEXT_PUBLIC_GA_ID ?? "")
