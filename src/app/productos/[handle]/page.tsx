@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { AddiWidget } from "@/components/AddiWidget";
 import { BuyBox } from "@/components/BuyBox";
 import { GuiaUso } from "@/components/GuiaUso";
 import { ImageGallery } from "@/components/ImageGallery";
@@ -240,6 +241,7 @@ async function ProductPageContent({ handle }: { handle: string }) {
                 inStock={product.inStock}
                 stickyBar
               />
+              <AddiWidget price={product.price} className="mt-4" />
               <ProductTrust productTitle={product.title} className="mt-5" />
               <PaymentMethods className="mt-4" />
             </div>

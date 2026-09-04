@@ -74,6 +74,17 @@ function BancolombiaLogo() {
   );
 }
 
+function AddiLogo() {
+  return (
+    <span
+      aria-hidden
+      className="font-sans text-sm font-black lowercase tracking-tight text-[#1c67d8]"
+    >
+      addi
+    </span>
+  );
+}
+
 export function PaymentMethods({
   className,
 }: {
@@ -93,7 +104,7 @@ export function PaymentMethods({
         </p>
         <ul
           className="flex flex-wrap items-center gap-1.5"
-          aria-label="Visa, Mastercard, PSE, Nequi y Bancolombia"
+          aria-label="Visa, Mastercard, PSE, Nequi, Bancolombia y Addi"
         >
           <PaymentLogo name="Visa">
             <VisaLogo />
@@ -109,6 +120,9 @@ export function PaymentMethods({
           </PaymentLogo>
           <PaymentLogo name="Bancolombia">
             <BancolombiaLogo />
+          </PaymentLogo>
+          <PaymentLogo name="Addi">
+            <AddiLogo />
           </PaymentLogo>
         </ul>
       </div>

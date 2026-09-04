@@ -5,6 +5,7 @@ import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { financiableConAddi } from "@/lib/addi";
 import { typeLabel, type Product } from "@/lib/catalog";
 import { formatCOP } from "@/lib/format";
 import { canonicalProductPath } from "@/lib/product-paths";
@@ -84,6 +85,13 @@ export function ProductCard({ product }: { product: Product }) {
             <p className="font-mono text-lg font-bold tabular-nums leading-none">
               {formatCOP(product.price)}
             </p>
+            {/* Solo donde Addi financia de verdad: por debajo de su mínimo el
+                método ni siquiera aparece en el checkout. */}
+            {financiableConAddi(product.price) ? (
+              <p className="mt-1.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-[#1c67d8]">
+                A cuotas con Addi
+              </p>
+            ) : null}
           </div>
           {hasMultipleVariants ? (
             <Button asChild variant="race" size="sm" className="w-full font-mono text-xs sm:w-auto">

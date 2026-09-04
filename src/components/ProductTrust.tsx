@@ -29,7 +29,7 @@ export function ProductTrust({
       </li>
       <li className="flex items-center gap-2.5">
         <ShieldCheckIcon aria-hidden className="size-4 shrink-0 text-azul" />
-        Pago seguro procesado por Wompi
+        Pago seguro con Wompi o a cuotas con Addi
       </li>
       <li className="flex items-center gap-2.5">
         <WhatsAppIcon className="size-4 shrink-0 text-[#25d366]" />

@@ -7,6 +7,7 @@ const ITEMS = [
   "Geles · Bebidas · Barras · Energy Packs",
   "Kits armados por nutricionistas deportivos",
   "Pago seguro: tarjeta · PSE · Nequi",
+  "Paga a cuotas con Addi",
   "20+ años alimentando el rendimiento",
 ];
 
