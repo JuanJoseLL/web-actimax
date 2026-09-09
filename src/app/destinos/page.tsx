@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Lato, Rubik, Space_Mono } from "next/font/google";
 import { connection } from "next/server";
+import { Suspense } from "react";
 import { DestinosPreview } from "./DestinosClient";
 import { getGoogleReviews } from "./google-reviews.server";
 import { getDestinosData } from "./shopify-data";
@@ -63,7 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function DestinosPage() {
+async function DestinosPageContent() {
   await connection();
   const data = await getDestinosData();
   const seo = data.seo.values;
@@ -147,5 +148,13 @@ window.gtag("config", ${JSON.stringify(secondaryAnalyticsId)}, {
       ) : null}
       <DestinosPreview data={data} googleReviews={googleReviews} />
     </div>
+  );
+}
+
+export default function DestinosPage() {
+  return (
+    <Suspense fallback={null}>
+      <DestinosPageContent />
+    </Suspense>
   );
 }
