@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Lato, Rubik, Space_Mono } from "next/font/google";
 import { DestinosPreview } from "./DestinosClient";
+import { getGoogleReviews } from "./google-reviews.server";
 import { getDestinosData } from "./shopify-data";
 
 const rubik = Rubik({
@@ -65,7 +66,8 @@ export default async function DestinosPage() {
   const data = await getDestinosData();
   const seo = data.seo.values;
   const settings = data.settings.values;
-  
+  const reviews = data.reviews.values;
+
   const canonical = String(
     seo.canonical_url ?? "https://actimax.com.co/destinos/",
   );
@@ -84,6 +86,23 @@ export default async function DestinosPage() {
     requestedAnalyticsId !== primaryAnalyticsId
       ? requestedAnalyticsId
       : "";
+
+  const placeId = String(reviews.google_place_id ?? "").trim();
+  const profileUrl = String(reviews.profile_url ?? "").trim();
+  const reviewsEnabled =
+    reviews.enabled !== false && reviews.enabled !== "false";
+  const reviewsProvider = String(reviews.provider ?? "disabled")
+    .trim()
+    .toLowerCase();
+  const googleReviews =
+    reviewsEnabled && reviewsProvider === "google_places"
+      ? await getGoogleReviews({
+          placeId,
+          profileUrl,
+          minimumRating: Number(reviews.minimum_rating ?? 1),
+          maxReviews: Number(reviews.max_reviews ?? 5),
+        })
+      : null;
 
   const webPageJsonLd = {
     "@context": "https://schema.org",
@@ -124,7 +143,7 @@ window.gtag("config", ${JSON.stringify(secondaryAnalyticsId)}, {
 });`}
         </Script>
       ) : null}
-      <DestinosPreview data={data} />
+      <DestinosPreview data={data} googleReviews={googleReviews} />
     </div>
   );
 }
