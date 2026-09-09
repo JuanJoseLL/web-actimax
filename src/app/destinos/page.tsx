@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Lato, Rubik, Space_Mono } from "next/font/google";
+import { connection } from "next/server";
 import { DestinosPreview } from "./DestinosClient";
 import { getGoogleReviews } from "./google-reviews.server";
 import { getDestinosData } from "./shopify-data";
@@ -63,6 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function DestinosPage() {
+  await connection();
   const data = await getDestinosData();
   const seo = data.seo.values;
   const settings = data.settings.values;
