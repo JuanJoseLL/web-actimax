@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./destinos.module.css";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties, FormEvent, MouseEvent, SVGProps } from "react";
 import type { Tour } from "./data";
 import type {
@@ -856,9 +856,77 @@ function GoogleReviewsBlock({
   }
 
   return (
-    <div className={styles.reviewsContent} data-layout={layout}>
+    <GoogleReviewsCarousel
+      state={state}
+      profileUrl={profileUrl}
+      layout={layout}
+    />
+  );
+}
+
+function GoogleReviewsCarousel({
+  state,
+  profileUrl,
+  layout,
+}: {
+  state: Extract<GoogleReviewsState, { status: "ready" }>;
+  profileUrl: string;
+  layout: string;
+}) {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const isCarousel = layout === "carousel" && state.reviews.length > 1;
+
+  const moveCarousel = useCallback((direction: -1 | 1) => {
+    const track = trackRef.current;
+    const firstCard = track?.querySelector<HTMLElement>("[data-review-card]");
+    if (!track || !firstCard) return;
+
+    const styles = window.getComputedStyle(track);
+    const gap = Number.parseFloat(styles.columnGap || styles.gap || "0") || 0;
+    const step = firstCard.getBoundingClientRect().width + gap;
+    const maximum = Math.max(0, track.scrollWidth - track.clientWidth);
+    const atStart = track.scrollLeft <= 4;
+    const atEnd = track.scrollLeft >= maximum - 4;
+    const nextPosition =
+      direction === 1
+        ? atEnd
+          ? 0
+          : Math.min(maximum, track.scrollLeft + step)
+        : atStart
+          ? maximum
+          : Math.max(0, track.scrollLeft - step);
+
+    track.scrollTo({ left: nextPosition, behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    if (!isCarousel || isPaused) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const timer = window.setInterval(() => {
+      if (!document.hidden) moveCarousel(1);
+    }, 5_000);
+
+    return () => window.clearInterval(timer);
+  }, [isCarousel, isPaused, moveCarousel]);
+
+  return (
+    <div
+      className={styles.reviewsContent}
+      data-layout={layout}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setIsPaused(false);
+        }
+      }}
+    >
       <div className={styles.reviewsSummary}>
-        <div>
+        <div className={styles.reviewsScore}>
+          <span className={styles.googleLabel}>Google</span>
           <strong>
             {state.rating.toLocaleString("es-ES", {
               maximumFractionDigits: 1,
@@ -867,19 +935,50 @@ function GoogleReviewsBlock({
           <ReviewStars rating={state.rating} />
           <span>{state.userRatingCount} opiniones</span>
         </div>
-        <a
-          href={state.googleMapsUri || profileUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Ver perfil en <b>Google Maps</b>
-        </a>
+        <div className={styles.reviewsSummaryActions}>
+          <a
+            href={state.googleMapsUri || profileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ver todas en <b>Google Maps</b>
+          </a>
+          {isCarousel ? (
+            <div className={styles.reviewsControls} aria-label="Controles del carrusel">
+              <button
+                type="button"
+                className={styles.reviewNavButton}
+                onClick={() => moveCarousel(-1)}
+                aria-label="Ver reseña anterior"
+              >
+                <span aria-hidden="true">←</span>
+              </button>
+              <button
+                type="button"
+                className={styles.reviewNavButton}
+                onClick={() => moveCarousel(1)}
+                aria-label="Ver reseña siguiente"
+              >
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          ) : null}
+        </div>
       </div>
 
       {state.reviews.length ? (
-        <div className={styles.reviewsGrid}>
+        <div
+          ref={trackRef}
+          className={styles.reviewsGrid}
+          role={isCarousel ? "region" : undefined}
+          aria-label={isCarousel ? "Carrusel de reseñas de Google" : undefined}
+        >
           {state.reviews.map((review) => (
-            <article key={review.id} className={styles.reviewCard}>
+            <article
+              key={review.id}
+              className={styles.reviewCard}
+              data-review-card
+            >
               <header className={styles.reviewAuthor}>
                 {review.authorPhotoUri ? (
                   <img
@@ -916,7 +1015,7 @@ function GoogleReviewsBlock({
                 {review.translated ? (
                   <span>Traducida por Google</span>
                 ) : (
-                  <span />
+                  <span>Google</span>
                 )}
                 {review.googleMapsUri ? (
                   <a
