@@ -36,7 +36,7 @@ const RUNNING: DeporteLanding = {
     "Geles para correr con y sin cafeína, Pre Race, Bebida Élite y Recovery Pro, más Energy Packs con los geles contados para 10K, 15K, 21K y maratón. Hechos en Colombia, envío a todo el país.",
   kicker: "Running",
   intro: [
-    "Correr más de una hora gasta las reservas de energía del músculo, y la nutrición para running consiste en reponerlas a tiempo: un gel energético cada 30 minutos en competencia —o cada 45 a 60 en un entreno normal—, el primero antes de sentir fatiga, hacia el minuto 45, y siempre con un sorbo de agua. Los geles para correr de Actimax vienen con y sin cafeína, en sachet de 30 g para llevar uno por toma en carrera o en gel de 90 g con tapa para los fondos de entrenamiento, y se fabrican en Envigado, Antioquia.",
+    "Correr más de una hora gasta las reservas de energía del músculo, y la nutrición para running consiste en reponerlas a tiempo: un gel energético cada 30 minutos en competencia (o cada 45 a 60 en un entreno normal), el primero antes de sentir fatiga, hacia el minuto 45, y siempre con un sorbo de agua. Los geles para correr de Actimax vienen con y sin cafeína, en sachet de 30 g para llevar uno por toma en carrera o en gel de 90 g con tapa para los fondos de entrenamiento, y se fabrican en Envigado, Antioquia.",
     `Esta guía reúne lo que un corredor necesita antes, durante y después: Pre Race para cargar energía en el desayuno, geles y Bebida Deportiva Élite para el recorrido, Recovery Pro para recuperar en los primeros 30 minutos, y los Energy Packs de 10K, 15K, media maratón y maratón, que traen los geles contados por kilómetro. ${ENVIO}`,
   ],
   secciones: [
@@ -50,7 +50,7 @@ const RUNNING: DeporteLanding = {
     {
       titulo: "Gel con cafeína o sin cafeína para correr",
       parrafos: [
-        "Los geles sin cafeína sirven en cualquier momento y para estómagos sensibles; los geles con cafeína —28,8 mg en el gel de 90 g y 9,6 mg en el sachet de 30 g— dan un impulso de alerta para el tramo final. El Energy Pack de media maratón usa dos geles de 30 g con cafeína y remata con un Energy Gel, la referencia de energía inmediata, sin cafeína y con 22 g de glucosa, pensada para el final de la carrera o para cuando llega la pájara. Prueba cualquier gel en los entrenos antes de llevarlo a una carrera.",
+        "Los geles sin cafeína sirven en cualquier momento y para estómagos sensibles; los geles con cafeína (28,8 mg en el gel de 90 g y 9,6 mg en el sachet de 30 g) dan un impulso de alerta para el tramo final. El Energy Pack de media maratón usa dos geles de 30 g con cafeína y remata con un Energy Gel, la referencia de energía inmediata, sin cafeína y con 22 g de glucosa, pensada para el final de la carrera o para cuando llega la pájara. Prueba cualquier gel en los entrenos antes de llevarlo a una carrera.",
       ],
     },
     {
@@ -135,7 +135,7 @@ const RUNNING: DeporteLanding = {
     {
       question: "¿Cómo evitar el muro o la pájara en carrera?",
       answer:
-        "Tomando el primer gel antes de sentir fatiga —hacia el minuto 45— y siguiendo cada 30 minutos, porque el gel repone lo que ya se gastó. En esfuerzos de más de 90 minutos combina gel y bebida deportiva: un gel y medio litro de Bebida Élite por hora. El Energy Gel se planifica justo antes del tramo más exigente, no cuando la pájara ya llegó.",
+        "Tomando el primer gel antes de sentir fatiga, hacia el minuto 45, y siguiendo cada 30 minutos, porque el gel repone lo que ya se gastó. En esfuerzos de más de 90 minutos combina gel y bebida deportiva: un gel y medio litro de Bebida Élite por hora. El Energy Gel se planifica justo antes del tramo más exigente, no cuando la pájara ya llegó.",
     },
     {
       question: "¿Qué tomar después de correr?",
@@ -196,27 +196,27 @@ const CICLISMO: DeporteLanding = {
     "Nutrición para ciclismo hecha en Colombia: gel de 90 g con tapa para el jersey, Energy Gel para los puertos, Bebida Élite por caramañola y los packs de Gran Fondo y Alto de Letras.",
   kicker: "Ciclismo",
   intro: [
-    "En la bici la nutrición se mide por hora: una caramañola de Bebida Deportiva Élite por hora de ruta y una porción de gel cada 45 minutos en un fondo, con los Energy Gel reservados para los premios de montaña, las cronos y los finales de etapa. Los geles para ciclismo de Actimax se fabrican en Envigado, Antioquia, con glucosa y fructosa —energía inmediata y de larga duración—, y el formato de 90 g con tapa se pensó para el jersey: se toma una porción, se vuelve a tapar y no se derrama.",
-    `Esta guía junta lo que un ciclista lleva antes, durante y después de rodar —Pre Race, geles, Bebida Élite, Recovery Pro y Protein Bar— y los dos packs armados para las rutas del país: el Energy Pack Gran Fondo y el Kit de nutrición Alto de Letras. ${ENVIO}`,
+    "En la bici la nutrición se mide por hora: una caramañola de Bebida Deportiva Élite por hora de ruta y una porción de gel cada 45 minutos en un fondo, con los Energy Gel reservados para los premios de montaña, las cronos y los finales de etapa. Los geles para ciclismo de Actimax se fabrican en Envigado, Antioquia, con glucosa y fructosa (energía inmediata y de larga duración), y el formato de 90 g con tapa se pensó para el jersey: se toma una porción, se vuelve a tapar y no se derrama.",
+    `Esta guía junta lo que un ciclista lleva antes, durante y después de rodar (Pre Race, geles, Bebida Élite, Recovery Pro y Protein Bar) y los dos packs armados para las rutas del país: el Energy Pack Gran Fondo y el Kit de nutrición Alto de Letras. ${ENVIO}`,
   ],
   secciones: [
     {
       titulo: "El gel de 90 g con tapa: hecho para el jersey",
       parrafos: [
-        "Cada gel de 90 g rinde tres porciones: giras la tapa, tomas una, un sorbo de agua y vuelves a tapar, sin que se derrame ni arruine la ropa. Aporta entre 28 y 30 g de carbohidratos de glucosa y fructosa, con sabor a fruta —fresa, manzana o mango— y sin colorantes artificiales; la versión con cafeína suma 28,8 mg por gel. Si prefieres una toma completa por sobre, la caja de 24 sachets de 30 g va uno por toma, con o sin cafeína.",
+        "Cada gel de 90 g rinde tres porciones: giras la tapa, tomas una, un sorbo de agua y vuelves a tapar, sin que se derrame ni arruine la ropa. Aporta entre 28 y 30 g de carbohidratos de glucosa y fructosa, con sabor a fruta (fresa, manzana o mango) y sin colorantes artificiales; la versión con cafeína suma 28,8 mg por gel. Si prefieres una toma completa por sobre, la caja de 24 sachets de 30 g va uno por toma, con o sin cafeína.",
       ],
     },
     {
       titulo: "Cuánto comer y beber por hora en la bici",
       parrafos: [
-        "La pauta del Energy Pack Gran Fondo es la referencia: una porción de gel cada 45 minutos y un Energy Gel —22 g de glucosa, energía inmediata y fácil digestión, con 80 a 150 ml de agua— planificado justo antes de los kilómetros más retadores, los premios de montaña o una crono. En la caramañola, un sobre de Bebida Élite en 500 ml de agua por hora: 27,5 g de carbohidratos, 250 mg de sodio y vitaminas del complejo B, a sorbos de 100 a 125 ml cada 15 minutos; la versión con cafeína aporta 55 mg. Para días muy calientes o rutas muy largas, la ficha explica cómo subir la dosis a 45 o 60 g por bidón.",
+        "La pauta del Energy Pack Gran Fondo es la referencia: una porción de gel cada 45 minutos y un Energy Gel (22 g de glucosa, energía inmediata y fácil digestión, con 80 a 150 ml de agua) planificado justo antes de los kilómetros más retadores, los premios de montaña o una crono. En la caramañola, un sobre de Bebida Élite en 500 ml de agua por hora: 27,5 g de carbohidratos, 250 mg de sodio y vitaminas del complejo B, a sorbos de 100 a 125 ml cada 15 minutos; la versión con cafeína aporta 55 mg. Para días muy calientes o rutas muy largas, la ficha explica cómo subir la dosis a 45 o 60 g por bidón.",
         "El Kit de nutrición Alto de Letras lleva esa lógica al ascenso más largo del país: seis sobres de Bebida Élite, cinco geles de 30 g, tres Energy Gel, Pre Race para el desayuno y Recovery Pro para la cima.",
       ],
     },
     {
       titulo: "Ciclomontañismo y salidas largas",
       parrafos: [
-        "La ficha de los geles los recomienda para ciclismo de fondo y ciclomontañismo de más de dos horas. En esfuerzos de más de 90 minutos la regla es combinar gel y bebida —un gel y medio litro de Bebida Élite por hora—, y en un fondo la combinación típica es bebida en la caramañola, geles en los tramos exigentes y una Protein Bar a mitad de ruta: 9,6 g de proteína y 14 g de carbohidratos en formato sólido, cuando el cuerpo agradece masticar algo.",
+        "La ficha de los geles los recomienda para ciclismo de fondo y ciclomontañismo de más de dos horas. En esfuerzos de más de 90 minutos la regla es combinar gel y bebida (un gel y medio litro de Bebida Élite por hora), y en un fondo la combinación típica es bebida en la caramañola, geles en los tramos exigentes y una Protein Bar a mitad de ruta: 9,6 g de proteína y 14 g de carbohidratos en formato sólido, cuando el cuerpo agradece masticar algo.",
       ],
     },
     {
@@ -251,7 +251,7 @@ const CICLISMO: DeporteLanding = {
     {
       question: "¿Cuántos geles llevo a un gran fondo?",
       answer:
-        "El Energy Pack Gran Fondo trae dos geles de 90 g —una porción cada 45 minutos—, dos Energy Gel para los kilómetros más retadores y cinco sobres de Bebida Élite, uno por caramañola y por hora, además de Pre Race para el desayuno y Recovery Pro para después. Para una ruta más larga, la pauta escala por hora.",
+        "El Energy Pack Gran Fondo trae dos geles de 90 g (una porción cada 45 minutos), dos Energy Gel para los kilómetros más retadores y cinco sobres de Bebida Élite, uno por caramañola y por hora, además de Pre Race para el desayuno y Recovery Pro para después. Para una ruta más larga, la pauta escala por hora.",
     },
     {
       question: "¿Qué tomar para subir el Alto de Letras?",
@@ -266,7 +266,7 @@ const CICLISMO: DeporteLanding = {
     {
       question: "¿Gel con cafeína o sin cafeína para rodar?",
       answer:
-        "Sin cafeína para cualquier momento de la ruta y para estómagos sensibles; con cafeína —28,8 mg por gel de 90 g, 9,6 mg por sachet de 30 g— para la parte final o las jornadas muy largas. La Bebida Élite con cafeína suma 55 mg por caramañola, así que conviene contar el total del día si combinas las dos.",
+        "Sin cafeína para cualquier momento de la ruta y para estómagos sensibles; con cafeína (28,8 mg por gel de 90 g, 9,6 mg por sachet de 30 g) para la parte final o las jornadas muy largas. La Bebida Élite con cafeína suma 55 mg por caramañola, así que conviene contar el total del día si combinas las dos.",
     },
     {
       question: "¿Dónde comprar geles para ciclismo en Colombia?",
@@ -302,8 +302,8 @@ const TRIATLON: DeporteLanding = {
     "Geles, Bebida Élite, Pre Race y Recovery Pro para las tres disciplinas, y el Energy Pack de triatlón media distancia con 8 geles, 2 Energy Gel y 4 sobres de Élite ya contados. Hecho en Colombia.",
   kicker: "Triatlón",
   intro: [
-    "Un triatlón encadena tres disciplinas y la nutrición tiene que seguir el mismo orden: cargar antes de la natación, comer y beber sobre la bici —donde más tiempo y más ocasión hay— y sostener la carrera a pie con lo que el estómago ya tolera. Los geles y bebidas de Actimax están pensados para esfuerzos de más de dos horas, triatlón de media y larga distancia incluidos, y se fabrican en Envigado, Antioquia.",
-    `Esta guía sigue la pauta del Energy Pack Actimax para Triatlón Media Distancia —Pre Race, cuatro sobres de Bebida Élite, ocho geles de 30 g, dos Energy Gel y Recovery Pro— y sirve de referencia para cualquier distancia. ${ENVIO}`,
+    "Un triatlón encadena tres disciplinas y la nutrición tiene que seguir el mismo orden: cargar antes de la natación, comer y beber sobre la bici, donde más tiempo y más ocasión hay, y sostener la carrera a pie con lo que el estómago ya tolera. Los geles y bebidas de Actimax están pensados para esfuerzos de más de dos horas, triatlón de media y larga distancia incluidos, y se fabrican en Envigado, Antioquia.",
+    `Esta guía sigue la pauta del Energy Pack Actimax para Triatlón Media Distancia (Pre Race, cuatro sobres de Bebida Élite, ocho geles de 30 g, dos Energy Gel y Recovery Pro) y sirve de referencia para cualquier distancia. ${ENVIO}`,
   ],
   secciones: [
     {
@@ -315,7 +315,7 @@ const TRIATLON: DeporteLanding = {
     {
       titulo: "En la bici: donde se come",
       parrafos: [
-        "Después de la primera hora sobre la bici, un gel de 30 g cada 30 minutos con sorbos de agua para una absorción más rápida —cuatro geles en la media distancia—, y dos sobres de Bebida Élite, cada uno en 500 ml de agua, para reponer electrolitos durante el recorrido: 27,5 g de carbohidratos y 250 mg de sodio por caramañola. El sachet de 30 g se toma completo, con o sin cafeína (9,6 mg por sachet); muchos triatletas van sin cafeína en la bici y la reservan para la carrera a pie.",
+        "Después de la primera hora sobre la bici, un gel de 30 g cada 30 minutos con sorbos de agua para una absorción más rápida (cuatro geles en la media distancia), y dos sobres de Bebida Élite, cada uno en 500 ml de agua, para reponer electrolitos durante el recorrido: 27,5 g de carbohidratos y 250 mg de sodio por caramañola. El sachet de 30 g se toma completo, con o sin cafeína (9,6 mg por sachet); muchos triatletas van sin cafeína en la bici y la reservan para la carrera a pie.",
       ],
     },
     {
@@ -327,7 +327,7 @@ const TRIATLON: DeporteLanding = {
     {
       titulo: "Después de la meta",
       parrafos: [
-        "En los primeros 30 minutos, un sobre de Recovery Pro en 250 ml de agua —24 g de proteína de cuatro fuentes y 4.417 mg de BCAA— para una recuperación más rápida y efectiva, y después un sobre de Bebida Élite en 500 ml de agua para rehidratar. La Protein Bar, con 9,6 g de proteína, es el snack sólido para la bolsa de transición o el viaje de vuelta.",
+        "En los primeros 30 minutos, un sobre de Recovery Pro en 250 ml de agua (24 g de proteína de cuatro fuentes y 4.417 mg de BCAA) para una recuperación más rápida y efectiva, y después un sobre de Bebida Élite en 500 ml de agua para rehidratar. La Protein Bar, con 9,6 g de proteína, es el snack sólido para la bolsa de transición o el viaje de vuelta.",
       ],
     },
     {
@@ -351,7 +351,7 @@ const TRIATLON: DeporteLanding = {
     {
       question: "¿Cuántos geles necesito para un triatlón de media distancia?",
       answer:
-        "El Energy Pack Actimax para Triatlón Media Distancia trae ocho geles de 30 g —cuatro para la bici, después de la primera hora y cada 30 minutos, y cuatro para la carrera a pie, uno cada 30 minutos— más dos Energy Gel: uno para iniciar la natación y otro para el remate. Completan el pack un sobre de Pre Race, cuatro de Bebida Élite y uno de Recovery Pro.",
+        "El Energy Pack Actimax para Triatlón Media Distancia trae ocho geles de 30 g (cuatro para la bici, después de la primera hora y cada 30 minutos, y cuatro para la carrera a pie, uno cada 30 minutos) más dos Energy Gel: uno para iniciar la natación y otro para el remate. Completan el pack un sobre de Pre Race, cuatro de Bebida Élite y uno de Recovery Pro.",
     },
     {
       question: "¿Se puede tomar un gel antes de nadar?",
@@ -371,7 +371,7 @@ const TRIATLON: DeporteLanding = {
     {
       question: "¿Qué tomar después de un triatlón?",
       answer:
-        "Un sobre de Recovery Pro en 250 ml de agua en los primeros 30 minutos —24 g de proteína y 4.417 mg de BCAA— y después un sobre de Bebida Élite en 500 ml de agua para rehidratar. Es el cierre que trae el pack de media distancia.",
+        "Un sobre de Recovery Pro en 250 ml de agua en los primeros 30 minutos (24 g de proteína y 4.417 mg de BCAA) y después un sobre de Bebida Élite en 500 ml de agua para rehidratar. Es el cierre que trae el pack de media distancia.",
     },
     {
       question: "¿Dónde comprar nutrición para triatlón en Colombia?",
@@ -389,7 +389,7 @@ const TRIATLON: DeporteLanding = {
   cta: {
     antes: "¿Haces triatlón? Toda la",
     despues:
-      "—natación, bici y carrera a pie— está en un solo lugar, con el pack de media distancia ya contado.",
+      "(natación, bici y carrera a pie) está en un solo lugar, con el pack de media distancia ya contado.",
   },
   precioPregunta: "¿Cuánto cuesta la nutrición para un triatlón?",
 };
@@ -405,7 +405,7 @@ const NATACION: DeporteLanding = {
     "Geles en sachet de 30 g, Energy Gel para arrancar, Bebida Élite para el borde de la piscina y Recovery Pro para después: nutrición deportiva para nadadores y aguas abiertas, hecha en Colombia.",
   kicker: "Natación",
   intro: [
-    "Nadar no evita el gasto de energía ni la pérdida de líquido: una sesión larga de piscina o una travesía de aguas abiertas es un esfuerzo de resistencia como cualquier otro, y la ficha de los geles Actimax incluye la natación de aguas abiertas entre los deportes de más de dos horas para los que están hechos. La diferencia está en la logística —no hay bolsillos ni caramañola— y por eso esta guía se centra en qué tomar antes de entrar al agua, qué dejar en el borde y qué tomar al salir.",
+    "Nadar no evita el gasto de energía ni la pérdida de líquido: una sesión larga de piscina o una travesía de aguas abiertas es un esfuerzo de resistencia como cualquier otro, y la ficha de los geles Actimax incluye la natación de aguas abiertas entre los deportes de más de dos horas para los que están hechos. La diferencia está en la logística (no hay bolsillos ni caramañola) y por eso esta guía se centra en qué tomar antes de entrar al agua, qué dejar en el borde y qué tomar al salir.",
     `Los productos se fabrican en Envigado, Antioquia, sin colorantes artificiales, y se compran en línea. ${ENVIO} Si tu natación es la primera disciplina de un triatlón, la guía de triatlón sigue el orden completo.`,
   ],
   secciones: [
@@ -424,7 +424,7 @@ const NATACION: DeporteLanding = {
     {
       titulo: "Con cafeína o sin cafeína",
       parrafos: [
-        "Los geles sin cafeína sirven a cualquier hora y para estómagos sensibles; los que llevan cafeína —9,6 mg por sachet de 30 g y 28,8 mg por gel de 90 g— dan un impulso de alerta para la parte final de una travesía larga. La Bebida Élite también existe con cafeína, 55 mg por porción. Como en cualquier deporte, prueba la combinación en los entrenos antes de una competencia.",
+        "Los geles sin cafeína sirven a cualquier hora y para estómagos sensibles; los que llevan cafeína (9,6 mg por sachet de 30 g y 28,8 mg por gel de 90 g) dan un impulso de alerta para la parte final de una travesía larga. La Bebida Élite también existe con cafeína, 55 mg por porción. Como en cualquier deporte, prueba la combinación en los entrenos antes de una competencia.",
       ],
     },
     {
@@ -463,7 +463,7 @@ const NATACION: DeporteLanding = {
     {
       question: "¿Gel con cafeína para nadar?",
       answer:
-        "Sin cafeína sirve a cualquier hora; con cafeína —9,6 mg por sachet, 28,8 mg por gel de 90 g— conviene para la parte final de una travesía larga. La Bebida Élite con cafeína aporta 55 mg por porción. Pruébalo en entrenos antes de llevarlo a una competencia.",
+        "Sin cafeína sirve a cualquier hora; con cafeína (9,6 mg por sachet, 28,8 mg por gel de 90 g) conviene para la parte final de una travesía larga. La Bebida Élite con cafeína aporta 55 mg por porción. Pruébalo en entrenos antes de llevarlo a una competencia.",
     },
     {
       question: "¿Qué tomar después de nadar?",
@@ -502,26 +502,26 @@ const GYM: DeporteLanding = {
     "Pre Race como pre entreno sin cafeína, Bebida Élite para la sesión, Recovery Pro con 24 g de proteína y Protein Bar de 9,6 g para el snack: nutrición para gym hecha en Colombia.",
   kicker: "Gym",
   intro: [
-    "El esquema de Actimax —antes, durante y después— aplica igual en el gimnasio que en la carretera: cargar energía antes de la sesión, hidratar y sostener el ritmo durante, y darle al músculo proteína en los primeros 30 a 40 minutos después, que es cuando mejor la aprovecha. Los productos se fabrican en Envigado, Antioquia, y no llevan colorantes artificiales.",
+    "El esquema de Actimax (antes, durante y después) aplica igual en el gimnasio que en la carretera: cargar energía antes de la sesión, hidratar y sostener el ritmo durante, y darle al músculo proteína en los primeros 30 a 40 minutos después, que es cuando mejor la aprovecha. Los productos se fabrican en Envigado, Antioquia, y no llevan colorantes artificiales.",
     `Esta guía ordena la nutrición para gym con los cuatro productos que más se usan en fuerza y entrenamiento funcional: Pre Race como pre entreno, la Bebida Deportiva Élite para la sesión, Recovery Pro como bebida de recuperación y la Protein Bar para el snack de la maleta. ${ENVIO}`,
   ],
   secciones: [
     {
       titulo: "Pre entreno: Pre Race 15 a 30 minutos antes",
       parrafos: [
-        "Pre Race se toma de 15 a 30 minutos antes de entrenar: 36 g —dos cucharadas y media o un sobre— en 250 ml de agua, leche, yogurt, jugo o café. Aporta 25 g de carbohidratos de maltodextrina y dextrosa, 6,2 g de proteína, 475 mg de calcio y vitaminas del complejo B para llenar el glucógeno del músculo y salir con ganas, sobre todo en los entrenos de madrugada donde no cae bien comer sólido. No tiene cafeína —si la quieres, mézclalo en café caliente— y no reemplaza ninguna comida principal. Sabores fresa, vainilla y caramelo; el tarro rinde 13 vasos y la caja trae 12 sobres.",
+        "Pre Race se toma de 15 a 30 minutos antes de entrenar: 36 g (dos cucharadas y media o un sobre) en 250 ml de agua, leche, yogurt, jugo o café. Aporta 25 g de carbohidratos de maltodextrina y dextrosa, 6,2 g de proteína, 475 mg de calcio y vitaminas del complejo B para llenar el glucógeno del músculo y salir con ganas, sobre todo en los entrenos de madrugada donde no cae bien comer sólido. No tiene cafeína (si la quieres, mézclalo en café caliente) y no reemplaza ninguna comida principal. Sabores fresa, vainilla y caramelo; el tarro rinde 13 vasos y la caja trae 12 sobres.",
       ],
     },
     {
       titulo: "Durante la sesión: hidratación y energía",
       parrafos: [
-        "En sesiones de más de 60 minutos conviene agregarle al agua electrolitos y carbohidratos: un sobre o dos cucharadas (30 g) de Bebida Élite en 500 ml aportan 27,5 g de carbohidratos, 250 mg de sodio y vitaminas del complejo B, a sorbos de 100 a 125 ml cada 15 minutos; la versión con cafeína suma 55 mg para esa chispa de alerta y concentración. Para las sesiones largas o dobles, un gel de 30 g —con 9,6 mg de cafeína o sin ella— con un sorbo de agua da energía inmediata para la parte más dura.",
+        "En sesiones de más de 60 minutos conviene agregarle al agua electrolitos y carbohidratos: un sobre o dos cucharadas (30 g) de Bebida Élite en 500 ml aportan 27,5 g de carbohidratos, 250 mg de sodio y vitaminas del complejo B, a sorbos de 100 a 125 ml cada 15 minutos; la versión con cafeína suma 55 mg para esa chispa de alerta y concentración. Para las sesiones largas o dobles, un gel de 30 g (con 9,6 mg de cafeína o sin ella) con un sorbo de agua da energía inmediata para la parte más dura.",
       ],
     },
     {
       titulo: "Después: proteína en los primeros 30 a 40 minutos",
       parrafos: [
-        "Recovery Pro es la bebida de recuperación: 37 g (dos cucharadas o un sobre) en 250 ml de agua, preferiblemente en shaker, con 24 g de proteína de alto valor biológico de cuatro fuentes —whey hidrolizado, albúmina de huevo, soya aislada y caseína aislada—, 4.417 mg de BCAA, 8,3 g de carbohidratos y 181 mg de sodio, sin conservantes ni colorantes artificiales. Se toma en los primeros 30 a 40 minutos después de terminar, que es cuando el músculo mejor aprovecha la proteína para reparar fibras y recargar glucógeno; está pensada para sesiones de más de 90 minutos y viene en tarro o en caja de 12 sobres.",
+        "Recovery Pro es la bebida de recuperación: 37 g (dos cucharadas o un sobre) en 250 ml de agua, preferiblemente en shaker, con 24 g de proteína de alto valor biológico de cuatro fuentes (whey hidrolizado, albúmina de huevo, soya aislada y caseína aislada), 4.417 mg de BCAA, 8,3 g de carbohidratos y 181 mg de sodio, sin conservantes ni colorantes artificiales. Se toma en los primeros 30 a 40 minutos después de terminar, que es cuando el músculo mejor aprovecha la proteína para reparar fibras y recargar glucógeno; está pensada para sesiones de más de 90 minutos y viene en tarro o en caja de 12 sobres.",
       ],
     },
     {
@@ -541,7 +541,7 @@ const GYM: DeporteLanding = {
     {
       question: "¿Cuánta proteína tiene Recovery Pro y cuándo se toma?",
       answer:
-        "24 g de proteína por porción de 37 g, de cuatro fuentes —whey hidrolizado, albúmina de huevo, soya aislada y caseína aislada— con 4.417 mg de BCAA. Se toma en los primeros 30 a 40 minutos después de terminar la sesión, en 250 ml de agua, preferiblemente en shaker.",
+        "24 g de proteína por porción de 37 g, de cuatro fuentes (whey hidrolizado, albúmina de huevo, soya aislada y caseína aislada) con 4.417 mg de BCAA. Se toma en los primeros 30 a 40 minutos después de terminar la sesión, en 250 ml de agua, preferiblemente en shaker.",
     },
     {
       question: "¿Sirve una bebida deportiva para el gimnasio?",

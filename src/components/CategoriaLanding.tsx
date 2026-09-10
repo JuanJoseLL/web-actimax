@@ -78,8 +78,8 @@ export function CategoriaLandingSkeleton() {
     <div aria-hidden>
       <Skeleton className="h-4 w-48" />
       <Skeleton className="mt-6 h-16 w-80" />
-      <Skeleton className="mt-6 h-24 max-w-3xl" />
-      <div className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:grid-cols-4">
+      <Skeleton className="mt-4 h-4 w-64" />
+      <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:grid-cols-4">
         {Array.from({ length: 4 }, (_, i) => (
           <div key={i}>
             <Skeleton className="aspect-square" />
@@ -158,14 +158,8 @@ export async function CategoriaLandingContent({ landing }: { landing: Landing })
         {" · envío a toda Colombia"}
       </p>
 
-      <div className="mt-6 flex max-w-3xl flex-col gap-4 text-base leading-relaxed text-tinta/80">
-        {landing.intro.map((parrafo) => (
-          <p key={parrafo}>{parrafo}</p>
-        ))}
-      </div>
-
       {chips.length > 0 ? (
-        <div className="mt-8 flex flex-wrap items-center gap-2">
+        <div className="mt-6 flex flex-wrap items-center gap-2">
           <span className="w-full font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-tinta/55 sm:w-auto sm:pr-2">
             {esCategoria(landing) ? "Ver por deporte" : "Ver por tipo"}
           </span>
@@ -191,7 +185,7 @@ export async function CategoriaLandingContent({ landing }: { landing: Landing })
           </Button>
         </div>
       ) : (
-        <div className="mt-12 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:grid-cols-4">
           {propios.map((product) => (
             <ProductCard key={product.handle} product={product} />
           ))}
@@ -199,6 +193,15 @@ export async function CategoriaLandingContent({ landing }: { landing: Landing })
       )}
 
       <div className="mt-16 flex max-w-3xl flex-col gap-12">
+        {/* La intro va después de la grilla: lo primero que se ve es el
+            producto y el texto queda para quien sigue bajando (pedido de
+            Operaciones, 10 sep 2026). Sigue en el HTML para el SEO. */}
+        <section className="flex flex-col gap-4 text-base leading-relaxed text-tinta/80">
+          {landing.intro.map((parrafo) => (
+            <p key={parrafo}>{parrafo}</p>
+          ))}
+        </section>
+
         {landing.secciones.map((seccion) => (
           <section key={seccion.titulo}>
             <h2 className="font-display text-3xl font-extrabold uppercase italic leading-tight">

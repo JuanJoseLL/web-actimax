@@ -102,14 +102,14 @@ const GELES: CategoriaLanding = {
     "Geles energéticos hechos en Colombia, con y sin cafeína, en caja de 8 geles de 90 g o de 24 sachets de 30 g. Cuándo tomarlos, cuántos llevar por distancia y compra en línea con envío a todo el país.",
   kicker: "Durante el esfuerzo",
   intro: [
-    "Un gel energético es carbohidrato de rápida absorción en un sobre individual: se toma durante el esfuerzo para reponer la energía que el músculo va gastando y evitar la pájara. Los geles energéticos Actimax —con y sin cafeína— se fabrican en Envigado, Antioquia, con una mezcla de glucosa y fructosa —energía inmediata y de larga duración—, sabor a fruta, sin colorantes artificiales y libres de gluten y de lácteos.",
+    "Un gel energético es carbohidrato de rápida absorción en un sobre individual: se toma durante el esfuerzo para reponer la energía que el músculo va gastando y evitar la pájara. Los geles energéticos Actimax, con y sin cafeína, se fabrican en Envigado, Antioquia, con una mezcla de glucosa y fructosa (energía inmediata y de larga duración), sabor a fruta, sin colorantes artificiales y libres de gluten y de lácteos.",
     "Vienen con cafeína y sin cafeína, en caja de 8 geles de 90 g con tapa (cada gel rinde 3 porciones) o en caja de 24 sachets de 30 g para llevar uno por toma. Están pensados para running, ciclismo, triatlón, natación de aguas abiertas y cualquier esfuerzo de más de dos horas, y se compran en línea con envío a Bogotá, Medellín, Cali, Barranquilla y el resto de Colombia.",
   ],
   secciones: [
     {
       titulo: "Cuándo tomar un gel energético",
       parrafos: [
-        "La pauta de Actimax es un gel cada 30 minutos si estás compitiendo o entrenando a intensidad alta, y uno cada 45 a 60 minutos en un entrenamiento normal. El primero conviene tomarlo antes de sentir fatiga —alrededor del minuto 45 en una carrera— porque el gel repone lo que ya se gastó, no lo que falta por gastar. Siempre con un sorbo de agua.",
+        "La pauta de Actimax es un gel cada 30 minutos si estás compitiendo o entrenando a intensidad alta, y uno cada 45 a 60 minutos en un entrenamiento normal. El primero conviene tomarlo antes de sentir fatiga, alrededor del minuto 45 en una carrera, porque el gel repone lo que ya se gastó, no lo que falta por gastar. Siempre con un sorbo de agua.",
         "Con el gel de 90 g lo ideal es destapar, tomar una porción, mantenerla en la boca y tragarla despacio; da para tres tomas. El sachet de 30 g se rompe por la guía de corte y se toma completo. En esfuerzos de más de 90 minutos combina gel y bebida deportiva: un gel y medio litro de bebida por cada hora de entrenamiento. Y la regla de oro: prueba los geles en los entrenos; nunca estrenes nutrición el día de la carrera.",
       ],
     },
@@ -124,13 +124,13 @@ const GELES: CategoriaLanding = {
       titulo: "Presentaciones y sabores",
       parrafos: [
         "La caja de 8 geles de 90 g es la presentación para entrenar: con tapa, para guardar entre tomas. La caja de 24 sachets de 30 g es la de carrera: un sachet por toma, sin cargar peso de más. Los sabores son fresa, manzana, mango y fresa-banano según la referencia, todos con fruta y sin colorantes artificiales.",
-        "El Energy Gel es la referencia de alto impacto: energía inmediata y fácil digestión para momentos puntuales de alta intensidad —un puerto, el final de una etapa o carrera, una pájara—, planificado para tomarlo justo antes del tramo más exigente.",
+        "El Energy Gel es la referencia de alto impacto: energía inmediata y fácil digestión para momentos puntuales de alta intensidad (un puerto, el final de una etapa o carrera, una pájara), planificado para tomarlo justo antes del tramo más exigente.",
       ],
     },
     {
       titulo: "Geles para correr, para ciclismo, triatlón y natación",
       parrafos: [
-        "La ficha del producto los recomienda para deportes de largo aliento y resistencia de más de dos horas: ciclismo de fondo y ciclomontañismo, media maratón, maratón y ultramaratón, trail de montaña, triatlón de media y larga distancia y natación de aguas abiertas. Para correr, el sachet de 30 g es el gel de carrera —uno por toma, sin peso de más—; para la bici, el gel de 90 g con tapa va en el jersey o la caramañola y se toma por porciones sin derramarse. En un triatlón se combinan: geles de fruta cada 30 minutos en la bici y en la carrera a pie, y un Energy Gel para arrancar la natación.",
+        "La ficha del producto los recomienda para deportes de largo aliento y resistencia de más de dos horas: ciclismo de fondo y ciclomontañismo, media maratón, maratón y ultramaratón, trail de montaña, triatlón de media y larga distancia y natación de aguas abiertas. Para correr, el sachet de 30 g es el gel de carrera: uno por toma, sin peso de más. Para la bici, el gel de 90 g con tapa va en el jersey o la caramañola y se toma por porciones sin derramarse. En un triatlón se combinan: geles de fruta cada 30 minutos en la bici y en la carrera a pie, y un Energy Gel para arrancar la natación.",
         "Cada deporte tiene su guía con los productos, los packs y la pauta de consumo: nutrición para running, para ciclismo, para triatlón, para natación y para gym. Y si lo que buscas es cuántos geles llevar a una distancia concreta, los Energy Packs de abajo ya los traen contados.",
       ],
     },
@@ -176,7 +176,7 @@ const GELES: CategoriaLanding = {
     {
       question: "¿Qué es un gel energético y para qué sirve?",
       answer:
-        "Un gel energético es un suplemento de carbohidratos de rápida absorción, en sobre individual, que repone la energía durante el ejercicio prolongado. Se usa en esfuerzos de más de 60 a 90 minutos —media maratón, maratón, fondos de ciclismo, triatlón— para mantener la glucosa disponible, retrasar la fatiga y evitar la pájara o el muro.",
+        "Un gel energético es un suplemento de carbohidratos de rápida absorción, en sobre individual, que repone la energía durante el ejercicio prolongado. Se usa en esfuerzos de más de 60 a 90 minutos (media maratón, maratón, fondos de ciclismo, triatlón) para mantener la glucosa disponible, retrasar la fatiga y evitar la pájara o el muro.",
     },
     {
       question: "¿Cuándo debo tomar un gel energético?",
@@ -235,27 +235,27 @@ const BEBIDAS: CategoriaLanding = {
     "Bebidas deportivas colombianas para antes, durante y después del ejercicio: Élite isotónica con electrolitos, Pre Race para cargar energía y Recovery Pro para recuperar. Envío a toda Colombia.",
   kicker: "Antes, durante y después",
   intro: [
-    "Una bebida deportiva isotónica repone lo que se pierde con el sudor —agua y electrolitos— y aporta carbohidratos para que el músculo siga teniendo combustible. Las bebidas deportivas Actimax se fabrican en Envigado, Antioquia, y cubren los tres momentos del esfuerzo: la Bebida Deportiva Élite para hidratar y dar energía durante el entrenamiento o la competencia, Pre Race para cargar energía antes de salir y Recovery Pro para recuperar el músculo después.",
+    "Una bebida deportiva isotónica repone lo que se pierde con el sudor, agua y electrolitos, y aporta carbohidratos para que el músculo siga teniendo combustible. Las bebidas deportivas Actimax se fabrican en Envigado, Antioquia, y cubren los tres momentos del esfuerzo: la Bebida Deportiva Élite para hidratar y dar energía durante el entrenamiento o la competencia, Pre Race para cargar energía antes de salir y Recovery Pro para recuperar el músculo después.",
     "Vienen en tarro con cuchara dosificadora o en sobres individuales para llevar en la maleta o en el jersey, y se compran en línea con envío a Bogotá, Medellín, Cali, Barranquilla y el resto de Colombia.",
   ],
   secciones: [
     {
       titulo: "Bebida Élite: hidratación y energía durante el esfuerzo",
       parrafos: [
-        "La Élite es la bebida isotónica de Actimax para el durante: una matriz de maltodextrina, dextrosa y fructosa —carbohidratos de rápida asimilación—, electrolitos para la contracción muscular y vitaminas del complejo B. Dos cucharadas o un sachet (30 g) en 500 ml de agua aportan 27,5 g de carbohidratos y 250 mg de sodio; la versión con cafeína suma 55 mg de cafeína para esa chispa de alerta y concentración. Para días muy calientes o largos, la ficha explica cómo subir la dosis a 45 o 60 g por bidón.",
+        "La Élite es la bebida isotónica de Actimax para el durante: una matriz de maltodextrina, dextrosa y fructosa (carbohidratos de rápida asimilación), electrolitos para la contracción muscular y vitaminas del complejo B. Dos cucharadas o un sachet (30 g) en 500 ml de agua aportan 27,5 g de carbohidratos y 250 mg de sodio; la versión con cafeína suma 55 mg de cafeína para esa chispa de alerta y concentración. Para días muy calientes o largos, la ficha explica cómo subir la dosis a 45 o 60 g por bidón.",
         "La pauta es tomar sorbos de 100 a 125 ml cada 15 minutos. En esfuerzos de más de 60 minutos conviene agregarle al agua electrolitos y carbohidratos, y en salidas de más de 120 minutos la Élite se combina con los geles energéticos: la bebida pone el agua y los electrolitos, el gel el combustible. Sabores naranja, limón, uva y tutti frutti; el tarro de 500 g rinde 16 bidones y el pack de 20 sachets va uno por bidón. La referencia sin cafeína aparece en el catálogo cuando hay existencias.",
       ],
     },
     {
       titulo: "Pre Race: energía antes de entrenar",
       parrafos: [
-        "Pre Race se toma de 15 a 30 minutos antes de entrenar o competir: 36 g (dos cucharadas y media o un sobre) en 250 ml de agua, leche, yogurt, jugo o café. Aporta 25 g de carbohidratos de maltodextrina y dextrosa, 6,2 g de proteína, 475 mg de calcio y vitaminas del complejo B para llenar el glucógeno del músculo y salir con ganas, sobre todo en los entrenos de madrugada donde no cae bien comer sólido. No tiene cafeína —si la quieres, mézclalo en café caliente— y no reemplaza ninguna comida principal. Sabores fresa, vainilla y caramelo; el tarro rinde 13 vasos y la caja trae 12 sobres.",
+        "Pre Race se toma de 15 a 30 minutos antes de entrenar o competir: 36 g (dos cucharadas y media o un sobre) en 250 ml de agua, leche, yogurt, jugo o café. Aporta 25 g de carbohidratos de maltodextrina y dextrosa, 6,2 g de proteína, 475 mg de calcio y vitaminas del complejo B para llenar el glucógeno del músculo y salir con ganas, sobre todo en los entrenos de madrugada donde no cae bien comer sólido. No tiene cafeína (si la quieres, mézclalo en café caliente) y no reemplaza ninguna comida principal. Sabores fresa, vainilla y caramelo; el tarro rinde 13 vasos y la caja trae 12 sobres.",
       ],
     },
     {
       titulo: "Recovery Pro: recuperación después",
       parrafos: [
-        "Recovery Pro es la bebida de recuperación para después del esfuerzo: 24 g de proteína de alto valor biológico de cuatro fuentes —whey hidrolizado, albúmina de huevo, soya aislada y caseína aislada— con 4.417 mg de BCAA, 8,3 g de carbohidratos y 181 mg de sodio, sin conservantes ni colorantes artificiales. Se prepara con 37 g (dos cucharadas o un sobre) en 250 ml de agua y se toma en los primeros 30 a 40 minutos después de terminar, que es cuando el músculo mejor aprovecha la proteína para reparar fibras y recargar glucógeno. Está pensada para sesiones de más de 90 minutos; sabores vainilla y fresa, en tarro de 400 g (12 vasos) o caja de 12 sobres.",
+        "Recovery Pro es la bebida de recuperación para después del esfuerzo: 24 g de proteína de alto valor biológico de cuatro fuentes (whey hidrolizado, albúmina de huevo, soya aislada y caseína aislada) con 4.417 mg de BCAA, 8,3 g de carbohidratos y 181 mg de sodio, sin conservantes ni colorantes artificiales. Se prepara con 37 g (dos cucharadas o un sobre) en 250 ml de agua y se toma en los primeros 30 a 40 minutos después de terminar, que es cuando el músculo mejor aprovecha la proteína para reparar fibras y recargar glucógeno. Está pensada para sesiones de más de 90 minutos; sabores vainilla y fresa, en tarro de 400 g (12 vasos) o caja de 12 sobres.",
       ],
     },
   ],
@@ -308,7 +308,7 @@ const BEBIDAS: CategoriaLanding = {
     {
       question: "¿Cuánta proteína tiene Recovery Pro y cuándo se toma?",
       answer:
-        "Cada porción de 37 g aporta 24 g de proteína de alto valor biológico —whey hidrolizado, albúmina de huevo, soya aislada y caseína aislada— con 4.417 mg de BCAA. Se toma en los primeros 30 a 40 minutos después de terminar la actividad, en 250 ml de agua, preferiblemente en shaker.",
+        "Cada porción de 37 g aporta 24 g de proteína de alto valor biológico (whey hidrolizado, albúmina de huevo, soya aislada y caseína aislada) con 4.417 mg de BCAA. Se toma en los primeros 30 a 40 minutos después de terminar la actividad, en 250 ml de agua, preferiblemente en shaker.",
     },
     {
       question: "¿Dónde comprar bebidas deportivas isotónicas en Colombia?",
@@ -354,8 +354,8 @@ const BARRAS: CategoriaLanding = {
     "Protein Bar Actimax: barra de proteína con 9,6 g de proteína aislada, miel y maní, hecha en Colombia para antes, durante y después de entrenar. Caja de 18 con envío a todo el país.",
   kicker: "Antes, durante y después",
   intro: [
-    "Una barra de proteína es la forma práctica de llevar proteína y carbohidratos al entrenamiento sin depender de un shaker: se guarda en el jersey o en la maleta y se come cuando el cuerpo lo pide. La Protein Bar Actimax se fabrica en Envigado, Antioquia, con nuggets de proteína —esferas crujientes de alta calidad y alta digestibilidad—, miel de abeja y chips de chocolate, en sabor miel-maní.",
-    "Está pensada para deportistas de fondo y resistencia —running, ciclismo, triatlón, natación, fútbol y gym—, aficionados o profesionales, y viene en caja de 18 barras con envío a Bogotá, Medellín, Cali, Barranquilla y el resto de Colombia.",
+    "Una barra de proteína es la forma práctica de llevar proteína y carbohidratos al entrenamiento sin depender de un shaker: se guarda en el jersey o en la maleta y se come cuando el cuerpo lo pide. La Protein Bar Actimax se fabrica en Envigado, Antioquia, con nuggets de proteína (esferas crujientes de alta calidad y alta digestibilidad), miel de abeja y chips de chocolate, en sabor miel-maní.",
+    "Está pensada para deportistas de fondo y resistencia (running, ciclismo, triatlón, natación, fútbol y gym), aficionados o profesionales, y viene en caja de 18 barras con envío a Bogotá, Medellín, Cali, Barranquilla y el resto de Colombia.",
   ],
   secciones: [
     {
@@ -394,7 +394,7 @@ const BARRAS: CategoriaLanding = {
     {
       question: "¿Cuándo debo comer la barra de proteína?",
       answer:
-        "Antes del entrenamiento como complemento, durante —en la mitad de un esfuerzo largo, para recargar aminoácidos y glucógeno— o después, como snack de recuperación: consumida al terminar amplía el suministro de aminoácidos al músculo por más de cuatro horas.",
+        "Antes del entrenamiento como complemento, durante, en la mitad de un esfuerzo largo para recargar aminoácidos y glucógeno, o después, como snack de recuperación: consumida al terminar amplía el suministro de aminoácidos al músculo por más de cuatro horas.",
     },
     {
       question: "¿La barra de proteína reemplaza al gel energético?",
