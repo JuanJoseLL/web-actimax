@@ -85,6 +85,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "El carrito no contiene productos válidos." }, { status: 400 });
   }
 
+  /* El id anónimo del visitante viaja como atributo del carrito para que el
+     pixel del checkout lo reenvíe a Meta como `external_id` y la navegación
+     del sitio quede unida a la compra. El guion bajo lo mantiene fuera de la
+     vista del pedido en el admin. */
+  const visitante =
+    typeof body === "object" && body !== null
+      ? (body as { visitante?: unknown }).visitante
+      : undefined;
+  const attributes =
+    typeof visitante === "string" && /^[\w-]{1,64}$/.test(visitante)
+      ? [{ key: "_ax_vid", value: visitante }]
+      : [];
+
   try {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -104,7 +117,7 @@ export async function POST(request: Request) {
          conservan su atributo "Cédula". */
       body: JSON.stringify({
         query: CART_CREATE_MUTATION,
-        variables: { input: { lines } },
+        variables: { input: attributes.length > 0 ? { lines, attributes } : { lines } },
       }),
       cache: "no-store",
       signal: AbortSignal.timeout(8000),

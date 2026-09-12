@@ -14,6 +14,7 @@ import { track } from "@/lib/track";
 import { toast } from "sonner";
 import { cartLineId } from "@/lib/cart";
 import { isShortedLine, shortedCartMessage } from "@/lib/checkout-lines";
+import { idVisitante } from "@/lib/visitante";
 
 /** Datos mínimos de un producto para mostrarlo en el carrito. */
 export interface CartLine {
@@ -288,6 +289,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             merchandiseId: item.variantId,
             quantity: item.qty,
           })),
+          visitante: idVisitante(),
         }),
       });
       const result: unknown = await response.json();
@@ -374,6 +376,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           lines: [{ merchandiseId: line.variantId, quantity: qty }],
+          visitante: idVisitante(),
         }),
       });
       const result: unknown = await response.json();

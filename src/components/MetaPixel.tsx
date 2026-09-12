@@ -4,10 +4,17 @@ import { usePathname } from "next/navigation";
 import Script from "next/script";
 import { useEffect, useRef } from "react";
 
+import { SNIPPET_ID_VISITANTE } from "@/lib/visitante";
+
 /**
  * Pixel de Meta (Facebook/Instagram). El snippet dispara el PageView de la
  * carga inicial; el efecto cubre las navegaciones internas del App Router,
  * que cambian de página sin recargar y el pixel no ve solo.
+ *
+ * El `external_id` de las coincidencias avanzadas se calcula dentro del
+ * snippet, no en un efecto: `fbq` encola las llamadas y las procesa en orden,
+ * así que un init posterior llegaría después del PageView y lo dejaría sin
+ * coincidencias. El mismo id viaja al checkout como atributo del carrito.
  */
 export function MetaPixel({ pixelId }: { pixelId: string }) {
   const pathname = usePathname();
@@ -34,7 +41,8 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '${pixelId}');
+var axid=${SNIPPET_ID_VISITANTE};
+fbq('init', '${pixelId}', axid ? {external_id: axid} : {});
 fbq('track', 'PageView');`}
       </Script>
       <noscript>
