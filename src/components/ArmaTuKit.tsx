@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
-import { PackageOpenIcon, ShoppingBagIcon, TruckIcon } from "lucide-react";
+import { PackageOpenIcon, ShoppingBagIcon, TruckIcon, XIcon } from "lucide-react";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { useCart, type CartLine } from "@/components/cart/CartProvider";
 import { Button } from "@/components/ui/button";
@@ -56,22 +56,24 @@ const MARCA_MOMENTO: Record<Momento, string> = {
 };
 
 /**
- * Cuántas casillas dibuja la tira antes de resumir el resto en un "+N".
+ * Cuántas casillas dibuja la tira de móvil antes de resumir el resto en "+N".
  *
- * La tira pone una casilla por unidad, no por sabor: es la mesa del sábado
- * en la noche, con los sobres en el orden en que se van a consumir. Pasadas
- * las dieciocho deja de leerse como una mesa y empieza a ser una lista, así
- * que ahí se corta.
+ * La tira pone una casilla por línea —un producto en un sabor, con la
+ * cantidad en la esquina—, no una por unidad. Doce sachets iguales en fila no
+ * decían nada que un "×12" no diga mejor, y en la barra fija no caben.
  */
-const MAX_PIEZAS_VISIBLES = 18;
+const MAX_LINEAS_VISIBLES = 8;
 
-interface PiezaKit {
-  /** La misma variante se repite en la tira; la key necesita el índice. */
-  id: string;
+/** Un renglón del kit: un producto en un sabor, con cuántos lleva. */
+interface LineaKit {
+  variantId: string;
   handle: string;
   titulo: string;
   sabor: string | null;
   image: string | null;
+  cantidad: number;
+  /** El precio de una unidad; la línea lo multiplica por la cantidad. */
+  precio: number;
 }
 
 /** El sabor que aparece elegido al abrir: el primero que se pueda comprar. */
@@ -84,29 +86,30 @@ function saboresIniciales(unidades: readonly UnidadKit[]): Record<string, string
   return inicial;
 }
 
-/** Las unidades del kit, una casilla por unidad y en orden de carrera. */
-function piezasDelKit(
+/** Lo que lleva el kit, un renglón por variante y en orden de carrera. */
+function lineasDelKit(
   grupos: ReturnType<typeof unidadesPorMomento>,
   seleccion: SeleccionKit,
-): PiezaKit[] {
-  const piezas: PiezaKit[] = [];
+): LineaKit[] {
+  const lineas: LineaKit[] = [];
   for (const grupo of grupos) {
     for (const unidad of grupo.unidades) {
       for (const sabor of unidad.sabores) {
         const cantidad = seleccion[sabor.variantId] ?? 0;
-        for (let i = 0; i < cantidad; i += 1) {
-          piezas.push({
-            id: `${sabor.variantId}-${i}`,
-            handle: unidad.handle,
-            titulo: unidad.title,
-            sabor: sabor.nombre,
-            image: sabor.image,
-          });
-        }
+        if (cantidad <= 0) continue;
+        lineas.push({
+          variantId: sabor.variantId,
+          handle: unidad.handle,
+          titulo: unidad.title,
+          sabor: sabor.nombre,
+          image: sabor.image,
+          cantidad,
+          precio: unidad.price,
+        });
       }
     }
   }
-  return piezas;
+  return lineas;
 }
 
 /** Cómo se lee un sabor en el selector, con su disponibilidad al lado. */
@@ -166,7 +169,7 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
   );
 
   const grupos = useMemo(() => unidadesPorMomento(unidades), [unidades]);
-  const piezas = useMemo(() => piezasDelKit(grupos, seleccion), [grupos, seleccion]);
+  const lineas = useMemo(() => lineasDelKit(grupos, seleccion), [grupos, seleccion]);
 
   const total = totalUnidades(seleccion);
   const subtotal = subtotalKit(seleccion, unidades);
@@ -263,8 +266,13 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
             escríbenos por WhatsApp y te armamos el kit a mano.
           </p>
         ) : (
+          /* `min-w-0` en las dos columnas: una pista `fr` no es un techo, es
+             un reparto del sobrante, y su mínimo automático es el min-content
+             de lo que lleva dentro. Sin esto, lo que no quepa en el panel
+             —antes, la tira de una casilla por unidad— ensancha su columna y
+             le roba el ancho al catálogo. */
           <div className="grid gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-start lg:gap-12">
-            <div className="grid gap-12">
+            <div className="grid min-w-0 gap-12">
               {grupos.map((grupo) => (
                 <section key={grupo.momento}>
                   <div className="flex items-center gap-3">
@@ -303,15 +311,16 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
             {/* El panel de escritorio y la barra de móvil son el mismo kit en
                 dos formatos; solo uno está visible a la vez, así que el lector
                 de pantalla nunca lo oye dos veces. */}
-            <aside className="hidden lg:sticky lg:top-24 lg:block">
+            <aside className="hidden min-w-0 lg:sticky lg:top-24 lg:block">
               <PanelKit
-                piezas={piezas}
+                lineas={lineas}
                 total={total}
                 subtotal={subtotal}
                 faltan={faltan}
                 texto={resumenKit(seleccion, unidades)}
                 motivo={motivo}
                 estado={estado}
+                onQuitar={(variantId) => cambiarCantidad(variantId, 0)}
                 onAgregar={agregarKit}
               />
             </aside>
@@ -324,7 +333,7 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
           {/* Espacio para que la barra fija no tape el final de la página. */}
           <div aria-hidden className="h-40 lg:hidden" />
           <BarraKit
-            piezas={piezas}
+            lineas={lineas}
             total={total}
             subtotal={subtotal}
             faltan={faltan}
@@ -517,22 +526,24 @@ function TarjetaUnidad({
 
 /** El kit en la columna de escritorio, fijo mientras se recorre el catálogo. */
 function PanelKit({
-  piezas,
+  lineas,
   total,
   subtotal,
   faltan,
   texto,
   motivo,
   estado,
+  onQuitar,
   onAgregar,
 }: {
-  piezas: PiezaKit[];
+  lineas: LineaKit[];
   total: number;
   subtotal: number;
   faltan: number;
   texto: string;
   motivo: string | null;
   estado: ReactNode;
+  onQuitar: (variantId: string) => void;
   onAgregar: () => void;
 }) {
   const completo = faltan === 0 && total > 0;
@@ -540,53 +551,69 @@ function PanelKit({
   return (
     <section
       aria-label="Tu kit"
-      className={`border-t-4 bg-tinta p-5 text-white transition-colors ${
+      className={`border-t-4 bg-tinta text-white transition-colors ${
         completo ? "border-amarillo" : "border-white/15"
       }`}
     >
-      <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-amarillo">
-        {completo ? "Kit listo" : "Tu kit"}
-      </p>
-
-      <TiraDelKit piezas={piezas} vacias={faltan} />
-
-      {/* El resumen va debajo, como pie de la tira: en el ancho del panel no
-          le cabe al lado del rótulo sin partirse. */}
-      <p className="mt-2 font-mono text-[10px] uppercase leading-relaxed tracking-[0.14em] text-white/50">
-        {total > 0 ? texto : `Mínimo ${MINIMO_UNIDADES} unidades para despachar`}
-      </p>
-
-      <div className="mt-4 border-t border-white/15 pt-4">
-        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-white/50">
-          Subtotal
+      {/* El contador va arriba a la derecha, en la línea del rótulo: es el
+          número que decide si el botón se puede pulsar, y ahí se lee sin
+          tener que recorrer el panel entero. */}
+      <div className="flex items-baseline justify-between gap-3 px-5 pt-5">
+        <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-amarillo">
+          {completo ? "Kit listo" : "Tu kit"}
         </p>
-        <p className="font-display text-4xl font-extrabold italic leading-none tabular-nums">
-          {formatCOP(subtotal)}
+        <p className="shrink-0 font-mono text-[10px] font-bold uppercase tabular-nums tracking-[0.14em] text-white/50">
+          {total}/{MINIMO_UNIDADES}
         </p>
       </div>
 
-      <Button
-        type="button"
-        /* Sobre el panel oscuro un botón azul apagado sigue pareciendo
-           pulsable; el contorno dice "todavía no" sin ambigüedad. */
-        variant={motivo === null ? "raceSun" : "raceOutline"}
-        size="lg"
-        disabled={motivo !== null}
-        onClick={onAgregar}
-        className="mt-4 w-full py-3 text-base"
-      >
-        <ShoppingBagIcon data-icon="inline-start" />
-        Agregar mi kit
-      </Button>
+      {/* Lo único que crece con el kit es la lista, y crece hacia adentro: al
+          quinto renglón se desplaza sola en vez de empujar el subtotal y el
+          botón fuera de la pantalla, que es lo que tiene que quedar a la
+          vista mientras se recorre el catálogo. */}
+      <ListaDelKit lineas={lineas} onQuitar={onQuitar} />
 
-      {estado}
+      <div className="px-5 pb-5">
+        {total > 0 ? (
+          /* Qué momentos de la carrera quedaron cubiertos: es lo único que la
+             lista no dice sola y la razón de agrupar la página así. */
+          <p className="mt-3 font-mono text-[10px] uppercase leading-relaxed tracking-[0.14em] text-white/50">
+            {texto}
+          </p>
+        ) : null}
+
+        <div className="mt-4 border-t border-white/15 pt-4">
+          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-white/50">
+            Subtotal
+          </p>
+          <p className="font-display text-4xl font-extrabold italic leading-none tabular-nums">
+            {formatCOP(subtotal)}
+          </p>
+        </div>
+
+        <Button
+          type="button"
+          /* Sobre el panel oscuro un botón azul apagado sigue pareciendo
+             pulsable; el contorno dice "todavía no" sin ambigüedad. */
+          variant={motivo === null ? "raceSun" : "raceOutline"}
+          size="lg"
+          disabled={motivo !== null}
+          onClick={onAgregar}
+          className="mt-4 w-full py-3 text-base"
+        >
+          <ShoppingBagIcon data-icon="inline-start" />
+          Agregar mi kit
+        </Button>
+
+        {estado}
+      </div>
     </section>
   );
 }
 
 /** El mismo kit en móvil: una barra fija, del alto de un pulgar. */
 function BarraKit({
-  piezas,
+  lineas,
   total,
   subtotal,
   faltan,
@@ -594,7 +621,7 @@ function BarraKit({
   estado,
   onAgregar,
 }: {
-  piezas: PiezaKit[];
+  lineas: LineaKit[];
   total: number;
   subtotal: number;
   faltan: number;
@@ -619,7 +646,7 @@ function BarraKit({
         aria-label="Tu kit"
         className="px-4 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
       >
-        <TiraDelKit piezas={piezas} vacias={faltan} compacta />
+        <TiraDelKit lineas={lineas} />
         <div className="mt-2 flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-amarillo">
@@ -691,65 +718,155 @@ function EstadoKit({
 }
 
 /**
- * La tira del kit: una casilla por unidad, en el orden en que se consumen.
+ * La tira del kit en la barra de móvil: una casilla por línea, en el orden en
+ * que se consumen.
  *
- * Es la mesa de la noche anterior, con los sobres puestos en fila. Las
- * casillas vacías son las que faltan para el mínimo: dicen cuánto queda sin
- * obligar a leer un número.
+ * Sigue siendo la mesa de la noche anterior con los sobres puestos en fila,
+ * pero un sobre por producto y sabor, con la cantidad en la esquina. Una
+ * casilla por unidad llenaba la barra de miniaturas idénticas apenas alguien
+ * pedía media docena de geles, que es justo el kit que la página promueve.
  */
-function TiraDelKit({
-  piezas,
-  vacias,
-  compacta = false,
-}: {
-  piezas: PiezaKit[];
-  vacias: number;
-  compacta?: boolean;
-}) {
-  const visibles = piezas.slice(0, MAX_PIEZAS_VISIBLES);
-  const ocultas = piezas.length - visibles.length;
-  const casilla = compacta ? "size-10" : "size-11";
+function TiraDelKit({ lineas }: { lineas: LineaKit[] }) {
+  if (lineas.length === 0) {
+    return (
+      <p className="flex h-10 items-center border border-dashed border-white/25 px-3 font-mono text-[9px] uppercase tracking-[0.14em] text-white/50">
+        Mínimo {MINIMO_UNIDADES} unidades para despachar
+      </p>
+    );
+  }
+
+  const visibles = lineas.slice(0, MAX_LINEAS_VISIBLES);
+  const ocultas = lineas.length - visibles.length;
 
   return (
-    <ol className={`flex gap-1.5 overflow-x-auto pb-1 ${compacta ? "" : "mt-3"}`}>
-      {visibles.map((pieza) => (
-        <li key={pieza.id} className="shrink-0">
+    <ol className="flex gap-1.5 overflow-x-auto pb-1">
+      {visibles.map((linea) => (
+        <li key={linea.variantId} className="shrink-0">
           <button
             type="button"
-            onClick={() => irALaUnidad(pieza.handle)}
-            title={pieza.sabor !== null ? `${pieza.titulo} · ${pieza.sabor}` : pieza.titulo}
-            className={`relative block ${casilla} bg-white/95 transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amarillo`}
+            onClick={() => irALaUnidad(linea.handle)}
+            title={linea.sabor !== null ? `${linea.titulo} · ${linea.sabor}` : linea.titulo}
+            className="relative block size-10 bg-white/95 transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amarillo"
           >
             <span className="sr-only">
-              Ver {pieza.titulo}
-              {pieza.sabor !== null ? ` ${pieza.sabor}` : ""}
+              Ver {linea.titulo}
+              {linea.sabor !== null ? ` ${linea.sabor}` : ""} ({linea.cantidad})
             </span>
-            {pieza.image !== null ? (
+            {linea.image !== null ? (
               <Image
-                src={pieza.image}
+                src={linea.image}
                 alt=""
                 fill
-                sizes="44px"
+                sizes="40px"
                 className="object-contain p-0.5 mix-blend-multiply"
               />
             ) : null}
+            {/* La cantidad va dentro de la casilla, no asomada por la esquina:
+                la tira se desplaza en horizontal y lo que sobresalga del
+                recuadro lo recorta el borde del scroll. */}
+            <span
+              aria-hidden
+              className="absolute bottom-0 right-0 grid h-4 min-w-4 place-items-center bg-amarillo px-0.5 font-mono text-[9px] font-bold leading-none tabular-nums text-tinta"
+            >
+              {linea.cantidad}
+            </span>
           </button>
         </li>
       ))}
       {ocultas > 0 ? (
-        <li
-          className={`grid ${casilla} shrink-0 place-items-center border border-white/25 font-mono text-[11px] font-bold tabular-nums text-white/70`}
-        >
+        <li className="grid size-10 shrink-0 place-items-center border border-white/25 font-mono text-[11px] font-bold tabular-nums text-white/70">
           +{ocultas}
         </li>
       ) : null}
-      {Array.from({ length: vacias }, (_, i) => (
-        <li
-          key={`vacia-${i}`}
-          aria-hidden
-          className={`${casilla} shrink-0 border border-dashed border-white/25`}
-        />
-      ))}
     </ol>
+  );
+}
+
+/**
+ * Lo que lleva el kit en el panel de escritorio, renglón por renglón.
+ *
+ * Acá había una casilla por unidad: doce sachets del mismo sabor eran doce
+ * miniaturas repetidas que no decían ni qué sabor era ni cuánto costaba esa
+ * línea, y al no caber en la columna se la ensanchaban al catálogo. Un
+ * renglón por producto y sabor dice las tres cosas y no crece con la
+ * cantidad, que es lo que sí crece de verdad.
+ */
+function ListaDelKit({
+  lineas,
+  onQuitar,
+}: {
+  lineas: LineaKit[];
+  onQuitar: (variantId: string) => void;
+}) {
+  if (lineas.length === 0) {
+    return (
+      <p className="mx-5 mt-4 border border-dashed border-white/25 px-4 py-6 text-center font-mono text-[10px] uppercase leading-relaxed tracking-[0.14em] text-white/50">
+        Todavía no hay nada en el kit
+        <br />
+        Mínimo {MINIMO_UNIDADES} unidades para despachar
+      </p>
+    );
+  }
+
+  return (
+    <ul className="mt-3 max-h-64 overflow-y-auto px-5">
+      {lineas.map((linea) => (
+        <li
+          key={linea.variantId}
+          className="flex items-center gap-2 border-b border-white/10 py-2.5 last:border-b-0"
+        >
+          {/* El renglón entero lleva a su tarjeta: la cantidad se cambia allá,
+              con el mismo selector de todas las unidades, y así el panel no
+              tiene dos maneras distintas de contar lo mismo. */}
+          <button
+            type="button"
+            onClick={() => irALaUnidad(linea.handle)}
+            className="flex min-w-0 flex-1 items-center gap-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amarillo"
+          >
+            <span className="relative block size-10 shrink-0 bg-white/95">
+              {linea.image !== null ? (
+                <Image
+                  src={linea.image}
+                  alt=""
+                  fill
+                  sizes="40px"
+                  className="object-contain p-0.5 mix-blend-multiply"
+                />
+              ) : null}
+              <span
+                aria-hidden
+                className="absolute bottom-0 right-0 grid h-5 min-w-5 place-items-center bg-amarillo px-1 font-mono text-[10px] font-bold leading-none tabular-nums text-tinta"
+              >
+                {linea.cantidad}
+              </span>
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="line-clamp-2 text-[13px] font-semibold leading-tight">
+                {linea.titulo}
+              </span>
+              <span className="mt-1 block truncate font-mono text-[10px] uppercase tracking-[0.12em] text-white/50">
+                {linea.sabor !== null ? `${linea.sabor} · ` : ""}
+                {linea.cantidad} u
+              </span>
+            </span>
+            <span className="shrink-0 font-mono text-xs font-bold tabular-nums">
+              {formatCOP(linea.precio * linea.cantidad)}
+            </span>
+          </button>
+          {/* Bajar de doce a cero con el selector son doce clics; acá la línea
+              entera se va de una. */}
+          <button
+            type="button"
+            onClick={() => onQuitar(linea.variantId)}
+            aria-label={`Quitar ${linea.titulo}${
+              linea.sabor !== null ? ` ${linea.sabor}` : ""
+            } del kit`}
+            className="grid size-7 shrink-0 place-items-center text-white/40 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amarillo"
+          >
+            <XIcon className="size-3.5" />
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 }
