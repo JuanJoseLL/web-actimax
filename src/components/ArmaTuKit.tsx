@@ -3,7 +3,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
-import { PackageOpenIcon, ShoppingBagIcon, TruckIcon, XIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  MinusIcon,
+  PackageOpenIcon,
+  PlusIcon,
+  ShoppingBagIcon,
+  TruckIcon,
+  XIcon,
+} from "lucide-react";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { useCart, type CartLine } from "@/components/cart/CartProvider";
 import { Button } from "@/components/ui/button";
@@ -42,17 +52,16 @@ import { formatCOP } from "@/lib/format";
 import { track } from "@/lib/track";
 import type { Momento } from "@/lib/taxonomia";
 
-/**
- * El marcador de cada sección es la hora de carrera, no un número de paso.
- *
- * Es el mismo reloj que usa la línea de tiempo de /mi-plan ("30 min antes",
- * "Min 45", "Meta +30 min"), y dice algo que un 01/02/03 no diría: acá el
- * orden no es una lista de pasos, es un cronómetro.
- */
 const MARCA_MOMENTO: Record<Momento, string> = {
-  antes: "–30 min",
-  durante: "En ruta",
-  despues: "Meta +30",
+  antes: "Antes",
+  durante: "Durante",
+  despues: "Después",
+};
+
+const SUGERENCIA_MOMENTO: Record<Momento, string> = {
+  antes: "¿Algo para antes de salir?",
+  durante: "¿Ya tienes qué llevar en la ruta?",
+  despues: "¿Y para después de entrenar?",
 };
 
 /**
@@ -125,6 +134,7 @@ function etiquetaSabor(
 /** Por qué no se puede pagar todavía. Null cuando sí se puede. */
 function motivoBloqueo(hayInventario: boolean, faltan: number): string | null {
   if (!hayInventario) return "Sin inventario todavía";
+  if (faltan === MINIMO_UNIDADES) return `Elige al menos ${MINIMO_UNIDADES} unidades para empezar.`;
   if (faltan > 0) return `Faltan ${faltan} ${faltan === 1 ? "unidad" : "unidades"}`;
   return null;
 }
@@ -139,7 +149,7 @@ function irALaUnidad(handle: string): void {
 }
 
 export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
-  const { add, open } = useCart();
+  const { add, open, subtotal: subtotalCarrito } = useCart();
   /* El kit no vive en un useState: vive en localStorage y React se suscribe,
      igual que el carrito. Así sobrevive a la recarga y a que el comprador
      vuelva mañana, sin efectos que restauren al montar. */
@@ -174,9 +184,18 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
   const total = totalUnidades(seleccion);
   const subtotal = subtotalKit(seleccion, unidades);
   const faltan = faltanParaMinimo(seleccion);
-  const faltaEnvio = faltaParaEnvioGratis(subtotal);
+  const totalPedido = subtotal + subtotalCarrito;
+  const faltaEnvio = faltaParaEnvioGratis(totalPedido);
   const hayInventario = unidades.some((unidad) => unidad.sabores.some((s) => s.inStock));
   const motivo = motivoBloqueo(hayInventario, faltan);
+  const sugerencia = total > 0
+    ? grupos.find((grupo) =>
+        grupo.unidades.some((unidad) => unidad.sabores.some((s) => s.inStock)) &&
+        !grupo.unidades.some((unidad) =>
+          unidad.sabores.some((s) => (seleccion[s.variantId] ?? 0) > 0),
+        ),
+      )
+    : undefined;
 
   function cambiarCantidad(variantId: string, cantidad: number) {
     {
@@ -191,6 +210,7 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
   }
 
   function agregarKit() {
+    if (motivo !== null) return;
     const lineas: Array<{ line: CartLine; qty: number }> = [];
     const handles: string[] = [];
     const momentos = new Set<Momento>();
@@ -252,12 +272,12 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
   }
 
   const estado = (
-    <EstadoKit motivo={motivo} subtotal={subtotal} faltaEnvio={faltaEnvio} />
+    <EstadoKit motivo={motivo} total={total} faltan={faltan} />
   );
 
   return (
-    <div className="bg-[#f4f2ec]">
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
+    <div id="productos-kit" className="scroll-mt-24 bg-[#f4f2ec]">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:py-10 lg:px-8">
         {hayInventario ? null : <AvisoSinInventario />}
 
         {grupos.length === 0 ? (
@@ -271,23 +291,59 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
              de lo que lleva dentro. Sin esto, lo que no quepa en el panel
              —antes, la tira de una casilla por unidad— ensancha su columna y
              le roba el ancho al catálogo. */
-          <div className="grid gap-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-start lg:gap-12">
-            <div className="grid min-w-0 gap-12">
+          <div className="grid gap-8 lg:grid-cols-[1fr_360px] lg:items-start">
+            <div className="grid min-w-0 gap-9">
+              <div>
+                <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-azul">
+                  Un poco de cada uno o más de tu favorito
+                </p>
+                <h2 className="mt-2 font-display text-4xl font-extrabold uppercase italic leading-none sm:text-5xl">
+                  ¿Qué llevamos hoy?
+                </h2>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  Elige el sabor y agrega la cantidad que quieras. Puedes mezclar
+                  productos y sabores hasta armar un kit de {MINIMO_UNIDADES} unidades o más.
+                </p>
+                <nav aria-label="Productos por momento" className="mt-5 grid grid-cols-3 gap-2">
+                  {grupos.map((grupo) => {
+                    const cantidad = grupo.unidades.reduce((suma, unidad) =>
+                      suma + unidad.sabores.reduce((n, s) => n + (seleccion[s.variantId] ?? 0), 0), 0);
+                    return (
+                      <a
+                        key={grupo.momento}
+                        href={`#kit-${grupo.momento}`}
+                        className="flex min-h-12 flex-wrap items-center justify-center gap-2 border border-tinta/15 bg-white px-2 py-3 text-sm font-semibold transition-colors hover:border-azul hover:text-azul focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-azul"
+                      >
+                        {MARCA_MOMENTO[grupo.momento]}
+                        {cantidad > 0 ? (
+                          <span className="grid min-w-5 place-items-center rounded-full bg-amarillo px-1 text-xs tabular-nums text-tinta">{cantidad}</span>
+                        ) : <ArrowRightIcon aria-hidden className="size-3.5 text-tinta/40" />}
+                      </a>
+                    );
+                  })}
+                </nav>
+                <div className="mt-4 border border-azul/15 bg-white p-4">
+                  <ProgresoEnvio totalPedido={totalPedido} faltaEnvio={faltaEnvio} conCarrito={subtotalCarrito > 0} />
+                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                    Aprovecha el pedido para dejar listos tus próximos entrenamientos.
+                  </p>
+                </div>
+              </div>
               {grupos.map((grupo) => (
-                <section key={grupo.momento}>
+                <section key={grupo.momento} id={`kit-${grupo.momento}`} className="scroll-mt-24">
                   <div className="flex items-center gap-3">
                     <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-azul">
                       {MARCA_MOMENTO[grupo.momento]}
                     </p>
                     <span aria-hidden className="h-px flex-1 bg-tinta/15" />
                   </div>
-                  <h2 className="mt-3 font-display text-4xl font-extrabold uppercase italic leading-none sm:text-5xl">
+                  <h2 className="mt-3 font-display text-3xl font-extrabold uppercase italic leading-none sm:text-4xl">
                     {TITULO_MOMENTO[grupo.momento]}
                   </h2>
                   <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
                     {AYUDA_MOMENTO[grupo.momento]}
                   </p>
-                  <div className="mt-6 grid gap-3 md:grid-cols-2">
+                  <div className="mt-5 grid gap-4 md:grid-cols-2">
                     {grupo.unidades.map((unidad) => (
                       <TarjetaUnidad
                         key={unidad.handle}
@@ -306,6 +362,17 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
                   </div>
                 </section>
               ))}
+              {sugerencia !== undefined ? (
+                <div className="flex flex-wrap items-center justify-between gap-4 border-l-4 border-azul bg-white p-5">
+                  <div className="max-w-md">
+                    <h3 className="text-base font-bold">{SUGERENCIA_MOMENTO[sugerencia.momento]}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{AYUDA_MOMENTO[sugerencia.momento]}</p>
+                  </div>
+                  <Button asChild variant="raceInk" className="h-11 px-4">
+                    <a href={`#kit-${sugerencia.momento}`}>Ver opciones <ArrowRightIcon /></a>
+                  </Button>
+                </div>
+              ) : null}
             </div>
 
             {/* El panel de escritorio y la barra de móvil son el mismo kit en
@@ -320,7 +387,8 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
                 texto={resumenKit(seleccion, unidades)}
                 motivo={motivo}
                 estado={estado}
-                onQuitar={(variantId) => cambiarCantidad(variantId, 0)}
+                envio={<ProgresoEnvio totalPedido={totalPedido} faltaEnvio={faltaEnvio} conCarrito={subtotalCarrito > 0} oscuro />}
+                onCambiarCantidad={cambiarCantidad}
                 onAgregar={agregarKit}
               />
             </aside>
@@ -331,7 +399,7 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
       {grupos.length === 0 ? null : (
         <>
           {/* Espacio para que la barra fija no tape el final de la página. */}
-          <div aria-hidden className="h-40 lg:hidden" />
+          <div aria-hidden className="h-60 lg:hidden" />
           <BarraKit
             lineas={lineas}
             total={total}
@@ -339,6 +407,8 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
             faltan={faltan}
             motivo={motivo}
             estado={estado}
+            envio={<ProgresoEnvio totalPedido={totalPedido} faltaEnvio={faltaEnvio} conCarrito={subtotalCarrito > 0} oscuro />}
+            onCambiarCantidad={cambiarCantidad}
             onAgregar={agregarKit}
           />
         </>
@@ -353,16 +423,15 @@ function AvisoSinInventario() {
       <div className="flex items-center gap-2 text-azul">
         <PackageOpenIcon className="size-4" />
         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em]">
-          Inventario en camino
+          Por ahora no hay unidades disponibles
         </p>
       </div>
       <h2 className="mt-2 font-display text-3xl font-extrabold uppercase italic leading-none sm:text-4xl">
-        Todavía no hay unidades sueltas
+        Tu próximo kit puede ser un Energy Pack
       </h2>
       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-        Estamos cargando las primeras. Los sabores y los precios de abajo ya son los
-        definitivos, así que puedes ir decidiendo qué llevas. Si compites este fin de
-        semana, los Energy Packs salen hoy mismo.
+        Mientras vuelven las unidades sueltas, puedes explorar nuestros Energy Packs:
+        combinaciones de productos para distintas distancias.
       </p>
       <Button asChild variant="raceInk" size="lg" className="mt-5">
         <Link href="/productos/?tipo=kits">Ver los Energy Packs</Link>
@@ -400,14 +469,14 @@ function TarjetaUnidad({
   return (
     <article
       id={`unidad-${unidad.handle}`}
-      className={`flex scroll-mt-24 flex-col border bg-white p-3 transition-colors sm:p-4 ${
+      className={`flex scroll-mt-24 flex-col border bg-white p-4 transition-colors ${
         enElKit > 0
-          ? "border-tinta shadow-[inset_4px_0_0_0_var(--color-amarillo)]"
-          : "border-tinta/10"
+          ? "border-azul/50 shadow-[inset_0_3px_0_0_var(--color-amarillo)]"
+          : "border-tinta/10 hover:border-tinta/30"
       }`}
     >
       <div className="flex flex-1 gap-4">
-        <div className="relative size-24 shrink-0 bg-niebla sm:size-28">
+        <div className="relative size-24 shrink-0 bg-niebla xl:size-28">
           {sabor?.image != null ? (
             <Image
               src={sabor.image}
@@ -450,7 +519,7 @@ function TarjetaUnidad({
       {/* Los controles van debajo y a todo el ancho: en la columna angosta el
           selector cortaba justo "(sin cafeína)", que es lo que más importa
           saber antes de elegir. */}
-      <div className="mt-3">
+      <div className="mt-4">
         {!hayQueElegirSabor ? null : unidadAgotada ? (
           /* Sin inventario no hay nada que elegir. Un selector con todas las
              opciones deshabilitadas es un callejón sin salida; la lista al
@@ -462,7 +531,7 @@ function TarjetaUnidad({
         ) : (
           <Select value={sabor?.variantId} onValueChange={onElegirSabor}>
             <SelectTrigger
-              className="h-10 w-full rounded-none font-mono text-xs"
+              className="h-auto! min-h-11 w-full rounded-none text-xs [&_[data-slot=select-value]]:line-clamp-none [&_[data-slot=select-value]]:whitespace-normal [&_[data-slot=select-value]]:text-left"
               aria-label={`${unidad.nombreOpcion} de ${unidad.title}`}
             >
               {/* Con hijos, el sabor elegido ya viaja en el HTML: sin ellos
@@ -489,14 +558,27 @@ function TarjetaUnidad({
         {unidadAgotada ? null : (
           <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
             {sabor?.inStock === true ? (
-              <QuantitySelector
-                value={cantidad}
-                min={0}
-                onChange={(valor) => onCambiarCantidad(sabor.variantId, valor)}
-                label={`unidades de ${unidad.title}${
-                  sabor.nombre !== null ? ` ${sabor.nombre}` : ""
-                }`}
-              />
+              cantidad > 0 ? (
+                <QuantitySelector
+                  value={cantidad}
+                  min={0}
+                  onChange={(valor) => onCambiarCantidad(sabor.variantId, valor)}
+                  label={`unidades de ${unidad.title}${
+                    sabor.nombre !== null ? ` ${sabor.nombre}` : ""
+                  }`}
+                  className="[&>button]:size-11 [&>[data-slot=button-group-text]]:text-tinta"
+                />
+              ) : (
+                <Button
+                  type="button"
+                  variant="raceInk"
+                  className="h-11 w-full"
+                  onClick={() => onCambiarCantidad(sabor.variantId, 1)}
+                  aria-label={`Agregar 1 ${unidad.title}${sabor.nombre !== null ? ` · ${sabor.nombre}` : ""} al kit`}
+                >
+                  <PlusIcon /> Agregar al kit
+                </Button>
+              )
             ) : (
               <p className="border border-dashed border-tinta/25 px-2.5 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                 Sin existencias
@@ -510,10 +592,28 @@ function TarjetaUnidad({
           </div>
         )}
 
+        {sabor?.inStock === true ? (
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            {[3, 6].map((extra) => (
+              <button
+                key={extra}
+                type="button"
+                onClick={() => onCambiarCantidad(sabor.variantId, cantidad + extra)}
+                aria-label={`Sumar ${extra} ${unidad.title}${sabor.nombre !== null ? ` · ${sabor.nombre}` : ""} por ${formatCOP(unidad.price * extra)}`}
+                className="min-h-12 border border-azul/20 bg-azul/[0.04] px-2 py-2 text-azul transition-colors hover:border-azul hover:bg-azul/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-azul"
+              >
+                <span className="block text-sm font-bold">+{extra} unidades</span>
+                <span className="mt-0.5 block font-mono text-[10px] tabular-nums">{formatCOP(unidad.price * extra)}</span>
+              </button>
+            ))}
+          </div>
+        ) : null}
+
         {/* Con dos sabores del mismo producto en el kit, el contador solo
             muestra el del sabor a la vista; esta línea enseña el resto. */}
-        {elegidos.length > 1 ? (
-          <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
+        {elegidos.length > 0 ? (
+          <p className="mt-3 border-t border-tinta/10 pt-2 text-xs leading-relaxed text-muted-foreground">
+            <span className="font-semibold text-azul">En tu kit: </span>
             {elegidos
               .map((s) => `${s.nombre ?? "unidad"} ×${seleccion[s.variantId]}`)
               .join(" · ")}
@@ -533,7 +633,8 @@ function PanelKit({
   texto,
   motivo,
   estado,
-  onQuitar,
+  envio,
+  onCambiarCantidad,
   onAgregar,
 }: {
   lineas: LineaKit[];
@@ -543,7 +644,8 @@ function PanelKit({
   texto: string;
   motivo: string | null;
   estado: ReactNode;
-  onQuitar: (variantId: string) => void;
+  envio: ReactNode;
+  onCambiarCantidad: (variantId: string, cantidad: number) => void;
   onAgregar: () => void;
 }) {
   const completo = faltan === 0 && total > 0;
@@ -560,10 +662,10 @@ function PanelKit({
           tener que recorrer el panel entero. */}
       <div className="flex items-baseline justify-between gap-3 px-5 pt-5">
         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-amarillo">
-          {completo ? "Kit listo" : "Tu kit"}
+          Tu kit
         </p>
-        <p className="shrink-0 font-mono text-[10px] font-bold uppercase tabular-nums tracking-[0.14em] text-white/50">
-          {total}/{MINIMO_UNIDADES}
+        <p aria-live="polite" className="shrink-0 font-mono text-[10px] font-bold uppercase tabular-nums tracking-[0.14em] text-white/50">
+          {total} {total === 1 ? "unidad" : "unidades"}
         </p>
       </div>
 
@@ -571,7 +673,8 @@ function PanelKit({
           quinto renglón se desplaza sola en vez de empujar el subtotal y el
           botón fuera de la pantalla, que es lo que tiene que quedar a la
           vista mientras se recorre el catálogo. */}
-      <ListaDelKit lineas={lineas} onQuitar={onQuitar} />
+      <div className="px-5 pt-4">{envio}</div>
+      <ListaDelKit lineas={lineas} onCambiarCantidad={onCambiarCantidad} />
 
       <div className="px-5 pb-5">
         {total > 0 ? (
@@ -599,10 +702,10 @@ function PanelKit({
           size="lg"
           disabled={motivo !== null}
           onClick={onAgregar}
-          className="mt-4 w-full py-3 text-base"
+          className="mt-4 h-11 w-full text-base"
         >
           <ShoppingBagIcon data-icon="inline-start" />
-          Agregar mi kit
+          Agregar kit al carrito
         </Button>
 
         {estado}
@@ -611,7 +714,7 @@ function PanelKit({
   );
 }
 
-/** El mismo kit en móvil: una barra fija, del alto de un pulgar. */
+/** Resumen compacto en móvil, con edición de cantidades desplegable. */
 function BarraKit({
   lineas,
   total,
@@ -619,6 +722,8 @@ function BarraKit({
   faltan,
   motivo,
   estado,
+  envio,
+  onCambiarCantidad,
   onAgregar,
 }: {
   lineas: LineaKit[];
@@ -627,9 +732,12 @@ function BarraKit({
   faltan: number;
   motivo: string | null;
   estado: ReactNode;
+  envio: ReactNode;
+  onCambiarCantidad: (variantId: string, cantidad: number) => void;
   onAgregar: () => void;
 }) {
   const completo = faltan === 0 && total > 0;
+  const [expandido, setExpandido] = useState(false);
 
   return (
     /* `data-buy-bar` es el gancho con el que globals.css esconde el botón de
@@ -646,18 +754,38 @@ function BarraKit({
         aria-label="Tu kit"
         className="px-4 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
       >
-        <TiraDelKit lineas={lineas} />
+        {total > 0 ? (
+          <div className="flex items-center gap-3">
+            <div className="min-w-0 flex-1">
+              {expandido ? <p className="text-sm font-semibold">Tu selección</p> : <TiraDelKit lineas={lineas} />}
+            </div>
+            <button
+              type="button"
+              aria-label={expandido ? "Cerrar detalle del kit" : `Ver y editar mi kit (${total})`}
+              aria-expanded={expandido}
+              aria-controls="detalle-kit-movil"
+              onClick={() => setExpandido((actual) => !actual)}
+              className="flex min-h-11 shrink-0 items-center gap-2 text-xs font-semibold text-white/80 focus-visible:outline-2 focus-visible:outline-amarillo"
+            >
+              {expandido ? "Cerrar" : "Editar kit"}
+              <ChevronDownIcon className={`size-4 transition-transform motion-reduce:transition-none ${expandido ? "" : "rotate-180"}`} />
+            </button>
+          </div>
+        ) : null}
+        <div id="detalle-kit-movil" hidden={!expandido || total === 0} className="max-h-[30dvh] overflow-y-auto overscroll-contain [&>ul]:mt-0 [&>ul]:max-h-none [&>ul]:px-0">
+          <ListaDelKit lineas={lineas} onCambiarCantidad={onCambiarCantidad} />
+        </div>
         <div className="mt-2 flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-amarillo">
-              {completo ? "Kit listo" : "Tu kit"}
+              Tu kit
             </p>
-            <p className="flex items-baseline gap-2">
+            <p className="flex flex-wrap items-baseline gap-x-2">
               <span className="font-mono text-lg font-bold leading-tight tabular-nums">
                 {formatCOP(subtotal)}
               </span>
-              <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-white/50">
-                {completo ? `${total} unidades` : `${total}/${MINIMO_UNIDADES}`}
+              <span aria-live="polite" className="font-mono text-[10px] uppercase tracking-[0.12em] text-white/50">
+                {total} {total === 1 ? "unidad" : "unidades"}
               </span>
             </p>
           </div>
@@ -667,52 +795,79 @@ function BarraKit({
             size="lg"
             disabled={motivo !== null}
             onClick={onAgregar}
-            className="shrink-0 px-4 py-3"
+            className="h-11 shrink-0 px-4"
           >
             <ShoppingBagIcon data-icon="inline-start" />
-            Agregar
+            Al carrito
           </Button>
         </div>
         {estado}
+        <div className="mt-2.5 border-t border-white/15 pt-2.5">{envio}</div>
       </section>
     </div>
   );
 }
 
-/**
- * La línea de estado bajo el botón: o el motivo por el que no se puede pagar,
- * o lo que falta para el envío gratis.
- *
- * Nunca las dos: bajo el mínimo, el envío gratis todavía no es la decisión.
- */
+/** El mínimo habilita la compra; no es un límite para el tamaño del kit. */
 function EstadoKit({
   motivo,
-  subtotal,
-  faltaEnvio,
+  total,
+  faltan,
 }: {
   motivo: string | null;
-  subtotal: number;
-  faltaEnvio: number;
+  total: number;
+  faltan: number;
 }) {
-  if (motivo !== null) {
-    return (
-      <p className="mt-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-amarillo">
-        {motivo}
-      </p>
-    );
-  }
   return (
     <div className="mt-2.5">
-      <Progress
-        value={Math.min(100, (subtotal / ENVIO_GRATIS_UMBRAL) * 100)}
-        className="h-1 bg-white/15 [&_[data-slot=progress-indicator]]:bg-amarillo"
-      />
-      <p className="mt-1.5 flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-white/60">
-        <TruckIcon className="size-3.5 shrink-0 text-amarillo" />
-        {faltaEnvio > 0
-          ? `${formatCOP(faltaEnvio)} para envío gratis`
-          : "Envío gratis incluido"}
+      <p role="status" className="flex items-center gap-1.5 text-xs leading-relaxed text-white/75">
+        {motivo === null ? <CheckIcon aria-hidden className="size-3.5 shrink-0 text-amarillo" /> : null}
+        {motivo === null
+          ? "Ya puedes llevarlo o seguir sumando favoritos."
+          : motivo}
       </p>
+      {faltan > 0 ? (
+        <div aria-hidden className="mt-2 flex gap-1">
+          {Array.from({ length: MINIMO_UNIDADES }, (_, i) => (
+            <span key={i} className={`h-1 flex-1 rounded-full ${i < total ? "bg-amarillo" : "bg-white/15"}`} />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/** El envío cuenta el kit y los productos que ya están en el carrito. */
+function ProgresoEnvio({
+  totalPedido,
+  faltaEnvio,
+  conCarrito,
+  oscuro = false,
+}: {
+  totalPedido: number;
+  faltaEnvio: number;
+  conCarrito: boolean;
+  oscuro?: boolean;
+}) {
+  const progreso = Math.min(100, (totalPedido / ENVIO_GRATIS_UMBRAL) * 100);
+  return (
+    <div className={oscuro ? "text-white/80" : "text-azul"}>
+      <p className="flex items-center gap-2 text-xs font-semibold leading-relaxed">
+        <TruckIcon aria-hidden className={`size-4 shrink-0 ${oscuro ? "text-amarillo" : ""}`} />
+        {faltaEnvio === 0
+          ? "¡Tu pedido ya tiene envío gratis!"
+          : totalPedido === 0
+            ? `Envío gratis desde ${formatCOP(ENVIO_GRATIS_UMBRAL)}`
+            : `Suma ${formatCOP(faltaEnvio)} más y el envío va por nuestra cuenta`}
+      </p>
+      <Progress
+        value={progreso}
+        aria-label="Avance hacia el envío gratis"
+        aria-valuenow={progreso}
+        aria-valuetext={faltaEnvio > 0 ? `Faltan ${formatCOP(faltaEnvio)}` : "Envío gratis alcanzado"}
+        className={`mt-2 h-1.5 [&_[data-slot=progress-indicator]]:motion-reduce:transition-none ${oscuro ? "bg-white/15 [&_[data-slot=progress-indicator]]:bg-amarillo" : "bg-azul/10 [&_[data-slot=progress-indicator]]:bg-azul"}`}
+      />
+      {conCarrito ? <p className="mt-1.5 text-[11px] opacity-75">Incluye lo que ya tienes en el carrito.</p> : null}
     </div>
   );
 }
@@ -727,14 +882,6 @@ function EstadoKit({
  * pedía media docena de geles, que es justo el kit que la página promueve.
  */
 function TiraDelKit({ lineas }: { lineas: LineaKit[] }) {
-  if (lineas.length === 0) {
-    return (
-      <p className="flex h-10 items-center border border-dashed border-white/25 px-3 font-mono text-[9px] uppercase tracking-[0.14em] text-white/50">
-        Mínimo {MINIMO_UNIDADES} unidades para despachar
-      </p>
-    );
-  }
-
   const visibles = lineas.slice(0, MAX_LINEAS_VISIBLES);
   const ocultas = lineas.length - visibles.length;
 
@@ -793,35 +940,34 @@ function TiraDelKit({ lineas }: { lineas: LineaKit[] }) {
  */
 function ListaDelKit({
   lineas,
-  onQuitar,
+  onCambiarCantidad,
 }: {
   lineas: LineaKit[];
-  onQuitar: (variantId: string) => void;
+  onCambiarCantidad: (variantId: string, cantidad: number) => void;
 }) {
   if (lineas.length === 0) {
     return (
-      <p className="mx-5 mt-4 border border-dashed border-white/25 px-4 py-6 text-center font-mono text-[10px] uppercase leading-relaxed tracking-[0.14em] text-white/50">
-        Tu kit está vacío
-        <br />
-        Mínimo {MINIMO_UNIDADES} unidades para despachar
-      </p>
+      <div className="mx-5 mt-4 border border-dashed border-white/25 px-4 py-7 text-center">
+        <PackageOpenIcon aria-hidden className="mx-auto size-8 text-amarillo" />
+        <p className="mt-3 text-sm font-semibold">Empieza por tu favorito</p>
+        <p className="mt-2 text-xs leading-relaxed text-white/60">
+          Tus productos aparecerán aquí. Mezcla sabores o lleva varios del mismo.
+        </p>
+      </div>
     );
   }
 
   return (
-    <ul className="mt-3 max-h-64 overflow-y-auto px-5">
+    <ul className="mt-3 max-h-[min(34dvh,20rem)] overflow-y-auto overscroll-contain px-5">
       {lineas.map((linea) => (
         <li
           key={linea.variantId}
-          className="flex items-center gap-2 border-b border-white/10 py-2.5 last:border-b-0"
+          className="border-b border-white/10 py-3 last:border-b-0"
         >
-          {/* El renglón entero lleva a su tarjeta: la cantidad se cambia allá,
-              con el mismo selector de todas las unidades, y así el panel no
-              tiene dos maneras distintas de contar lo mismo. */}
           <button
             type="button"
             onClick={() => irALaUnidad(linea.handle)}
-            className="flex min-w-0 flex-1 items-center gap-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amarillo"
+            className="flex w-full min-w-0 items-center gap-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amarillo"
           >
             <span className="relative block size-10 shrink-0 bg-white/95">
               {linea.image !== null ? (
@@ -844,7 +990,7 @@ function ListaDelKit({
               <span className="line-clamp-2 text-[13px] font-semibold leading-tight">
                 {linea.titulo}
               </span>
-              <span className="mt-1 block truncate font-mono text-[10px] uppercase tracking-[0.12em] text-white/50">
+              <span className="mt-1 block text-[11px] leading-relaxed text-white/60">
                 {linea.sabor !== null ? `${linea.sabor} · ` : ""}
                 {linea.cantidad} u
               </span>
@@ -853,18 +999,37 @@ function ListaDelKit({
               {formatCOP(linea.precio * linea.cantidad)}
             </span>
           </button>
-          {/* Bajar de doce a cero con el selector son doce clics; acá la línea
-              entera se va de una. */}
-          <button
-            type="button"
-            onClick={() => onQuitar(linea.variantId)}
-            aria-label={`Quitar ${linea.titulo}${
-              linea.sabor !== null ? ` ${linea.sabor}` : ""
-            } del kit`}
-            className="grid size-7 shrink-0 place-items-center text-white/40 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amarillo"
-          >
-            <XIcon className="size-3.5" />
-          </button>
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <div className="flex items-center border border-white/20">
+              <button
+                type="button"
+                onClick={() => onCambiarCantidad(linea.variantId, linea.cantidad - 1)}
+                aria-label={`Disminuir ${linea.titulo}${linea.sabor !== null ? ` ${linea.sabor}` : ""}`}
+                className="grid size-11 place-items-center hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-amarillo"
+              >
+                <MinusIcon className="size-3.5" />
+              </button>
+              <span className="min-w-8 text-center font-mono text-xs tabular-nums">{linea.cantidad}</span>
+              <button
+                type="button"
+                onClick={() => onCambiarCantidad(linea.variantId, linea.cantidad + 1)}
+                aria-label={`Aumentar ${linea.titulo}${linea.sabor !== null ? ` ${linea.sabor}` : ""}`}
+                className="grid size-11 place-items-center hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-amarillo"
+              >
+                <PlusIcon className="size-3.5" />
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={() => onCambiarCantidad(linea.variantId, 0)}
+              aria-label={`Quitar ${linea.titulo}${
+                linea.sabor !== null ? ` ${linea.sabor}` : ""
+              } del kit`}
+              className="flex min-h-11 shrink-0 items-center gap-1 px-2 text-xs text-white/60 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amarillo"
+            >
+              <XIcon className="size-3.5" /> Quitar
+            </button>
+          </div>
         </li>
       ))}
     </ul>

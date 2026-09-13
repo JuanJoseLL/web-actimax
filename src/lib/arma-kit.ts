@@ -58,9 +58,9 @@ export const MINIMO_UNIDADES = 6;
 export const MOMENTOS_KIT: readonly Momento[] = ["antes", "durante", "despues"];
 
 export const TITULO_MOMENTO: Record<Momento, string> = {
-  antes: "Antes de arrancar",
-  durante: "Durante el esfuerzo",
-  despues: "Después de la meta",
+  antes: "Antes de empezar",
+  durante: "Mientras entrenas",
+  despues: "Para recuperarte",
 };
 
 /**
@@ -79,9 +79,9 @@ export const ETIQUETA_UNIDAD: Record<ProductType, string> = {
 };
 
 export const AYUDA_MOMENTO: Record<Momento, string> = {
-  antes: "Lo que tomas 15 a 30 minutos antes para salir con las reservas llenas.",
-  durante: "Lo que consumes en movimiento: calcula una unidad cada 30 a 45 minutos.",
-  despues: "Los primeros 30 minutos después de la meta, cuando el músculo repone mejor.",
+  antes: "Prepara tu próxima salida con una bebida antes de entrenar o competir.",
+  durante: "Geles y bebidas para llevar contigo. Combina sabores y guarda algunos para la próxima salida.",
+  despues: "Al terminar también hay favoritos: elige tu bebida de recuperación o una barra de proteína.",
 };
 
 /**

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { PackageIcon, TruckIcon } from "lucide-react";
+import { ArrowDownIcon, PackageIcon, TruckIcon } from "lucide-react";
 import { ArmaTuKit } from "@/components/ArmaTuKit";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ETIQUETA_UNIDAD,
@@ -20,11 +21,11 @@ import type { Product } from "@/lib/taxonomia";
 export const metadata: Metadata = pageMetadata({
   title: "Arma tu kit — Geles, bebidas y barras por unidad",
   description:
-    "Arma el kit de tu próxima carrera unidad por unidad: los geles, sobres y barras que ya probaste, en la cantidad que pide tu distancia. Desde 6 unidades, con envíos a toda Colombia.",
+    "Combina tus geles, bebidas y barras favoritos para entrenar o competir. Elige sabores y cantidades desde 6 unidades. Envío gratis desde $120.000 en Colombia.",
   path: "/arma-tu-kit/",
-  ogTitle: "Arma tu kit Actimax — Nada que no hayas probado",
+  ogTitle: "Arma tu kit Actimax — Tus favoritos, a tu manera",
   ogDescription:
-    "Gel por gel y sobre por sobre: los sabores que ya te caen bien, la cafeína que toleras y la cantidad que pide tu distancia.",
+    "Elige tus productos, combina sabores y lleva lo que necesitas para tus próximos entrenamientos y carreras. Desde 6 unidades.",
 });
 
 export default function ArmaTuKitPage() {
@@ -41,33 +42,36 @@ export default function ArmaTuKitPage() {
 function Hero() {
   return (
     <section className="hero-course overflow-hidden text-white">
-      <div className="mx-auto grid max-w-[1440px] gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-[1fr_0.72fr] lg:items-end lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-7 px-4 py-10 sm:px-6 md:py-14 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-14 lg:px-8">
         <div>
           <Badge className="rounded-sm bg-amarillo font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-tinta">
-            Arma tu kit · Unidades sueltas
+            Arma tu kit
           </Badge>
-          <h1 className="mt-5 max-w-4xl font-display text-5xl font-extrabold uppercase italic leading-[0.84] tracking-tight sm:text-8xl lg:text-9xl">
-            Nada que
-            <span className="block">no hayas</span>
-            <span className="block text-amarillo">probado.</span>
+          <h1 className="mt-4 font-display text-6xl font-extrabold uppercase italic leading-[0.9] tracking-tight sm:text-7xl lg:text-8xl">
+            Tus favoritos,
+            <span className="block text-amarillo">a tu manera.</span>
           </h1>
         </div>
-        <div className="border-l border-white/20 pl-4 sm:pl-6">
-          <p className="text-lg font-medium leading-relaxed text-white/75">
-            El día de la carrera no se estrena nada. Un Energy Pack trae un contenido fijo;
-            este kit lo armas unidad por unidad con los geles que ya sabes que te caen bien,
-            la cafeína que toleras y la cantidad que pide tu distancia.
+        <div>
+          <p className="max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
+            Combina los geles, bebidas y barras que más te gustan. Tú eliges los
+            sabores y cuántos llevar para tus próximos entrenamientos o carreras.
           </p>
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-white/50">
+          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-3 text-xs text-white/75">
             <span className="flex items-center gap-2">
               <PackageIcon className="size-4 text-amarillo" />
-              Desde {MINIMO_UNIDADES} unidades
+              Desde {MINIMO_UNIDADES} unidades, como quieras combinarlas
             </span>
             <span className="flex items-center gap-2">
               <TruckIcon className="size-4 text-amarillo" />
               Envío gratis desde {formatCOP(ENVIO_GRATIS_UMBRAL)}
             </span>
           </div>
+          <Button asChild variant="raceSun" className="mt-6 h-11 px-6">
+            <a href="#productos-kit">
+              Empezar mi kit <ArrowDownIcon data-icon="inline-end" />
+            </a>
+          </Button>
         </div>
       </div>
     </section>
