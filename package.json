@@ -22,6 +22,7 @@
     "unidades:plan": "node --env-file-if-exists=.env.local scripts/crear-unidades-kit.mjs plan",
     "unidades:aplicar": "node --env-file-if-exists=.env.local scripts/crear-unidades-kit.mjs aplicar",
     "unidades:fotos": "node --env-file-if-exists=.env.local scripts/crear-unidades-kit.mjs fotos",
+    "unidades:inventario": "node --env-file-if-exists=.env.local scripts/crear-unidades-kit.mjs inventario",
     "unidades:verificar": "node --env-file-if-exists=.env.local scripts/crear-unidades-kit.mjs verificar",
     "tablero": "node --env-file-if-exists=.env.local scripts/tablero-semanal.mjs"
   },

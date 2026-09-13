@@ -7,6 +7,7 @@
  *   pnpm unidades:plan       imprime qué haría, sin escribir nada (por defecto)
  *   pnpm unidades:aplicar    crea o actualiza los productos en la tienda
  *   pnpm unidades:fotos      les copia las fotos de los productos en caja
+ *   pnpm unidades:inventario <n>   deja todas las variantes en n unidades
  *   pnpm unidades:verificar  comprueba que quedaron como deben
  *
  * Tres decisiones que no son obvias y que sostienen todo lo demás:
@@ -444,6 +445,67 @@ function altDeFoto(url, titulo) {
   return `${nombreArchivo(url)} · ${titulo}`;
 }
 
+const ITEMS_INVENTARIO = /* GraphQL */ `
+  query ItemsDeInventario($handle: String!) {
+    productByIdentifier(identifier: { handle: $handle }) {
+      handle
+      variants(first: 20) {
+        nodes {
+          id
+          title
+          inventoryItem {
+            id
+            tracked
+            inventoryLevels(first: 5) {
+              nodes {
+                location {
+                  id
+                  name
+                }
+                quantities(names: ["available"]) {
+                  name
+                  quantity
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+const FIJAR_INVENTARIO = /* GraphQL */ `
+  mutation FijarInventario($input: InventorySetQuantitiesInput!) {
+    inventorySetQuantities(input: $input) {
+      inventoryAdjustmentGroup {
+        changes {
+          name
+          delta
+        }
+      }
+      userErrors {
+        code
+        field
+        message
+      }
+    }
+  }
+`;
+
+const UBICACIONES = /* GraphQL */ `
+  {
+    locations(first: 10) {
+      nodes {
+        id
+        name
+        isActive
+        fulfillsOnlineOrders
+      }
+    }
+  }
+`;
+
 /**
  * Cómo se llama un canal, solo para imprimirlo.
  *
@@ -612,6 +674,79 @@ async function fotos() {
   }
 }
 
+/**
+ * Deja el inventario de todas las unidades en la cantidad pedida.
+ *
+ * Ojo con lo que significa: estas unidades salen físicamente de romper
+ * cajas, así que su stock y el de la caja de la que salen son el mismo
+ * producto contado dos veces en Shopify. Mientras el armador no venda de
+ * verdad da igual; el día que venda, o Operaciones aparta un cupo mensual
+ * para el armador, o hay que modelar cajas y packs como bundles de unidades
+ * para que Shopify descuente de un solo lado.
+ *
+ * Fija (`set`) en vez de sumar: correrlo dos veces deja 20, no 40.
+ */
+async function inventario(cantidad) {
+  const datos = await graphql(UBICACIONES);
+  const ubicaciones = datos.locations.nodes.filter((l) => l.isActive && l.fulfillsOnlineOrders);
+  if (ubicaciones.length !== 1) {
+    throw new Error(
+      `Se esperaba una sola ubicación que despache online; hay ${ubicaciones.length}: ` +
+        `${ubicaciones.map((l) => l.name).join(", ")}. Elige a mano en qué bodega va el stock.`,
+    );
+  }
+  const ubicacion = ubicaciones[0];
+  console.log(`  Ubicación: ${ubicacion.name}\n`);
+
+  let tocadas = 0;
+  for (const producto of UNIDADES) {
+    const datos = await graphql(ITEMS_INVENTARIO, { handle: producto.handle });
+    const encontrado = datos.productByIdentifier;
+    if (encontrado === null) {
+      throw new Error(`${producto.handle}: no existe. Corre antes pnpm unidades:aplicar.`);
+    }
+
+    const quantities = [];
+    const sinRastreo = [];
+    for (const variante of encontrado.variants.nodes) {
+      const item = variante.inventoryItem;
+      if (!item.tracked) {
+        sinRastreo.push(variante.title);
+        continue;
+      }
+      /* Sin `compareQuantity`: es el compare-and-swap que evita pisar a otro
+         que esté moviendo el mismo stock, y acá el valor que queremos es
+         absoluto ("déjalo en 20") venga de donde venga. Shopify exige decirlo
+         explícitamente con `ignoreCompareQuantity`, abajo. */
+      quantities.push({
+        inventoryItemId: item.id,
+        locationId: ubicacion.id,
+        quantity: cantidad,
+      });
+    }
+    if (sinRastreo.length > 0) {
+      throw new Error(
+        `${producto.handle}: ${sinRastreo.join(", ")} sin rastreo de inventario; no se puede fijar stock.`,
+      );
+    }
+
+    const resultado = await graphql(FIJAR_INVENTARIO, {
+      input: {
+        name: "available",
+        reason: "correction",
+        ignoreCompareQuantity: true,
+        quantities,
+      },
+    });
+    const errores = resultado.inventorySetQuantities.userErrors;
+    if (errores.length > 0) throw new Error(`${producto.handle}: ${JSON.stringify(errores)}`);
+
+    tocadas += quantities.length;
+    console.log(`  ✓ ${producto.handle.padEnd(38)} ${quantities.length} variantes a ${cantidad}`);
+  }
+  return tocadas;
+}
+
 async function verificar() {
   const problemas = [];
   const { headless } = await publicaciones();
@@ -717,6 +852,15 @@ if (modo === "plan") {
   console.log(`Copiando las fotos de los productos en caja a las unidades de ${STORE}:`);
   await fotos();
   console.log("\nListo. Comprobar con: pnpm unidades:verificar");
+} else if (modo === "inventario") {
+  const cantidad = Number(process.argv[3] ?? "");
+  if (!Number.isInteger(cantidad) || cantidad < 0 || cantidad > 10000) {
+    console.error("Uso: pnpm unidades:inventario <cantidad>   (entero entre 0 y 10000)");
+    process.exit(1);
+  }
+  console.log(`Dejando todas las unidades en ${cantidad} en ${STORE}:`);
+  const tocadas = await inventario(cantidad);
+  console.log(`\n${tocadas} variantes en ${cantidad}. Comprobar con: pnpm unidades:verificar`);
 } else if (modo === "verificar") {
   console.log(`Estado en ${STORE}:`);
   const problemas = await verificar();
@@ -728,6 +872,6 @@ if (modo === "plan") {
     process.exit(1);
   }
 } else {
-  console.error(`Modo desconocido "${modo}". Usa: plan | aplicar | fotos | verificar`);
+  console.error(`Modo desconocido "${modo}". Usa: plan | aplicar | fotos | inventario <n> | verificar`);
   process.exit(1);
 }
