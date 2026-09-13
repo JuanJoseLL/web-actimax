@@ -56,6 +56,14 @@ export interface Product {
   handle: string;
   title: string;
   type: ProductType | null;
+  /**
+   * Unidad suelta del armador de kits: existe en Shopify y se puede comprar,
+   * pero no es catálogo. `getAllProducts()` la deja fuera, y con eso queda
+   * fuera de todo lo que se dibuja a partir de ahí —listado, landings,
+   * sitemap, paleta de búsqueda, llms.txt y su propia ficha, que responde
+   * 404—. Solo `getUnidadesDeKit()` las devuelve.
+   */
+  soloEnKit: boolean;
   momentos: Momento[];
   deportes: string[];
   price: number;
@@ -77,6 +85,26 @@ export interface Product {
   options: ProductOption[];
   variants: ProductVariant[];
   reviewSummary: ProductReviewSummary | null;
+}
+
+/**
+ * La etiqueta de Shopify que saca un producto del catálogo y lo deja
+ * disponible solo para el armador de kits. Es lo único que separa una unidad
+ * suelta de un producto normal: si Operaciones se la quita, la unidad
+ * aparece en la tienda al siguiente webhook.
+ */
+export const TAG_SOLO_EN_KIT = "unidad";
+
+/**
+ * ¿Las etiquetas de Shopify marcan este producto como unidad suelta?
+ *
+ * En un solo lugar y tolerante con lo que Operaciones escriba a mano
+ * (mayúsculas, espacios de sobra). Deliberadamente exacto por lo demás:
+ * "unidades" no cuenta, porque una coincidencia por prefijo escondería del
+ * catálogo un producto normal y ese error se nota tarde y mal.
+ */
+export function esSoloEnKit(tags: readonly string[]): boolean {
+  return tags.some((tag) => tag.toLowerCase().trim() === TAG_SOLO_EN_KIT);
 }
 
 export const TYPE_LABELS: Record<ProductType, string> = {

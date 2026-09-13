@@ -3,6 +3,7 @@ import localCatalog from "@/data/catalog.json";
 import { descriptionFields, sinListaDeContenido } from "./description";
 import {
   DEPORTE_LABELS,
+  esSoloEnKit,
   isMomento,
   isProductType,
   type Product,
@@ -144,6 +145,7 @@ function mapShopifyProduct(node: ShopifyProductNode): Product {
 
   const tags = node.tags.map((t) => t.toLowerCase().trim());
   const type = tags.find(isProductType) ?? null;
+  const soloEnKit = esSoloEnKit(tags);
   const descripcion = descriptionFields(node.descriptionHtml ?? "");
   /* La lista de la descripción solo sirve de respaldo en los kits: en un
      gel el primer <ul> son sabores o beneficios, no contenido. */
@@ -158,6 +160,7 @@ function mapShopifyProduct(node: ShopifyProductNode): Product {
     handle: node.handle,
     title: node.title,
     type,
+    soloEnKit,
     momentos: tags.filter(isMomento),
     deportes: tags.filter((t) => t in DEPORTE_LABELS),
     price,
@@ -207,10 +210,18 @@ async function fetchShopifyProducts(): Promise<Product[] | null> {
       return null;
     }
     // Solo productos etiquetados con el vocabulario de la tienda (tipo,
-    // momento o deporte): deja fuera los de ejemplo que trae Shopify.
+    // momento o deporte): deja fuera los de ejemplo que trae Shopify. Las
+    // unidades sueltas pasan por su propia etiqueta aunque no traigan nada
+    // más; de acá salen para el armador, no para el catálogo.
     const products = nodes
       .map(mapShopifyProduct)
-      .filter((p) => p.type !== null || p.momentos.length > 0 || p.deportes.length > 0);
+      .filter(
+        (p) =>
+          p.soloEnKit ||
+          p.type !== null ||
+          p.momentos.length > 0 ||
+          p.deportes.length > 0,
+      );
     return products.length > 0 ? products : null;
   } catch (err) {
     console.error("No se pudo leer de Shopify; usando catálogo local.", err);
@@ -291,6 +302,10 @@ function localProducts(): Product[] {
       id: String(p.id),
       variantId: variant?.id ?? null,
       type,
+      /* El respaldo local es el catálogo que se extrajo de WooCommerce, donde
+         las unidades sueltas no existían. Si Shopify se cae, el armador se
+         queda sin qué ofrecer, que es preferible a inventar precios. */
+      soloEnKit: false,
       momentos: p.momentos.filter(isMomento),
       price: variant?.price ?? p.price,
       regularPrice: variant?.regularPrice ?? p.regularPrice,
@@ -304,7 +319,11 @@ function localProducts(): Product[] {
 }
 
 /**
- * Catálogo completo, cacheado con stale-while-revalidate.
+ * Catálogo y unidades sueltas juntos, cacheados con stale-while-revalidate.
+ *
+ * Privado a propósito: mezclar las dos cosas es justo lo que hay que evitar
+ * fuera de este módulo. Las vistas públicas son getAllProducts() (la tienda)
+ * y getUnidadesDeKit() (el armador).
  *
  * La frescura la da el webhook de Shopify (products/create|update|delete →
  * /api/revalidar), que invalida el tag `catalog` en el momento del cambio.
@@ -320,7 +339,7 @@ function localProducts(): Product[] {
  * o sea ~17 unidades de escritura ISR cada vez que el resultado cambiaba.
  * Esa era la fuga que tenía el proyecto al 90% de la cuota de Hobby.
  */
-export async function getAllProducts(): Promise<Product[]> {
+async function getCatalogoCompleto(): Promise<Product[]> {
   "use cache";
   cacheTag("catalog");
   cacheLife({ stale: 86400, revalidate: 86400, expire: 604800 });
@@ -340,8 +359,46 @@ export async function getAllProducts(): Promise<Product[]> {
   return fromShopify;
 }
 
+/**
+ * El catálogo que ve el comprador: todo menos las unidades sueltas.
+ *
+ * Este es el único filtro que las mantiene fuera de la tienda. Todo lo que
+ * el sitio dibuja sale de acá —el listado, las landings, el sitemap, la
+ * paleta de búsqueda, el upsell del carrito, llms.txt y las fichas—, así que
+ * una unidad no puede colarse en ninguna de esas superficies sin que alguien
+ * llame a getCatalogoCompleto() o a getUnidadesDeKit() a propósito.
+ */
+export async function getAllProducts(): Promise<Product[]> {
+  return (await getCatalogoCompleto()).filter((p) => !p.soloEnKit);
+}
+
+/**
+ * Las unidades sueltas, lo único que el armador de kits puede ofrecer.
+ *
+ * Sale de la misma entrada de caché que el catálogo: son dos vistas de una
+ * sola consulta a Shopify, no dos consultas.
+ */
+export async function getUnidadesDeKit(): Promise<Product[]> {
+  return (await getCatalogoCompleto()).filter((p) => p.soloEnKit);
+}
+
 export async function getProduct(handle: string): Promise<Product | undefined> {
   return (await getAllProducts()).find((p) => p.handle === handle);
+}
+
+/**
+ * Como getProduct(), pero mirando también entre las unidades sueltas.
+ *
+ * Solo lo usa /api/revalidar, que compara lo cacheado contra getProductoFresco();
+ * ese lee Shopify sin filtrar nada. Si un lado escondiera las unidades y el
+ * otro no, cada venta de una unidad se vería como "producto que apareció" y
+ * reescribiría el sitio entero. Los dos lados tienen que mirar la misma
+ * población o la comparación no significa nada.
+ */
+export async function getProductoCacheado(
+  handle: string,
+): Promise<Product | undefined> {
+  return (await getCatalogoCompleto()).find((p) => p.handle === handle);
 }
 
 /**

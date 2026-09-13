@@ -24,6 +24,7 @@ function toProduct(p: RawProduct): Product {
     handle: p.handle,
     title: p.title,
     type: isProductType(p.type) ? p.type : null,
+    soloEnKit: false,
     momentos: (p.momentos ?? []).filter(isMomento),
     deportes: p.deportes ?? [],
     price: 0,

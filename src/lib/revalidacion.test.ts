@@ -14,6 +14,7 @@ function producto(cambios: Partial<Product> = {}): Product {
     handle: "gel-energetico-actimax-caja-x8",
     title: "Gel Energético Actimax caja x8",
     type: "geles",
+    soloEnKit: false,
     momentos: ["durante"],
     deportes: ["running"],
     price: 72000,

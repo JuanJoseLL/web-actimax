@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
-import { getProduct, getProductoFresco } from "@/lib/catalog";
+import { getProductoCacheado, getProductoFresco } from "@/lib/catalog";
 import { cambioVisible, handleDelPayload, tagsPorTopic } from "@/lib/revalidacion";
 
 /**
@@ -118,8 +118,12 @@ export async function POST(request: Request) {
   if (topic === "products/update") {
     const handle = handleDelPayload(body);
     if (handle !== null) {
+      /* getProductoCacheado y no getProduct: el webhook también llega por las
+         unidades sueltas del armador, que el catálogo esconde. Comparar una
+         vista filtrada contra Shopify sin filtrar haría que cada venta de una
+         unidad pareciera un cambio y reescribiera el sitio entero. */
       const [cacheado, fresco] = await Promise.all([
-        getProduct(handle),
+        getProductoCacheado(handle),
         getProductoFresco(handle),
       ]);
       if (!cambioVisible(cacheado, fresco)) {
