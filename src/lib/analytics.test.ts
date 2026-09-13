@@ -17,6 +17,7 @@ describe("cartSurface", () => {
   it("nombra las demás superficies de la tienda", () => {
     expect(cartSurface("/")).toBe("home");
     expect(cartSurface("/mi-plan/")).toBe("mi-plan");
+    expect(cartSurface("/arma-tu-kit/")).toBe("arma-tu-kit");
     expect(cartSurface("/blog/electrolitos/")).toBe("blog");
     expect(cartSurface("/preguntas-frecuentes/")).toBe("otra");
   });

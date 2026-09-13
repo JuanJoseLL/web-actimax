@@ -35,6 +35,7 @@ export function cartSurface(pathname: string): string {
   if (pathname.startsWith("/productos/comparar")) return "comparador";
   if (pathname.startsWith("/productos/")) return "pagina-producto";
   if (pathname.startsWith("/mi-plan")) return "mi-plan";
+  if (pathname.startsWith("/arma-tu-kit")) return "arma-tu-kit";
   if (pathname.startsWith("/blog")) return "blog";
   return "otra";
 }
