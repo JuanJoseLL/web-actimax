@@ -85,9 +85,9 @@ const UNIDADES = [
       { nombre: "Fresa-Banano (sin cafeína)", barcode: "7709028226838", sku: "UNI-GEL30-FRBA" },
       { nombre: "Fresa con cafeína", barcode: "7709811410888", sku: "UNI-GEL30-FRE-CAF" },
       /* Manzana y Mango llegaron de Operaciones sin el "CAF" que sí traen sus
-         hermanos de 90 g, pero la caja x24 de la que salen es la de con
-         cafeína. Queda escrito así hasta que lo confirmen: /mi-plan pregunta
-         por tolerancia a la cafeína y no puede equivocarse en esto. */
+         hermanos de 90 g. Confirmado el 12 de septiembre de 2026: los dos son
+         con cafeína. Importa porque /mi-plan pregunta por tolerancia a la
+         cafeína y no puede equivocarse en esto. */
       { nombre: "Manzana con cafeína", barcode: "7709990569124", sku: "UNI-GEL30-MAN-CAF" },
       { nombre: "Mango con cafeína", barcode: "7709028226869", sku: "UNI-GEL30-MAG-CAF" },
     ],
@@ -233,6 +233,7 @@ const PUBLICACIONES = /* GraphQL */ `
     publications(first: 25) {
       nodes {
         id
+        name
         catalog {
           title
         }
@@ -298,6 +299,7 @@ const ESTADO = /* GraphQL */ `
           isPublished
           publication {
             id
+            name
             catalog {
               title
             }
@@ -349,11 +351,25 @@ function entrada(producto) {
   };
 }
 
+/**
+ * Cómo se llama un canal, solo para imprimirlo.
+ *
+ * Nunca para decidir: los dos campos disponibles dan nombres distintos para
+ * el mismo canal. En `publications` el headless es "Actimax Headless"
+ * (`name`; `catalog` llega null porque los catálogos son cosa de B2B y
+ * mercados), pero en `resourcePublications` el mismo canal se presenta como
+ * "Channel Catalog <id> for Actimax Headless" (`catalog.title`). Comparar
+ * por nombre hacía que el paso defensivo retirara los productos del canal
+ * que acababa de publicarlos. La identidad de un canal es su id.
+ */
+function nombreCanal(publicacion) {
+  return publicacion.name ?? publicacion.catalog?.title ?? publicacion.id;
+}
+
 async function publicaciones() {
   const data = await graphql(PUBLICACIONES);
-  /* `Publication.name` quedó deprecado a favor de `catalog.title`. */
   const porNombre = new Map(
-    data.publications.nodes.map((p) => [p.catalog?.title ?? "", p.id]),
+    data.publications.nodes.map((p) => [nombreCanal(p), p.id]),
   );
   const headless = porNombre.get(CANAL_HEADLESS);
   if (headless === undefined) {
@@ -404,8 +420,8 @@ async function aplicar() {
        son justo las dos superficies donde una unidad suelta no debe salir. */
     const estado = await graphql(ESTADO, { handle: producto.handle });
     const sobrantes = estado.productByIdentifier.resourcePublications.nodes
-      .filter((rp) => rp.isPublished && rp.publication.catalog?.title !== CANAL_HEADLESS)
-      .map((rp) => ({ id: rp.publication.id, nombre: rp.publication.catalog?.title ?? rp.publication.id }));
+      .filter((rp) => rp.isPublished && rp.publication.id !== headless)
+      .map((rp) => ({ id: rp.publication.id, nombre: nombreCanal(rp.publication) }));
     if (sobrantes.length > 0) {
       await graphql(DESPUBLICAR, {
         id: creado.id,
@@ -422,6 +438,7 @@ async function aplicar() {
 
 async function verificar() {
   const problemas = [];
+  const { headless } = await publicaciones();
   for (const producto of UNIDADES) {
     const data = await graphql(ESTADO, { handle: producto.handle });
     const p = data.productByIdentifier;
@@ -434,15 +451,15 @@ async function verificar() {
       problemas.push(`${producto.handle}: SIN la etiqueta "${TAG_UNIDAD}" — saldría en el catálogo.`);
     }
 
-    const canales = p.resourcePublications.nodes
-      .filter((rp) => rp.isPublished)
-      .map((rp) => rp.publication.catalog?.title ?? rp.publication.id);
-    const otros = canales.filter((nombre) => nombre !== CANAL_HEADLESS);
-    if (!canales.includes(CANAL_HEADLESS)) {
+    const canales = p.resourcePublications.nodes.filter((rp) => rp.isPublished);
+    const otros = canales.filter((rp) => rp.publication.id !== headless);
+    if (!canales.some((rp) => rp.publication.id === headless)) {
       problemas.push(`${producto.handle}: no está en "${CANAL_HEADLESS}"; el armador no lo verá.`);
     }
     if (otros.length > 0) {
-      problemas.push(`${producto.handle}: publicado también en ${otros.join(", ")}.`);
+      problemas.push(
+        `${producto.handle}: publicado también en ${otros.map((rp) => nombreCanal(rp.publication)).join(", ")}.`,
+      );
     }
 
     const esperados = new Map(producto.sabores.map((s) => [s.barcode, producto.precio]));
@@ -461,7 +478,7 @@ async function verificar() {
 
     const stock = p.variants.nodes.reduce((a, v) => a + (v.inventoryQuantity ?? 0), 0);
     console.log(
-      `  ${p.handle.padEnd(38)} ${String(p.variants.nodes.length).padStart(2)} var · ${canales.join(", ")} · stock ${stock}`,
+      `  ${p.handle.padEnd(38)} ${String(p.variants.nodes.length).padStart(2)} var · ${canales.map((rp) => nombreCanal(rp.publication)).join(", ") || "SIN CANAL"} · stock ${stock}`,
     );
   }
 
