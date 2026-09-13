@@ -6,6 +6,7 @@
  *
  *   pnpm unidades:plan       imprime qué haría, sin escribir nada (por defecto)
  *   pnpm unidades:aplicar    crea o actualiza los productos en la tienda
+ *   pnpm unidades:fotos      les copia las fotos de los productos en caja
  *   pnpm unidades:verificar  comprueba que quedaron como deben
  *
  * Tres decisiones que no son obvias y que sostienen todo lo demás:
@@ -62,76 +63,82 @@ const VENDOR = "Actimax";
 const UNIDADES = [
   {
     handle: "unidad-gel-energetico-90g",
+    fuentes: ["gel-energetico-actimax-caja-x8-con-cafeina", "gel-energetico-actimax-caja-x8"],
     title: "Gel Energético 90 g — unidad",
     productType: "Geles energéticos",
     tags: [TAG_UNIDAD, "geles", "durante"],
     descripcion: "Un gel energético de 90 g. Se vende suelto solo dentro de «Arma tu Kit».",
     precio: 15000,
     sabores: [
-      { nombre: "Fresa-Banano (sin cafeína)", barcode: "7709990576641", sku: "UNI-GEL90-FRBA" },
-      { nombre: "Fresa con cafeína", barcode: "7709990576696", sku: "UNI-GEL90-FRE-CAF" },
-      { nombre: "Manzana con cafeína", barcode: "7709990576627", sku: "UNI-GEL90-MAN-CAF" },
-      { nombre: "Mango con cafeína", barcode: "7709990576658", sku: "UNI-GEL90-MAG-CAF" },
+      { nombre: "Fresa-Banano (sin cafeína)", barcode: "7709990576641", fuente: "gel-energetico-actimax-caja-x8", sku: "UNI-GEL90-FRBA" },
+      { nombre: "Fresa con cafeína", barcode: "7709990576696", fuente: "gel-energetico-actimax-caja-x8-con-cafeina", sku: "UNI-GEL90-FRE-CAF" },
+      { nombre: "Manzana con cafeína", barcode: "7709990576627", fuente: "gel-energetico-actimax-caja-x8-con-cafeina", sku: "UNI-GEL90-MAN-CAF" },
+      { nombre: "Mango con cafeína", barcode: "7709990576658", fuente: "gel-energetico-actimax-caja-x8-con-cafeina", sku: "UNI-GEL90-MAG-CAF" },
     ],
   },
   {
     handle: "unidad-gel-energetico-30g",
+    fuentes: ["gl-energetico-actimax-sachets-x24-con-cafeina", "gel-energetico-sachets-x24-sin-cafeina"],
     title: "Gel Energético 30 g — unidad",
     productType: "Geles energéticos",
     tags: [TAG_UNIDAD, "geles", "durante"],
     descripcion: "Un sachet de gel energético de 30 g. Se vende suelto solo dentro de «Arma tu Kit».",
     precio: 9000,
     sabores: [
-      { nombre: "Fresa-Banano (sin cafeína)", barcode: "7709028226838", sku: "UNI-GEL30-FRBA" },
-      { nombre: "Fresa con cafeína", barcode: "7709811410888", sku: "UNI-GEL30-FRE-CAF" },
+      { nombre: "Fresa-Banano (sin cafeína)", barcode: "7709028226838", fuente: "gel-energetico-sachets-x24-sin-cafeina", sku: "UNI-GEL30-FRBA" },
+      { nombre: "Fresa con cafeína", barcode: "7709811410888", fuente: "gl-energetico-actimax-sachets-x24-con-cafeina", sku: "UNI-GEL30-FRE-CAF" },
       /* Manzana y Mango llegaron de Operaciones sin el "CAF" que sí traen sus
          hermanos de 90 g. Confirmado el 12 de septiembre de 2026: los dos son
          con cafeína. Importa porque /mi-plan pregunta por tolerancia a la
          cafeína y no puede equivocarse en esto. */
-      { nombre: "Manzana con cafeína", barcode: "7709990569124", sku: "UNI-GEL30-MAN-CAF" },
-      { nombre: "Mango con cafeína", barcode: "7709028226869", sku: "UNI-GEL30-MAG-CAF" },
+      { nombre: "Manzana con cafeína", barcode: "7709990569124", fuente: "gl-energetico-actimax-sachets-x24-con-cafeina", sku: "UNI-GEL30-MAN-CAF" },
+      { nombre: "Mango con cafeína", barcode: "7709028226869", fuente: "gl-energetico-actimax-sachets-x24-con-cafeina", sku: "UNI-GEL30-MAG-CAF" },
     ],
   },
   {
     handle: "unidad-energy-gel-30g",
+    fuentes: ["energy-gel-caja-x24"],
     title: "Energy Gel 30 g — unidad",
     productType: "Geles energéticos",
     tags: [TAG_UNIDAD, "geles", "durante"],
     descripcion: "Un Energy Gel de 30 g. Se vende suelto solo dentro de «Arma tu Kit».",
     precio: 10000,
     sabores: [
-      { nombre: "Kiwi", barcode: "7709682806483", sku: "UNI-EGEL30-KIWI" },
-      { nombre: "Durazno", barcode: "7709682806476", sku: "UNI-EGEL30-DURA" },
-      { nombre: "Cookies and Cream", barcode: "7709997169174", sku: "UNI-EGEL30-COOK" },
+      { nombre: "Kiwi", barcode: "7709682806483", fuente: "energy-gel-caja-x24", sku: "UNI-EGEL30-KIWI" },
+      { nombre: "Durazno", barcode: "7709682806476", fuente: "energy-gel-caja-x24", sku: "UNI-EGEL30-DURA" },
+      { nombre: "Cookies and Cream", barcode: "7709997169174", fuente: "energy-gel-caja-x24", sku: "UNI-EGEL30-COOK" },
     ],
   },
   {
     handle: "unidad-sobre-pre-race",
+    fuentes: ["pre-race-caja-x12"],
     title: "Sobre Pre Race 36 g — unidad",
     productType: "Bebidas deportivas",
     tags: [TAG_UNIDAD, "bebidas", "antes"],
     descripcion: "Un sobre de Pre Race de 36 g. Se vende suelto solo dentro de «Arma tu Kit».",
     precio: 12000,
     sabores: [
-      { nombre: "Fresa Natural", barcode: "7709811410833", sku: "UNI-PRERACE-FRE" },
-      { nombre: "Vainilla Italiana", barcode: "7709811410826", sku: "UNI-PRERACE-VAI" },
-      { nombre: "Caramelo Inglés", barcode: "7709028226883", sku: "UNI-PRERACE-CAR" },
+      { nombre: "Fresa Natural", barcode: "7709811410833", fuente: "pre-race-caja-x12", sku: "UNI-PRERACE-FRE" },
+      { nombre: "Vainilla Italiana", barcode: "7709811410826", fuente: "pre-race-caja-x12", sku: "UNI-PRERACE-VAI" },
+      { nombre: "Caramelo Inglés", barcode: "7709028226883", fuente: "pre-race-caja-x12", sku: "UNI-PRERACE-CAR" },
     ],
   },
   {
     handle: "unidad-sobre-recovery-pro",
+    fuentes: ["recovery-pro-caja-x12"],
     title: "Sobre Recovery Pro 37 g — unidad",
     productType: "Bebidas deportivas",
     tags: [TAG_UNIDAD, "bebidas", "despues"],
     descripcion: "Un sobre de Recovery Pro de 37 g. Se vende suelto solo dentro de «Arma tu Kit».",
     precio: 15000,
     sabores: [
-      { nombre: "Vainilla Italiana", barcode: "7709028226845", sku: "UNI-RECPRO-VAI" },
-      { nombre: "Fresa", barcode: "7709028226807", sku: "UNI-RECPRO-FRE" },
+      { nombre: "Vainilla Italiana", barcode: "7709028226845", fuente: "recovery-pro-caja-x12", sku: "UNI-RECPRO-VAI" },
+      { nombre: "Fresa", barcode: "7709028226807", fuente: "recovery-pro-caja-x12", sku: "UNI-RECPRO-FRE" },
     ],
   },
   {
     handle: "unidad-sachet-bebida-elite-cafeina",
+    fuentes: ["pack-sachets-bebida-elite-cafeina"],
     title: "Sachet Bebida Élite con cafeína 30 g — unidad",
     productType: "Bebidas deportivas",
     tags: [TAG_UNIDAD, "bebidas", "durante"],
@@ -141,14 +148,15 @@ const UNIDADES = [
     descripcion: "Un sachet de Bebida Élite con cafeína de 30 g. Se vende suelto solo dentro de «Arma tu Kit».",
     precio: 7000,
     sabores: [
-      { nombre: "Naranja", barcode: "7709682806445", sku: "UNI-ELITE-NAR-CAF" },
-      { nombre: "Uva", barcode: "7709682806414", sku: "UNI-ELITE-UVA-CAF" },
-      { nombre: "Tutti Fruti", barcode: "7709682806490", sku: "UNI-ELITE-TUT-CAF" },
-      { nombre: "Limón", barcode: "7709682806438", sku: "UNI-ELITE-LIM-CAF" },
+      { nombre: "Naranja", barcode: "7709682806445", fuente: "pack-sachets-bebida-elite-cafeina", sku: "UNI-ELITE-NAR-CAF" },
+      { nombre: "Uva", barcode: "7709682806414", fuente: "pack-sachets-bebida-elite-cafeina", sku: "UNI-ELITE-UVA-CAF" },
+      { nombre: "Tutti Fruti", barcode: "7709682806490", fuente: "pack-sachets-bebida-elite-cafeina", sku: "UNI-ELITE-TUT-CAF" },
+      { nombre: "Limón", barcode: "7709682806438", fuente: "pack-sachets-bebida-elite-cafeina", sku: "UNI-ELITE-LIM-CAF" },
     ],
   },
   {
     handle: "unidad-protein-bar",
+    fuentes: ["protein-bar-caja-x18"],
     title: "Protein Bar — unidad",
     productType: "Barras de proteína",
     tags: [TAG_UNIDAD, "barras", "despues"],
@@ -157,7 +165,7 @@ const UNIDADES = [
     /* Sin sabores: Shopify igual exige una opción, y la de un producto de
        variante única se llama "Title" / "Default Title". Es lo mismo que
        tienen hoy los Energy Packs. */
-    sabores: [{ nombre: null, barcode: "7709803786489", sku: "UNI-PROTEINBAR" }],
+    sabores: [{ nombre: null, barcode: "7709803786489", fuente: "protein-bar-caja-x18", sku: "UNI-PROTEINBAR" }],
   },
 ];
 
@@ -351,6 +359,91 @@ function entrada(producto) {
   };
 }
 
+const MEDIA_FUENTE = /* GraphQL */ `
+  query Fuente($handle: String!) {
+    productByIdentifier(identifier: { handle: $handle }) {
+      id
+      title
+      media(first: 20) {
+        nodes {
+          alt
+          mediaContentType
+          ... on MediaImage {
+            image {
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+const MEDIA_UNIDAD = /* GraphQL */ `
+  query MediaUnidad($handle: String!) {
+    productByIdentifier(identifier: { handle: $handle }) {
+      id
+      media(first: 30) {
+        nodes {
+          id
+          alt
+        }
+      }
+      variants(first: 20) {
+        nodes {
+          id
+          title
+        }
+      }
+    }
+  }
+`;
+
+const ASIGNAR_FOTO = /* GraphQL */ `
+  mutation AsignarFoto($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+    productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+      productVariants {
+        id
+        title
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+/**
+ * Fotos de la caja que no sirven para una unidad suelta.
+ *
+ * El resto sí: la foto principal de cada producto ya es el sobre, el tubo o
+ * la barra sola, no el empaque. Estas dos son las únicas que muestran varias
+ * unidades juntas y en un producto que se vende de a uno mienten.
+ */
+const FOTOS_DE_CAJA = ["energy-gel-caja-x24-actimax", "geles-energeticos-90-g-sin-cafeina-actimax"];
+
+function esFotoDeCaja(url) {
+  return FOTOS_DE_CAJA.some((nombre) => url.includes(nombre));
+}
+
+/** El nombre del archivo, que es lo estable entre la fuente y la copia. */
+function nombreArchivo(url) {
+  return decodeURIComponent(url.split("/").pop().split("?")[0]);
+}
+
+/**
+ * Cómo se saben cuáles fotos ya están copiadas.
+ *
+ * El `alt` se usa como clave: Shopify le añade un sufijo al nombre del
+ * archivo cuando ya existe uno igual, así que la URL de la copia no se puede
+ * comparar con la del original. El alt sí viaja intacto, y acá se escribe a
+ * propósito con el nombre del archivo de origen adelante.
+ */
+function altDeFoto(url, titulo) {
+  return `${nombreArchivo(url)} · ${titulo}`;
+}
+
 /**
  * Cómo se llama un canal, solo para imprimirlo.
  *
@@ -432,6 +525,89 @@ async function aplicar() {
 
     console.log(
       `  ✓ ${producto.handle} · ${creado.variants.nodes.length} variantes · solo ${CANAL_HEADLESS}`,
+    );
+  }
+}
+
+async function fotos() {
+  /* Las galerías de origen se leen una sola vez: varias unidades comparten
+     fuente y no tiene sentido pedir lo mismo dos veces. */
+  const galerias = new Map();
+  for (const handle of new Set(UNIDADES.flatMap((u) => u.fuentes))) {
+    const data = await graphql(MEDIA_FUENTE, { handle });
+    const fuente = data.productByIdentifier;
+    if (fuente === null) throw new Error(`No existe el producto de origen "${handle}".`);
+    const imagenes = fuente.media.nodes
+      .filter((m) => m.mediaContentType === "IMAGE" && m.image?.url)
+      .map((m) => ({ url: m.image.url, alt: altDeFoto(m.image.url, fuente.title) }))
+      .filter((im) => !esFotoDeCaja(im.url));
+    galerias.set(handle, imagenes);
+  }
+
+  for (const producto of UNIDADES) {
+    const estado = await graphql(MEDIA_UNIDAD, { handle: producto.handle });
+    const unidad = estado.productByIdentifier;
+    if (unidad === null) {
+      throw new Error(`${producto.handle}: no existe. Corre antes pnpm unidades:aplicar.`);
+    }
+
+    /* La galería de la unidad es la de sus fuentes, en orden y sin repetir:
+       los geles salen de dos productos (con y sin cafeína) y comparten las
+       fotos de contexto. */
+    const deseadas = [];
+    const vistas = new Set();
+    for (const handle of producto.fuentes) {
+      for (const imagen of galerias.get(handle)) {
+        if (vistas.has(imagen.alt)) continue;
+        vistas.add(imagen.alt);
+        deseadas.push(imagen);
+      }
+    }
+
+    /* Idempotencia: lo ya copiado se vuelve a mandar por id, no por URL, así
+       que Shopify lo conserva en vez de subir un duplicado en cada corrida. */
+    const yaEstan = new Map(unidad.media.nodes.map((m) => [m.alt, m.id]));
+    const files = deseadas.map((imagen) => {
+      const id = yaEstan.get(imagen.alt);
+      return id !== undefined
+        ? { id }
+        : { originalSource: imagen.url, alt: imagen.alt, contentType: "IMAGE" };
+    });
+    const nuevas = files.filter((f) => f.originalSource !== undefined).length;
+
+    const data = await graphql(PRODUCT_SET, {
+      input: { handle: producto.handle, files },
+      identifier: { handle: producto.handle },
+    });
+    const errores = data.productSet.userErrors;
+    if (errores.length > 0) throw new Error(`${producto.handle}: ${JSON.stringify(errores)}`);
+
+    /* Ahora que las fotos existen en el producto, cada sabor apunta a la de
+       su presentación: la variante sin cafeína no puede mostrar el empaque
+       con cafeína. */
+    const despues = await graphql(MEDIA_UNIDAD, { handle: producto.handle });
+    const porAlt = new Map(despues.productByIdentifier.media.nodes.map((m) => [m.alt, m.id]));
+    const variantes = [];
+    for (const variante of despues.productByIdentifier.variants.nodes) {
+      const sabor = producto.sabores.find(
+        (s) => (s.nombre ?? "Default Title") === variante.title,
+      );
+      if (sabor === undefined) continue;
+      const principal = galerias.get(sabor.fuente)[0];
+      const mediaId = principal === undefined ? undefined : porAlt.get(principal.alt);
+      if (mediaId !== undefined) variantes.push({ id: variante.id, mediaId });
+    }
+    if (variantes.length > 0) {
+      const asignadas = await graphql(ASIGNAR_FOTO, {
+        productId: unidad.id,
+        variants: variantes,
+      });
+      const errs = asignadas.productVariantsBulkUpdate.userErrors;
+      if (errs.length > 0) throw new Error(`${producto.handle}: ${JSON.stringify(errs)}`);
+    }
+
+    console.log(
+      `  ✓ ${producto.handle.padEnd(38)} ${deseadas.length} fotos (${nuevas} nuevas) · ${variantes.length} variantes con foto propia`,
     );
   }
 }
@@ -537,6 +713,10 @@ if (modo === "plan") {
   await aplicar();
   console.log("\nListo. Falta que Operaciones cargue stock y fotos: hasta entonces salen agotadas.");
   console.log("Comprobar con: pnpm unidades:verificar");
+} else if (modo === "fotos") {
+  console.log(`Copiando las fotos de los productos en caja a las unidades de ${STORE}:`);
+  await fotos();
+  console.log("\nListo. Comprobar con: pnpm unidades:verificar");
 } else if (modo === "verificar") {
   console.log(`Estado en ${STORE}:`);
   const problemas = await verificar();
@@ -548,6 +728,6 @@ if (modo === "plan") {
     process.exit(1);
   }
 } else {
-  console.error(`Modo desconocido "${modo}". Usa: plan | aplicar | verificar`);
+  console.error(`Modo desconocido "${modo}". Usa: plan | aplicar | fotos | verificar`);
   process.exit(1);
 }
