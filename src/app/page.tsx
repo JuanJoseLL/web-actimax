@@ -487,6 +487,19 @@ async function RitualSection() {
             );
           })}
         </div>
+
+        {/* El armador reparte las unidades sueltas por estos mismos tres
+            momentos, así que el método es de donde mejor cuelga. En móvil es
+            además el único enlace al armador que se ve sin abrir el menú. */}
+        <p className="reveal mt-10 text-base text-tinta/70">
+          ¿Ya sabes qué te cae bien?{" "}
+          <Link
+            href="/arma-tu-kit/"
+            className="font-semibold text-azul underline-offset-4 hover:underline"
+          >
+            Arma tu kit unidad por unidad, sin el contenido fijo de una caja →
+          </Link>
+        </p>
       </div>
     </section>
   );

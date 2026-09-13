@@ -18,13 +18,13 @@ import { pageMetadata } from "@/lib/seo";
 import type { Product } from "@/lib/taxonomia";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Arma tu Kit — Nutrición por unidad para tu carrera",
+  title: "Arma tu kit — Geles, bebidas y barras por unidad",
   description:
-    "Escoge gel por gel y sobre por sobre: arma el kit de nutrición de tu próxima carrera con unidades sueltas de Actimax. Desde 6 unidades, con envíos a toda Colombia.",
+    "Arma el kit de tu próxima carrera unidad por unidad: los geles, sobres y barras que ya probaste, en la cantidad que pide tu distancia. Desde 6 unidades, con envíos a toda Colombia.",
   path: "/arma-tu-kit/",
-  ogTitle: "Arma tu Kit Actimax — Tu estómago manda",
+  ogTitle: "Arma tu kit Actimax — Nada que no hayas probado",
   ogDescription:
-    "Los sabores que ya probaste y la cafeína que toleras, en las cantidades que tu carrera necesita.",
+    "Gel por gel y sobre por sobre: los sabores que ya te caen bien, la cafeína que toleras y la cantidad que pide tu distancia.",
 });
 
 export default function ArmaTuKitPage() {
@@ -44,18 +44,19 @@ function Hero() {
       <div className="mx-auto grid max-w-[1440px] gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-[1fr_0.72fr] lg:items-end lg:px-8">
         <div>
           <Badge className="rounded-sm bg-amarillo font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-tinta">
-            Arma tu kit · Unidad por unidad
+            Arma tu kit · Unidades sueltas
           </Badge>
           <h1 className="mt-5 max-w-4xl font-display text-5xl font-extrabold uppercase italic leading-[0.84] tracking-tight sm:text-8xl lg:text-9xl">
-            Tu estómago
-            <span className="block text-amarillo">manda.</span>
+            Nada que
+            <span className="block">no hayas</span>
+            <span className="block text-amarillo">probado.</span>
           </h1>
         </div>
         <div className="border-l border-white/20 pl-4 sm:pl-6">
           <p className="text-lg font-medium leading-relaxed text-white/75">
-            Los Energy Packs traen un contenido fijo. Acá escoges gel por gel y sobre por
-            sobre: los sabores que ya probaste, la cafeína que toleras y las cantidades que
-            aguanta tu carrera.
+            El día de la carrera no se estrena nada. Un Energy Pack trae un contenido fijo;
+            este kit lo armas unidad por unidad con los geles que ya sabes que te caen bien,
+            la cafeína que toleras y la cantidad que pide tu distancia.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-white/50">
             <span className="flex items-center gap-2">
@@ -78,7 +79,7 @@ function ArmadorCargando() {
     <div className="bg-[#f4f2ec]">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-azul">
-          Sacando las unidades a la mesa…
+          Cargando las unidades…
         </p>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }, (_, i) => (

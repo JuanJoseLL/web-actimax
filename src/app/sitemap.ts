@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           },
         ]
       : []),
-    { url: `${SITE_URL}/mi-plan/`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE_URL}/arma-tu-kit/`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/productos/`, changeFrequency: "daily", priority: 0.9 },
     ...CATEGORIAS.map((categoria) => ({
       url: `${SITE_URL}${categoria.path}`,

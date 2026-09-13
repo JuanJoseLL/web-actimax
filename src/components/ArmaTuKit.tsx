@@ -262,8 +262,8 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
 
         {grupos.length === 0 ? (
           <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
-            El armador no pudo cargar las unidades. Vuelve a intentarlo en un momento o
-            escríbenos por WhatsApp y te armamos el kit a mano.
+            No pudimos cargar las unidades. Vuelve a intentarlo en un momento o escríbenos
+            por WhatsApp y te armamos el kit a mano.
           </p>
         ) : (
           /* `min-w-0` en las dos columnas: una pista `fr` no es un techo, es
@@ -361,7 +361,7 @@ function AvisoSinInventario() {
       </h2>
       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
         Estamos cargando las primeras. Los sabores y los precios de abajo ya son los
-        definitivos, así que puedes ir decidiendo qué llevas. Para la carrera de este fin de
+        definitivos, así que puedes ir decidiendo qué llevas. Si compites este fin de
         semana, los Energy Packs salen hoy mismo.
       </p>
       <Button asChild variant="raceInk" size="lg" className="mt-5">
@@ -801,7 +801,7 @@ function ListaDelKit({
   if (lineas.length === 0) {
     return (
       <p className="mx-5 mt-4 border border-dashed border-white/25 px-4 py-6 text-center font-mono text-[10px] uppercase leading-relaxed tracking-[0.14em] text-white/50">
-        Todavía no hay nada en el kit
+        Tu kit está vacío
         <br />
         Mínimo {MINIMO_UNIDADES} unidades para despachar
       </p>

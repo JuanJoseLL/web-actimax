@@ -79,9 +79,9 @@ export const ETIQUETA_UNIDAD: Record<ProductType, string> = {
 };
 
 export const AYUDA_MOMENTO: Record<Momento, string> = {
-  antes: "La carga previa: energía disponible desde el primer kilómetro.",
-  durante: "Lo que vas a consumir en movimiento, cada 30 a 45 minutos.",
-  despues: "La ventana de recuperación: lo que repone lo que gastaste.",
+  antes: "Lo que tomas 15 a 30 minutos antes para salir con las reservas llenas.",
+  durante: "Lo que consumes en movimiento: calcula una unidad cada 30 a 45 minutos.",
+  despues: "Los primeros 30 minutos después de la meta, cuando el músculo repone mejor.",
 };
 
 /**

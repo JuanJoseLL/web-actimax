@@ -25,7 +25,7 @@ import { categoriaPath } from "@/data/categorias";
 const NAV = [
   { label: "Comprar", href: "/productos/" },
   { label: "Geles", href: categoriaPath("geles") },
-  { label: "Mi plan", href: "/mi-plan/" },
+  { label: "Arma tu kit", href: "/arma-tu-kit/" },
   { label: "El método", href: "/#metodo" },
   { label: "Blog", href: "/blog/" },
   { label: "Club", href: "/#club" },
@@ -113,8 +113,8 @@ export function Header() {
             variant="raceSun"
             className="hidden h-9 px-4 lg:inline-flex"
           >
-            <Link href="/mi-plan/">
-              Mi próximo reto
+            <Link href="/arma-tu-kit/">
+              Empieza tu kit
               <ArrowRightIcon data-icon="inline-end" />
             </Link>
           </Button>

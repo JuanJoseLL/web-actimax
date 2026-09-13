@@ -78,7 +78,7 @@ export function FuelFinder({ tone = "dark" }: { tone?: "dark" | "light" }) {
   const planDistance =
     sport === "running" ? distance.replace("k", "") : sport === "ciclismo" ? "100" : "113";
 
-  function trackRecommendation(destination: "producto" | "plan") {
+  function trackRecommendation(destination: "producto" | "kit") {
     track("recomendador_kit", {
       deporte: sport,
       distancia: Number(planDistance),
@@ -112,7 +112,8 @@ export function FuelFinder({ tone = "dark" }: { tone?: "dark" | "light" }) {
               Tu próximo reto empieza aquí
             </SheetTitle>
             <SheetDescription>
-              Elige tu disciplina y un reto base. Después ajustaremos tiempo, clima y tolerancia para construir tu plan.
+              Elige disciplina y distancia: te decimos con qué Energy Pack cubrirla. Si
+              prefieres escoger unidad por unidad, puedes armar el kit tú mismo.
             </SheetDescription>
           </SheetHeader>
 
@@ -183,12 +184,13 @@ export function FuelFinder({ tone = "dark" }: { tone?: "dark" | "light" }) {
           </Button>
           <Button asChild variant="outline" size="lg" className="mt-2 h-auto w-full py-3">
             <Link
-              href={`/mi-plan/?deporte=${sport}&distancia=${planDistance}`}
-              /* El pageview no conserva los parámetros. El evento registra
-                 el reto elegido y cuál de las dos salidas tomó el usuario. */
-              onClick={() => trackRecommendation("plan")}
+              href="/arma-tu-kit/"
+              /* El pageview no dice de dónde llegó nadie. El evento registra
+                 el reto elegido y cuál de las dos salidas tomó el usuario:
+                 el pack ya armado o el kit unidad por unidad. */
+              onClick={() => trackRecommendation("kit")}
             >
-              Personalizar mi plan
+              Armarlo unidad por unidad
             </Link>
           </Button>
         </div>

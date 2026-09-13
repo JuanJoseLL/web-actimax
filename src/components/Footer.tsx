@@ -32,6 +32,7 @@ const COLUMNS = [
       { label: "Barras de proteína", href: categoriaPath("barras") },
       { label: "Energy Packs", href: "/productos/?tipo=kits" },
       { label: "Comparar Energy Packs", href: "/productos/comparar/" },
+      { label: "Arma tu kit por unidad", href: "/arma-tu-kit/" },
     ],
   },
   {

@@ -10,6 +10,7 @@ import {
   MedalIcon,
   NewspaperIcon,
   PackageIcon,
+  PackageOpenIcon,
   PlusIcon,
   RouteIcon,
   ShoppingCartIcon,
@@ -91,7 +92,7 @@ function selectedValue(root: HTMLElement): string | null {
 }
 
 const RUTAS = [
-  { label: "Crear mi Plan Actimax", href: "/mi-plan/", icon: RouteIcon },
+  { label: "Arma tu kit unidad por unidad", href: "/arma-tu-kit/", icon: PackageOpenIcon },
   { label: "Geles energéticos", href: categoriaPath("geles"), icon: ZapIcon },
   { label: "Bebidas deportivas", href: categoriaPath("bebidas"), icon: CupSodaIcon },
   { label: "Barras de proteína", href: categoriaPath("barras"), icon: CookieIcon },

@@ -144,13 +144,14 @@ tablero, con sus propiedades:
 | Evento | Propiedades | Dónde dispara |
 | --- | --- | --- |
 | `producto_visto` | `producto` | `BuyBox` al montar la ficha |
-| `agregar_al_carrito` | `producto`, `origen` (`pagina-producto`, `catalogo`, `carrito`, `mi-plan`, `paleta`) | `AddToCartButton`, `CommandPalette` |
+| `agregar_al_carrito` | `producto`, `origen` (`pagina-producto`, `catalogo`, `carrito`, `arma-tu-kit`, `mi-plan`, `paleta`) | `AddToCartButton`, `ArmaTuKit`, `CommandPalette` |
 | `ver_carrito` | `valor`, `unidades` | `CartProvider` al abrir el drawer |
 | `iniciar_checkout` | `valor`, `via` (`carrito`, `comprar-ahora`) | `CartProvider` |
 | `checkout_fallido` | `motivo`, `via` | `CartProvider` |
 | `compra` | `valor`, `via` | `CartProvider` al volver del checkout (subcuenta, ver arriba) |
-| `recomendador_kit` | `deporte`, `distancia`, `destino` (la 3.ª se pierde) | `FuelFinder` |
-| `plan_creado` | `pack`, `distancia` | `ActimaxPlanBuilder` |
+| `recomendador_kit` | `deporte`, `distancia`, `destino` (`producto`, `kit`; la 3.ª se pierde) | `FuelFinder` |
+| `plan_creado` | `pack`, `distancia` | `ActimaxPlanBuilder` (/mi-plan, fuera del menú) |
+| `kit_armado` | `unidades`, `momentos` | `ArmaTuKit` |
 | `busqueda_paleta` | `consulta`, `resultado` | `CommandPalette` |
 | `newsletter_suscripcion` | `resultado`, `origen` | `NewsletterForm` |
 | `resena_enviada` | `producto`, `estrellas` | `ReviewForm` |
