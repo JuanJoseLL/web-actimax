@@ -72,7 +72,7 @@ export async function GET(): Promise<Response> {
         ]
       : []),
     `- [Comparador de Energy Packs](${SITE_URL}/productos/comparar/): kits de nutrición por distancia (10K a maratón, Gran Fondo, triatlón).`,
-    `- [Arma tu kit](${SITE_URL}/arma-tu-kit/): geles, bebidas y barras por unidad para armar un kit a la medida de una carrera, desde 6 unidades.`,
+    `- [Arma tu kit](${SITE_URL}/arma-tu-kit/): geles, bebidas y barras por unidad para armar un kit a la medida de una carrera, desde una unidad y sin mínimo de compra.`,
     `- [Blog](${SITE_URL}/blog/): guías de nutrición deportiva, hidratación y estrategia de carrera.`,
     "",
   );

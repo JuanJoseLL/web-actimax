@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
-  MINIMO_UNIDADES,
+  UNIDADES_SUGERIDAS,
   faltaParaEnvioGratis,
-  faltanParaMinimo,
+  faltanParaSugerido,
   resumenKit,
   subtotalKit,
   tituloUnidad,
@@ -61,7 +61,7 @@ const CATALOGO: UnidadKit[] = [
 ];
 
 /** El kit más barato que se puede pagar: seis sachets de Élite, $42.000. */
-const KIT_MINIMO: SeleccionKit = {
+const KIT_SUGERIDO: SeleccionKit = {
   [variante("unidad-sachet-bebida-elite-cafeina", "Naranja")]: 6,
 };
 
@@ -160,22 +160,31 @@ describe("subtotalKit", () => {
   });
 });
 
-describe("faltanParaMinimo", () => {
-  it("pide las seis unidades completas cuando no hay nada elegido", () => {
-    expect(faltanParaMinimo({})).toBe(MINIMO_UNIDADES);
+describe("faltanParaSugerido", () => {
+  it("sugiere las seis unidades completas cuando no hay nada elegido", () => {
+    expect(faltanParaSugerido({})).toBe(UNIDADES_SUGERIDAS);
   });
 
   it("descuenta lo que ya lleva el kit", () => {
     expect(
-      faltanParaMinimo({ [variante("unidad-protein-bar", "Default Title")]: 4 }),
+      faltanParaSugerido({ [variante("unidad-protein-bar", "Default Title")]: 4 }),
     ).toBe(2);
   });
 
-  it("deja de pedir unidades al llegar al mínimo", () => {
-    expect(faltanParaMinimo(KIT_MINIMO)).toBe(0);
+  it("deja de sugerir al cubrir la carrera completa", () => {
+    expect(faltanParaSugerido(KIT_SUGERIDO)).toBe(0);
     expect(
-      faltanParaMinimo({ [variante("unidad-protein-bar", "Default Title")]: 12 }),
+      faltanParaSugerido({ [variante("unidad-protein-bar", "Default Title")]: 12 }),
     ).toBe(0);
+  });
+
+  /* La sugerencia no es una tranca: una sola unidad es un kit que se paga,
+     y esta cuenta solo alimenta el renglón que invita a sumar más. */
+  it("con una sola unidad ya cuenta, aunque falten cinco", () => {
+    const unaSola = { [variante("unidad-gel-energetico-30g", "Fresa con cafeína")]: 1 };
+    expect(totalUnidades(unaSola)).toBe(1);
+    expect(faltanParaSugerido(unaSola)).toBe(5);
+    expect(subtotalKit(unaSola, CATALOGO)).toBe(9_000);
   });
 });
 
@@ -189,12 +198,12 @@ describe("faltaParaEnvioGratis", () => {
     expect(faltaParaEnvioGratis(180_000)).toBe(0);
   });
 
-  it("el kit mínimo más barato todavía queda lejos del envío gratis", () => {
-    /* Seis sachets de $7.000 son $42.000: el mínimo de unidades y el envío
+  it("el kit sugerido más barato todavía queda lejos del envío gratis", () => {
+    /* Seis sachets de $7.000 son $42.000: la carrera completa y el envío
        gratis son dos metas distintas y la página tiene que mostrar las dos. */
-    const subtotal = subtotalKit(KIT_MINIMO, CATALOGO);
+    const subtotal = subtotalKit(KIT_SUGERIDO, CATALOGO);
     expect(subtotal).toBe(42_000);
-    expect(faltanParaMinimo(KIT_MINIMO)).toBe(0);
+    expect(faltanParaSugerido(KIT_SUGERIDO)).toBe(0);
     expect(faltaParaEnvioGratis(subtotal)).toBe(78_000);
   });
 });

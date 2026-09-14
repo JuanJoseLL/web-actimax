@@ -5,12 +5,7 @@ import { ArmaTuKit } from "@/components/ArmaTuKit";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  ETIQUETA_UNIDAD,
-  MINIMO_UNIDADES,
-  tituloUnidad,
-  type UnidadKit,
-} from "@/lib/arma-kit";
+import { ETIQUETA_UNIDAD, tituloUnidad, type UnidadKit } from "@/lib/arma-kit";
 import { getUnidadesDeKit } from "@/lib/catalog";
 import { ENVIO_GRATIS_UMBRAL } from "@/lib/envio";
 import { formatCOP } from "@/lib/format";
@@ -21,11 +16,11 @@ import type { Product } from "@/lib/taxonomia";
 export const metadata: Metadata = pageMetadata({
   title: "Arma tu kit — Geles, bebidas y barras por unidad",
   description:
-    "Combina tus geles, bebidas y barras favoritos para entrenar o competir. Elige sabores y cantidades desde 6 unidades. Envío gratis desde $120.000 en Colombia.",
+    "Combina tus geles, bebidas y barras favoritos para entrenar o competir. Elige sabores y cantidades desde una sola unidad, sin mínimo de compra. Envío gratis desde $120.000 en Colombia.",
   path: "/arma-tu-kit/",
   ogTitle: "Arma tu kit Actimax — Tus favoritos, a tu manera",
   ogDescription:
-    "Elige tus productos, combina sabores y lleva lo que necesitas para tus próximos entrenamientos y carreras. Desde 6 unidades.",
+    "Elige tus productos, combina sabores y lleva lo que necesitas para tus próximos entrenamientos y carreras. Desde una unidad.",
 });
 
 export default function ArmaTuKitPage() {
@@ -60,7 +55,7 @@ function Hero() {
           <div className="mt-5 flex flex-wrap gap-x-5 gap-y-3 text-xs text-white/75">
             <span className="flex items-center gap-2">
               <PackageIcon className="size-4 text-amarillo" />
-              Desde {MINIMO_UNIDADES} unidades, como quieras combinarlas
+              Desde una unidad, como quieras combinarlas
             </span>
             <span className="flex items-center gap-2">
               <TruckIcon className="size-4 text-amarillo" />

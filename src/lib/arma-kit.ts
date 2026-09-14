@@ -1,6 +1,6 @@
 /**
  * Las cuentas del armador de kits: cuántas unidades llevas, cuánto cuesta y
- * qué falta para poder pagarlo.
+ * qué falta para la carrera completa y para el envío gratis.
  *
  * Lógica pura y sin React para poder probarla; la página solo la dibuja.
  */
@@ -44,15 +44,18 @@ export interface SaborKit {
 export type SeleccionKit = Readonly<Record<string, number>>;
 
 /**
- * El kit más pequeño que se despacha.
+ * El kit que vale la pena llevar, que no es lo mismo que el kit que se
+ * permite comprar.
  *
- * No es un capricho: armar un kit cuesta que alguien lo empaque unidad por
- * unidad, y un pedido de un solo sachet de $7.000 con envío cobrado deja
- * plata en rojo y un comprador molesto. Seis unidades es la carrera más
- * corta que cubre el catálogo (un 10K: pre, gel y recuperación con algo de
- * hidratación).
+ * Seis unidades es la carrera más corta que cubre el catálogo (un 10K: pre,
+ * gel y recuperación con algo de hidratación), y a ese número apunta todo lo
+ * que la página sugiere. Pero es una meta, no una tranca: quien quiera probar
+ * un solo gel antes de comprometerse con seis puede hacerlo, y es mejor esa
+ * venta —y ese comprador que vuelve— que un carrito abandonado en la unidad
+ * cinco. El envío cobrado por debajo de {@link ENVIO_GRATIS_UMBRAL} es lo que
+ * sostiene el pedido pequeño.
  */
-export const MINIMO_UNIDADES = 6;
+export const UNIDADES_SUGERIDAS = 6;
 
 /** El orden en que se arma una carrera, que es el orden de la página. */
 export const MOMENTOS_KIT: readonly Momento[] = ["antes", "durante", "despues"];
@@ -129,9 +132,9 @@ export function subtotalKit(seleccion: SeleccionKit, unidades: readonly UnidadKi
   return subtotal;
 }
 
-/** Cuántas unidades faltan para poder pagar. Cero si ya se puede. */
-export function faltanParaMinimo(seleccion: SeleccionKit): number {
-  return Math.max(0, MINIMO_UNIDADES - totalUnidades(seleccion));
+/** Cuántas unidades faltan para la carrera completa. Cero si ya la cubre. */
+export function faltanParaSugerido(seleccion: SeleccionKit): number {
+  return Math.max(0, UNIDADES_SUGERIDAS - totalUnidades(seleccion));
 }
 
 /** Cuánta plata falta para el envío gratis. Cero si ya lo alcanzó. */

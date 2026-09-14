@@ -28,10 +28,10 @@ import {
 import { cartSurface } from "@/lib/analytics";
 import {
   AYUDA_MOMENTO,
-  MINIMO_UNIDADES,
+  UNIDADES_SUGERIDAS,
   TITULO_MOMENTO,
   faltaParaEnvioGratis,
-  faltanParaMinimo,
+  faltanParaSugerido,
   resumenKit,
   subtotalKit,
   totalUnidades,
@@ -131,11 +131,16 @@ function etiquetaSabor(
   return marcarAgotados && !sabor.inStock ? `${nombre} · agotado` : nombre;
 }
 
-/** Por qué no se puede pagar todavía. Null cuando sí se puede. */
-function motivoBloqueo(hayInventario: boolean, faltan: number): string | null {
+/**
+ * Por qué no se puede pagar todavía. Null cuando sí se puede.
+ *
+ * Lo único que impide llevar el kit es que esté vacío: no hay mínimo de
+ * unidades. Las seis de {@link UNIDADES_SUGERIDAS} se sugieren en el estado,
+ * con el botón ya habilitado.
+ */
+function motivoBloqueo(hayInventario: boolean, total: number): string | null {
   if (!hayInventario) return "Sin inventario todavía";
-  if (faltan === MINIMO_UNIDADES) return `Elige al menos ${MINIMO_UNIDADES} unidades para empezar.`;
-  if (faltan > 0) return `Faltan ${faltan} ${faltan === 1 ? "unidad" : "unidades"}`;
+  if (total === 0) return "Agrega una unidad para empezar tu kit.";
   return null;
 }
 
@@ -183,11 +188,11 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
 
   const total = totalUnidades(seleccion);
   const subtotal = subtotalKit(seleccion, unidades);
-  const faltan = faltanParaMinimo(seleccion);
+  const faltanSugeridas = faltanParaSugerido(seleccion);
   const totalPedido = subtotal + subtotalCarrito;
   const faltaEnvio = faltaParaEnvioGratis(totalPedido);
   const hayInventario = unidades.some((unidad) => unidad.sabores.some((s) => s.inStock));
-  const motivo = motivoBloqueo(hayInventario, faltan);
+  const motivo = motivoBloqueo(hayInventario, total);
   const sugerencia = total > 0
     ? grupos.find((grupo) =>
         grupo.unidades.some((unidad) => unidad.sabores.some((s) => s.inStock)) &&
@@ -251,10 +256,10 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
     for (const handle of handles) track("agregar_al_carrito", { producto: handle, origen });
 
     /* El pageview de /arma-tu-kit/ no dice nada del kit que salió. `unidades`
-       responde si el mínimo de seis estorba o se queda corto —es el número
-       que habría que mover— y `momentos` dice si la gente arma la carrera
-       completa o solo pasa por los geles, que es la apuesta de agrupar la
-       página así. La plata no viaja acá: el carrito entero se mide en
+       responde de qué tamaño salen los kits ahora que no hay mínimo —cuántos
+       se van en una o dos, y si la sugerencia de seis mueve algo— y
+       `momentos` dice si la gente arma la carrera completa o solo pasa por
+       los geles, que es la apuesta de agrupar la página así. La plata no viaja acá: el carrito entero se mide en
        `iniciar_checkout` y contarla dos veces inflaría los ingresos. Vercel
        solo admite 2 propiedades por evento. */
     track("kit_armado", { unidades: total, momentos: momentos.size });
@@ -272,7 +277,7 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
   }
 
   const estado = (
-    <EstadoKit motivo={motivo} total={total} faltan={faltan} />
+    <EstadoKit motivo={motivo} total={total} faltan={faltanSugeridas} />
   );
 
   return (
@@ -301,8 +306,9 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
                   ¿Qué llevamos hoy?
                 </h2>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  Elige el sabor y agrega la cantidad que quieras. Puedes mezclar
-                  productos y sabores hasta armar un kit de {MINIMO_UNIDADES} unidades o más.
+                  Elige el sabor y agrega la cantidad que quieras: puedes mezclar
+                  productos y sabores sin mínimo. Con {UNIDADES_SUGERIDAS} unidades ya
+                  cubres una carrera completa, del calentamiento a la recuperación.
                 </p>
                 <nav aria-label="Productos por momento" className="mt-5 grid grid-cols-3 gap-2">
                   {grupos.map((grupo) => {
@@ -383,7 +389,6 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
                 lineas={lineas}
                 total={total}
                 subtotal={subtotal}
-                faltan={faltan}
                 texto={resumenKit(seleccion, unidades)}
                 motivo={motivo}
                 estado={estado}
@@ -404,7 +409,6 @@ export function ArmaTuKit({ unidades }: { unidades: UnidadKit[] }) {
             lineas={lineas}
             total={total}
             subtotal={subtotal}
-            faltan={faltan}
             motivo={motivo}
             estado={estado}
             envio={<ProgresoEnvio totalPedido={totalPedido} faltaEnvio={faltaEnvio} conCarrito={subtotalCarrito > 0} oscuro />}
@@ -629,7 +633,6 @@ function PanelKit({
   lineas,
   total,
   subtotal,
-  faltan,
   texto,
   motivo,
   estado,
@@ -640,7 +643,6 @@ function PanelKit({
   lineas: LineaKit[];
   total: number;
   subtotal: number;
-  faltan: number;
   texto: string;
   motivo: string | null;
   estado: ReactNode;
@@ -648,13 +650,15 @@ function PanelKit({
   onCambiarCantidad: (variantId: string, cantidad: number) => void;
   onAgregar: () => void;
 }) {
-  const completo = faltan === 0 && total > 0;
+  /* El borde amarillo dice lo mismo que el botón: el kit ya se puede llevar.
+     Antes marcaba las seis unidades y se quedaba gris con un kit pagable. */
+  const listo = motivo === null;
 
   return (
     <section
       aria-label="Tu kit"
       className={`border-t-4 bg-tinta text-white transition-colors ${
-        completo ? "border-amarillo" : "border-white/15"
+        listo ? "border-amarillo" : "border-white/15"
       }`}
     >
       {/* El contador va arriba a la derecha, en la línea del rótulo: es el
@@ -719,7 +723,6 @@ function BarraKit({
   lineas,
   total,
   subtotal,
-  faltan,
   motivo,
   estado,
   envio,
@@ -729,14 +732,13 @@ function BarraKit({
   lineas: LineaKit[];
   total: number;
   subtotal: number;
-  faltan: number;
   motivo: string | null;
   estado: ReactNode;
   envio: ReactNode;
   onCambiarCantidad: (variantId: string, cantidad: number) => void;
   onAgregar: () => void;
 }) {
-  const completo = faltan === 0 && total > 0;
+  const listo = motivo === null;
   const [expandido, setExpandido] = useState(false);
 
   return (
@@ -747,7 +749,7 @@ function BarraKit({
       data-buy-bar
       aria-hidden="false"
       className={`fixed inset-x-0 bottom-0 z-40 border-t-4 bg-tinta text-white transition-colors lg:hidden ${
-        completo ? "border-amarillo" : "border-white/15"
+        listo ? "border-amarillo" : "border-white/15"
       }`}
     >
       <section
@@ -808,7 +810,15 @@ function BarraKit({
   );
 }
 
-/** El mínimo habilita la compra; no es un límite para el tamaño del kit. */
+/**
+ * Qué se puede hacer con el kit que hay, y qué se gana sumando una más.
+ *
+ * Con el mínimo fuera, este renglón es lo único que empuja a llevar más de
+ * una unidad, así que no se queda en "ya puedes llevarlo": nombra lo que
+ * falta para la carrera completa y la barrita lo va llenando. Es un aliciente
+ * con el botón ya habilitado, no una tranca —quien solo quería probar un gel
+ * paga igual—, y el envío gratis del panel de arriba es el otro tirón.
+ */
 function EstadoKit({
   motivo,
   total,
@@ -818,17 +828,24 @@ function EstadoKit({
   total: number;
   faltan: number;
 }) {
+  /* Las seis se sugieren solo después de la primera unidad: seis casillas
+     vacías sobre un kit sin nada se leen como un requisito, que es justo lo
+     que dejó de ser. */
+  const sugerir = motivo === null && faltan > 0;
+
   return (
     <div className="mt-2.5">
       <p role="status" className="flex items-center gap-1.5 text-xs leading-relaxed text-white/75">
         {motivo === null ? <CheckIcon aria-hidden className="size-3.5 shrink-0 text-amarillo" /> : null}
-        {motivo === null
-          ? "Ya puedes llevarlo o seguir sumando favoritos."
-          : motivo}
+        {motivo !== null
+          ? motivo
+          : sugerir
+            ? `Ya puedes llevarlo. Con ${faltan} ${faltan === 1 ? "unidad" : "unidades"} más cubres una carrera completa.`
+            : "Tu carrera queda cubierta. Suma lo que quieras dejar listo para la próxima."}
       </p>
-      {faltan > 0 ? (
+      {sugerir ? (
         <div aria-hidden className="mt-2 flex gap-1">
-          {Array.from({ length: MINIMO_UNIDADES }, (_, i) => (
+          {Array.from({ length: UNIDADES_SUGERIDAS }, (_, i) => (
             <span key={i} className={`h-1 flex-1 rounded-full ${i < total ? "bg-amarillo" : "bg-white/15"}`} />
           ))}
         </div>
