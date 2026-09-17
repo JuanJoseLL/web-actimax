@@ -3,6 +3,7 @@ import { Archivo, Barlow_Condensed, Chivo_Mono } from "next/font/google";
 import { Suspense } from "react";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
+import { Atribucion } from "@/components/Atribucion";
 import { MetaPixel } from "@/components/MetaPixel";
 import { WebAnalytics } from "@/components/WebAnalytics";
 import { CartDrawer } from "@/components/cart/CartDrawer";
@@ -110,6 +111,7 @@ export default function RootLayout({
           </Suspense>
           <Toaster position="top-right" offset={{ top: 108 }} mobileOffset={{ top: 108 }} />
         </CartProvider>
+        <Atribucion />
         <WebAnalytics />
         {process.env.NEXT_PUBLIC_META_PIXEL_ID ? (
           <MetaPixel pixelId={process.env.NEXT_PUBLIC_META_PIXEL_ID} />

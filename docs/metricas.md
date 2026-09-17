@@ -93,16 +93,60 @@ Instagram 7 · Facebook 2.
 **Herramientas:** Mi Plan 38 visitantes, 18 planes, 2 al carrito · filtros
 155/1.110 · buscador 7 personas, 3 búsquedas sin resultado («hidratante»).
 
+## Cómo etiquetar los anuncios
+
+Sin esto el desglose por campaña queda vacío: la web solo puede leer lo que el
+anuncio traiga en la URL. Va en el campo de URL del anuncio, no en el texto.
+
+```
+https://actimax.com.co/productos/geles-energeticos/?utm_source=instagram&utm_medium=cpc&utm_campaign=maraton-medellin
+```
+
+- `utm_source`: dónde se ve el anuncio — `instagram`, `facebook`, `google`.
+- `utm_medium`: **la palabra que separa la pauta de lo orgánico.** `cpc` para
+  todo lo pagado. Sin esto no hay forma de distinguir un anuncio de Instagram
+  de un enlace del feed.
+- `utm_campaign`: el nombre de la campaña, en minúsculas y con guiones, igual
+  al que se usó en el administrador de anuncios para poder cuadrarlo.
+- `utm_content` (opcional): el creativo, si se quiere comparar entre piezas.
+
+Tres cosas que rompen el desglose: cambiarle el nombre a una campaña a mitad de
+camino (salen dos filas), escribirlo con mayúsculas o tildes distintas cada vez
+(se normaliza a minúsculas, pero `maratón` y `maraton` siguen siendo dos), y
+mandar el enlace de la bio sin UTM (cae en `meta / sin-utm`).
+
 ## Cosas que hay que saber al leer los números
 
 - **El evento `compra` de Vercel subcuenta.** Solo dispara si el comprador
   vuelve al sitio después de pagar; en el baseline midió 10 de 23. Los pedidos
   siempre se leen de Shopify. El evento queda en el tablero solo como
   referencia.
-- **La atribución de la venta por fuente no sirve.** El referente al volver del
-  checkout es `pagos.actimax.com.co` (mismo dominio raíz) y se descarta, así
-  que las compras salen como «directo». La calidad por fuente se mide en
+- **La atribución de la venta va por el atributo del pedido, no por el
+  referente.** El referente al volver del checkout es `pagos.actimax.com.co`
+  (mismo dominio raíz) y se descarta, así que en Vercel las compras siempre
+  salen como «directo». Desde el 17 de septiembre de 2026 el front lee los UTM
+  de la URL de entrada, los guarda 30 días y se los cuelga al carrito como
+  atributo `Origen` (`src/lib/atribucion.ts`); el atributo llega al pedido y el
+  tablero lo desglosa en «Ventas por campaña». Manda el último clic con UTM,
+  igual que en Meta y GA4. Dos cosas que hay que saber al leerlo:
+  - **Sin UTM en los anuncios no hay nada que leer.** El desglose solo sabe lo
+    que quien monta la pauta haya etiquetado. Un clic de Google Ads sin UTM cae
+    igual en `google-ads / sin-utm` por el `gclid`, pero un anuncio de Meta sin
+    UTM es indistinguible de un enlace orgánico: ambos traen `fbclid` y salen
+    como `meta / sin-utm`.
+  - **«Sin atribuir» no es «directo».** Ahí caen los pedidos anteriores al 17
+    de septiembre de 2026, los de quien llegó sin UTM y los de quien compró en
+    incógnito o con el almacenamiento bloqueado.
+  La calidad por fuente (referente, no campaña) se sigue midiendo en
   ficha → checkout, que ocurre dentro de la misma sesión.
+- **Vercel Web Analytics tiene dimensiones UTM, pero no en este plan.**
+  `utmSource`, `utmMedium`, `utmCampaign`, `utmContent` y `utmTerm` son valores
+  válidos de `by`; comprobado el 17 de septiembre de 2026, en Pro responden
+  `402 payment_required: UTM dimensions require an Enterprise plan or the Web
+  Analytics Plus add-on`. Lo que sí corre es `referrerHostname`, que no separa
+  la pauta de lo orgánico —Instagram pago y Instagram del feed llegan los dos
+  como `instagram.com`— y deja ciego el bucket más grande: el navegador interno
+  de Instagram no manda referente y cae en «directo».
 - **Visitantes reales = visitantes − los de `/en`.** `/en` no existe (404) y
   recibió 1.581 visitantes bot el 13–14 de agosto y otros 91 el 18–19. Desde
   el 24 ago 2026 el sitio no envía a Vercel las vistas del 404

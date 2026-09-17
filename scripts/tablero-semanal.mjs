@@ -208,6 +208,7 @@ const PEDIDOS_QUERY = `
           totalShippingPriceSet { shopMoney { amount } }
           lineItems(first: 50) { edges { node { quantity } } }
           customer { tags numberOfOrders }
+          customAttributes { key value }
         }
       }
     }
@@ -242,6 +243,26 @@ function mediana(valores) {
   return orden[Math.floor(orden.length / 2)];
 }
 
+/**
+ * Ventas por campaña, leídas del atributo «Origen» que el front le cuelga al
+ * carrito (src/lib/atribucion.ts). Es la única lectura de la pauta con plata
+ * real: Meta reporta lo que se acredita a sí mismo y el referente se pierde
+ * al pasar por el checkout. Los pedidos sin atributo son los de antes de que
+ * esto existiera, los de quien llegó sin UTM y los del canal telefónico.
+ */
+function ventasPorOrigen(pedidos) {
+  const porOrigen = {};
+  for (const pedido of pedidos) {
+    const origen = pedido.customAttributes.find((a) => a.key === "Origen")?.value ?? "sin atribuir";
+    const fila = (porOrigen[origen] ??= { pedidos: 0, ingresos: 0 });
+    fila.pedidos += 1;
+    fila.ingresos += Number(pedido.currentTotalPriceSet.shopMoney.amount);
+  }
+  return Object.fromEntries(
+    Object.entries(porOrigen).sort((a, b) => b[1].ingresos - a[1].ingresos),
+  );
+}
+
 function resumenPedidos(pedidos) {
   const totales = pedidos.map((p) => Number(p.currentTotalPriceSet.shopMoney.amount));
   const ingresos = totales.reduce((a, b) => a + b, 0);
@@ -257,6 +278,7 @@ function resumenPedidos(pedidos) {
     exactoUmbral: totales.filter((t) => t === ENVIO_GRATIS_UMBRAL).length,
     unSoloProducto: pedidos.filter((p) => p.lineItems.edges.length === 1).length,
     clientesAntiguos: antiguos,
+    porOrigen: ventasPorOrigen(pedidos),
   };
 }
 
@@ -301,6 +323,14 @@ function imprimirMarkdown(ventana, v, s) {
   console.log(`- Pedidos: **${s.pedidos}** · ingresos **${cop(s.ingresos)}** · ticket medio **${cop(s.ticketMedio)}** · mediana ${cop(s.mediana)}`);
   console.log(`- Alcanzaron envío gratis: ${s.envioGratis} de ${s.pedidos} · exactamente ${cop(ENVIO_GRATIS_UMBRAL)}: ${s.exactoUmbral} · un solo producto: ${s.unSoloProducto}`);
   console.log(`- Clientes antiguos (woo-import o 2.º+ pedido): **${s.clientesAntiguos} de ${s.pedidos}** (${pct(s.clientesAntiguos, s.pedidos)})\n`);
+
+  console.log(`### Ventas por campaña (atributo «Origen» del pedido)\n`);
+  console.log(`| Origen | Pedidos | Ingresos | % de ingresos |`);
+  console.log(`|---|---:|---:|---:|`);
+  for (const [origen, f] of Object.entries(s.porOrigen)) {
+    console.log(`| ${origen} | ${f.pedidos} | ${cop(f.ingresos)} | ${pct(f.ingresos, s.ingresos)} |`);
+  }
+  console.log();
 
   console.log(`### Calidad del tráfico (ficha → checkout, de cada 100)\n`);
   console.log(`| Fuente | Ficha | Checkout | De cada 100 |`);

@@ -14,6 +14,7 @@ import { track } from "@/lib/track";
 import { toast } from "sonner";
 import { cartLineId } from "@/lib/cart";
 import { isShortedLine, shortedCartMessage } from "@/lib/checkout-lines";
+import { atribucionGuardada } from "@/lib/atribucion";
 import { idVisitante } from "@/lib/visitante";
 
 /** Datos mínimos de un producto para mostrarlo en el carrito. */
@@ -290,6 +291,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             quantity: item.qty,
           })),
           visitante: idVisitante(),
+          atribucion: atribucionGuardada(),
         }),
       });
       const result: unknown = await response.json();
@@ -377,6 +379,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({
           lines: [{ merchandiseId: line.variantId, quantity: qty }],
           visitante: idVisitante(),
+          atribucion: atribucionGuardada(),
         }),
       });
       const result: unknown = await response.json();

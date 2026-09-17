@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { parametrosUtm, resumenAtribucion, saneaAtribucion } from "@/lib/atribucion";
 import { findShortedLines, type CheckoutLine } from "@/lib/checkout-lines";
 
 const STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
@@ -98,6 +99,18 @@ export async function POST(request: Request) {
       ? [{ key: "_ax_vid", value: visitante }]
       : [];
 
+  /* De dónde venía quien compra. A diferencia del id de visitante, este sí va
+     sin guion bajo: la gracia es que se vea al abrir el pedido en el admin,
+     sin tener que correr un script. Si algún día estorba en la vista del
+     cliente, basta con anteponerle "_" —la API lo sigue devolviendo—. */
+  const atribucion = saneaAtribucion(
+    typeof body === "object" && body !== null
+      ? (body as { atribucion?: unknown }).atribucion
+      : undefined,
+  );
+  const origen = resumenAtribucion(atribucion);
+  if (origen !== null) attributes.push({ key: "Origen", value: origen });
+
   try {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -160,6 +173,13 @@ export async function POST(request: Request) {
     // checkout en español con formato de pesos colombiano.
     const localizedUrl = new URL(cart.checkoutUrl);
     localizedUrl.searchParams.set("locale", "es-CO");
+    /* Los UTM también colgados de la URL, por si Shopify los levanta en
+       «Detalles de conversión» del pedido: es gratis y no estorba. Sin
+       verificar con un pedido real; el atributo de arriba es lo que de verdad
+       responde de dónde vino la compra. */
+    for (const [clave, valor] of parametrosUtm(atribucion)) {
+      localizedUrl.searchParams.set(clave, valor);
+    }
 
     return NextResponse.json({ checkoutUrl: localizedUrl.toString(), cartId: cart.id });
   } catch (error) {
