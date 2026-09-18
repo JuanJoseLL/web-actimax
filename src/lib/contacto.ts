@@ -8,16 +8,25 @@ export const TELEFONO_E164 = "+573046580298";
 
 export const EMAIL = "ventas@actimax.com.co";
 
+export const LEGAL_NAME = "ACTIVA SPORT S.A.S";
+export const TAX_ID = "811031312-8";
+
 export const SEDE = {
   lineas: ["Cra. 45A # 34 Sur - 57", "Local 130, Portal del Cerro", "Envigado, Antioquia"],
   streetAddress: "Cra. 45A # 34 Sur - 57, Local 130 Portal del Cerro",
   addressLocality: "Envigado",
   addressRegion: "Antioquia",
+  postalCode: "055422",
   addressCountry: "CO",
-  mapsUrl:
-    "https://www.google.com/maps/search/?api=1&query=" +
-    encodeURIComponent("Actimax, Cra. 45A # 34 Sur - 57, Local 130 Portal del Cerro, Envigado, Antioquia"),
+  mapsUrl: "https://maps.app.goo.gl/NEvh7ENHWuWvTxrAA",
 };
+
+/** Horario de atención presencial de la sede Portal del Cerro. */
+export const HORARIO_SEDE = {
+  days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+  opens: "08:00",
+  closes: "16:00",
+} as const;
 
 /** Enlace de chat de WhatsApp, con mensaje inicial opcional. */
 export function whatsappUrl(text?: string): string {

@@ -5,7 +5,15 @@
  * recomendar los productos con información correcta.
  */
 import type { Metadata } from "next";
-import { EMAIL, SEDE, SOCIAL_PROFILES, TELEFONO_DISPLAY } from "@/lib/contacto";
+import {
+  EMAIL,
+  HORARIO_SEDE,
+  LEGAL_NAME,
+  SEDE,
+  SOCIAL_PROFILES,
+  TAX_ID,
+  TELEFONO_DISPLAY,
+} from "@/lib/contacto";
 import {
   DEPORTE_LABELS,
   MOMENTO_LABELS,
@@ -16,6 +24,11 @@ import { canonicalProductPath } from "@/lib/product-paths";
 import { reviewsAverage, type ProductReview } from "@/lib/reviews";
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://actimax.com.co";
+
+export const HOME_TITLE =
+  "Actimax | Nutrición deportiva y geles energéticos en Colombia";
+export const HOME_META_DESCRIPTION =
+  "Geles energéticos, bebidas deportivas, barras y Energy Packs para running y ciclismo. Nutrición deportiva hecha en Colombia con envíos nacionales.";
 
 /**
  * Imagen por defecto al compartir: WhatsApp y las redes leen og:image.
@@ -67,6 +80,9 @@ export const BRAND_DESCRIPTION =
   "para running, ciclismo, triatlón, natación, fútbol y gym. Venta en línea con envíos a toda Colombia.";
 
 const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+const STORE_ID = `${SITE_URL}/#tienda-envigado`;
+const WEBSITE_ID = `${SITE_URL}/#website`;
+const WEBPAGE_ID = `${SITE_URL}/#webpage`;
 
 /** Serializa JSON-LD; escapa "<" para no poder cerrar el <script>. */
 export function jsonLd(data: object): string {
@@ -80,12 +96,16 @@ export function productUrl(handle: string): string {
 export function organizationJsonLd(): object {
   return {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "OnlineStore",
     "@id": ORGANIZATION_ID,
     name: "Actimax",
     alternateName: "Actimax Nutrición Deportiva",
+    legalName: LEGAL_NAME,
+    taxID: TAX_ID,
     url: `${SITE_URL}/`,
     logo: `${SITE_URL}/actimax-logo.svg`,
+    image: DEFAULT_OG_IMAGE.url,
+    slogan: "Tu meta no se improvisa.",
     description: BRAND_DESCRIPTION,
     telephone: TELEFONO_DISPLAY,
     email: EMAIL,
@@ -94,10 +114,51 @@ export function organizationJsonLd(): object {
       streetAddress: SEDE.streetAddress,
       addressLocality: SEDE.addressLocality,
       addressRegion: SEDE.addressRegion,
+      postalCode: SEDE.postalCode,
       addressCountry: SEDE.addressCountry,
     },
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: TELEFONO_DISPLAY,
+      email: EMAIL,
+      contactType: "customer service",
+      areaServed: "CO",
+      availableLanguage: "Spanish",
+    },
     areaServed: { "@type": "Country", name: "Colombia" },
+    hasPOS: { "@id": STORE_ID },
     sameAs: SOCIAL_PROFILES,
+  };
+}
+
+export function storeJsonLd(): object {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SportingGoodsStore",
+    "@id": STORE_ID,
+    name: "Actimax — Portal del Cerro",
+    url: `${SITE_URL}/`,
+    image: DEFAULT_OG_IMAGE.url,
+    telephone: TELEFONO_DISPLAY,
+    email: EMAIL,
+    priceRange: "$$",
+    currenciesAccepted: "COP",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: SEDE.streetAddress,
+      addressLocality: SEDE.addressLocality,
+      addressRegion: SEDE.addressRegion,
+      postalCode: SEDE.postalCode,
+      addressCountry: SEDE.addressCountry,
+    },
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: HORARIO_SEDE.days.map((day) => `https://schema.org/${day}`),
+      opens: HORARIO_SEDE.opens,
+      closes: HORARIO_SEDE.closes,
+    },
+    parentOrganization: { "@id": ORGANIZATION_ID },
+    sameAs: [SEDE.mapsUrl],
   };
 }
 
@@ -105,11 +166,31 @@ export function webSiteJsonLd(): object {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "@id": `${SITE_URL}/#website`,
+    "@id": WEBSITE_ID,
     url: `${SITE_URL}/`,
     name: "Actimax",
     inLanguage: "es-CO",
     publisher: { "@id": ORGANIZATION_ID },
+  };
+}
+
+export function homePageJsonLd(): object {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": WEBPAGE_ID,
+    url: `${SITE_URL}/`,
+    name: HOME_TITLE,
+    description: HOME_META_DESCRIPTION,
+    inLanguage: "es-CO",
+    isPartOf: { "@id": WEBSITE_ID },
+    about: { "@id": ORGANIZATION_ID },
+    primaryImageOfPage: {
+      "@type": "ImageObject",
+      url: DEFAULT_OG_IMAGE.url,
+      width: DEFAULT_OG_IMAGE.width,
+      height: DEFAULT_OG_IMAGE.height,
+    },
   };
 }
 
