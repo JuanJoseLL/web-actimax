@@ -82,7 +82,7 @@ function Hero() {
   return (
     <section className="hero-evolved overflow-hidden text-white">
       <div className="grid lg:min-h-[calc(100svh-99px)] lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="relative z-10 flex flex-col justify-center px-4 py-12 sm:px-8 md:py-20 lg:pr-14 lg:pl-[max(3.5rem,calc((100vw-1440px)/2+5rem))] xl:pr-20 xl:pl-[max(5rem,calc((100vw-1440px)/2+5rem))]">
+        <div className="relative z-10 flex flex-col justify-center px-4 py-12 sm:px-8 md:py-20 lg:pb-8 lg:pr-14 lg:pl-[max(3.5rem,calc((100vw-1440px)/2+5rem))] xl:pr-20 xl:pl-[max(5rem,calc((100vw-1440px)/2+5rem))]">
           <div className="fade-up flex items-center gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.22em] text-amarillo">
             <span className="h-px w-8 bg-amarillo" />
             El combustible de tu próxima historia
@@ -784,4 +784,3 @@ function TeamSection() {
     </section>
   );
 }
-
