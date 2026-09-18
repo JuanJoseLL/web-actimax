@@ -18,7 +18,7 @@ export const SEDE = {
   addressRegion: "Antioquia",
   postalCode: "055422",
   addressCountry: "CO",
-  mapsUrl: "https://maps.app.goo.gl/NEvh7ENHWuWvTxrAA",
+  mapsUrl: "https://maps.app.goo.gl/bQSETyu5QLjXa4Hz6",
 };
 
 /** Horario de atención presencial de la sede Portal del Cerro. */
@@ -51,3 +51,4 @@ export const REDES_VISIBLES = [
   { nombre: "TikTok", href: "https://www.tiktok.com/@actimaxco" },
   { nombre: "YouTube", href: "https://www.youtube.com/user/actimaxcol" },
 ] as const;
+

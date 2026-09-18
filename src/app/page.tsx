@@ -16,6 +16,7 @@ import {
   UsersRoundIcon,
 } from "lucide-react";
 import { FuelFinder } from "@/components/FuelFinder";
+import { GoogleReviewsBadge } from "@/components/GoogleReviewsBadge";
 import { NewsletterSection } from "@/components/NewsletterSection";
 import { ProductCard } from "@/components/ProductCard";
 import { Ticker } from "@/components/Ticker";
@@ -162,6 +163,8 @@ function Hero() {
               </div>
             ))}
           </div>
+
+          <GoogleReviewsBadge />
         </div>
 
         <div className="relative min-h-[400px] overflow-hidden border-t border-white/10 sm:min-h-[520px] lg:min-h-full lg:border-l lg:border-t-0">
@@ -781,3 +784,4 @@ function TeamSection() {
     </section>
   );
 }
+
