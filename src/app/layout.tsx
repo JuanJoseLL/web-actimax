@@ -18,7 +18,16 @@ import { Toaster } from "@/components/ui/sonner";
 import { getAllProducts, type Product } from "@/lib/catalog";
 import type { UpsellProduct } from "@/lib/envio-gratis";
 import { initialProductVariant, selectableProductOptions } from "@/lib/product-variants";
-import { DEFAULT_OG_IMAGE, SITE_URL, jsonLd, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
+import {
+  DEFAULT_OG_IMAGE,
+  HOME_META_DESCRIPTION,
+  HOME_TITLE,
+  SITE_URL,
+  jsonLd,
+  organizationJsonLd,
+  storeJsonLd,
+  webSiteJsonLd,
+} from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 const archivo = Archivo({
@@ -41,9 +50,8 @@ const chivoMono = Chivo_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Actimax — Geles energéticos y nutrición deportiva de Colombia",
-  description:
-    "El combustible de tu próxima meta: geles energéticos con y sin cafeína, bebidas deportivas, barras de proteína y Energy Packs por distancia. Nutrición deportiva hecha en Colombia, con envíos a todo el país.",
+  title: HOME_TITLE,
+  description: HOME_META_DESCRIPTION,
   keywords: [
     "geles deportivos",
     "geles energéticos",
@@ -60,10 +68,15 @@ export const metadata: Metadata = {
     locale: "es_CO",
     siteName: "Actimax",
     url: "/",
-    title: "Actimax — Geles energéticos y nutrición deportiva de Colombia",
-    description:
-      "Geles energéticos, bebidas deportivas, barras de proteína y Energy Packs por distancia. Hecho en Colombia, con envíos a todo el país.",
+    title: HOME_TITLE,
+    description: HOME_META_DESCRIPTION,
     images: [DEFAULT_OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: HOME_TITLE,
+    description: HOME_META_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE.url],
   },
   icons: {
     icon: [
@@ -93,6 +106,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLd(organizationJsonLd()) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLd(storeJsonLd()) }}
         />
         <script
           type="application/ld+json"

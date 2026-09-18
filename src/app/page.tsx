@@ -24,6 +24,7 @@ import { formatPostDate, getAllBlogPosts } from "@/lib/blog";
 import { getAllProducts, getProducts } from "@/lib/catalog";
 import { formatCOP } from "@/lib/format";
 import { canonicalProductPath } from "@/lib/product-paths";
+import { homePageJsonLd, itemListJsonLd, jsonLd } from "@/lib/seo";
 import { categoriaPath } from "@/data/categorias";
 import { BEST_SELLERS } from "@/data/destacados";
 
@@ -34,6 +35,10 @@ export const metadata: Metadata = { alternates: { canonical: "/" } };
 export default function Home() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(homePageJsonLd()) }}
+      />
       <Hero />
       <Ticker />
       <Suspense fallback={<HomeSectionSkeleton className="bg-[#f4f2ec]" />}>
@@ -89,14 +94,17 @@ function Hero() {
             Tu meta
             <span className="block text-amarillo">no se</span>
             improvisa.
+            <span className="mt-6 block max-w-xl font-sans text-base font-semibold normal-case not-italic leading-snug tracking-normal text-white/82 sm:text-xl">
+              Nutrición deportiva hecha en Colombia.
+            </span>
           </h1>
 
           <p
             className="fade-up mt-7 max-w-xl text-base font-medium leading-relaxed text-white/72 sm:text-lg"
             style={{ animationDelay: "0.16s" }}
           >
-            Nutrición deportiva para acompañarte antes, durante y después de
-            cada entreno. Geles, bebidas, barras y Energy Packs.
+            Geles energéticos, bebidas deportivas, barras y Energy Packs para
+            acompañarte antes, durante y después de cada entrenamiento.
           </p>
 
           <div
@@ -233,6 +241,9 @@ async function ChallengeSection() {
           <div>
             <p className="section-kicker">02 · Elige tu próxima meta</p>
             <h2 className="mt-4 max-w-3xl font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl lg:text-8xl">
+              <span className="mb-4 block font-sans text-sm font-semibold normal-case not-italic leading-snug tracking-normal text-azul sm:text-base">
+                Energy Packs por distancia para running y ciclismo
+              </span>
               ¿Qué historia vas a contar?
             </h2>
           </div>
@@ -363,6 +374,9 @@ function StorySection() {
         <div className="flex flex-col justify-center px-4 py-16 sm:px-8 md:py-20 lg:px-16 xl:px-20">
           <p className="section-kicker section-kicker-dark">03 · Nuestra historia</p>
           <h2 className="mt-5 max-w-xl font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl lg:text-8xl">
+            <span className="mb-4 block font-sans text-sm font-semibold normal-case not-italic leading-snug tracking-normal text-amarillo sm:text-base">
+              Nutrición deportiva desarrollada en Colombia
+            </span>
             De una fórmula a miles de metas.
           </h2>
           <p className="mt-7 max-w-xl text-lg font-medium leading-relaxed text-white/70">
@@ -437,6 +451,9 @@ async function RitualSection() {
         <div className="reveal max-w-4xl">
           <p className="section-kicker">04 · El método Actimax</p>
           <h2 className="mt-4 font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl lg:text-8xl">
+            <span className="mb-4 block font-sans text-sm font-semibold normal-case not-italic leading-snug tracking-normal text-azul sm:text-base">
+              Nutrición antes, durante y después del entrenamiento
+            </span>
             Todo atleta tiene un ritual.
           </h2>
           <p className="mt-6 max-w-2xl text-lg font-medium leading-relaxed text-tinta/65">
@@ -513,11 +530,20 @@ async function BestSellersSection() {
 
   return (
     <section className="bg-[#f4f2ec]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(itemListJsonLd("Productos deportivos más elegidos", featured)),
+        }}
+      />
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
         <div className="reveal flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="section-kicker">01 · Los favoritos del club</p>
             <h2 className="mt-4 font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl">
+              <span className="mb-4 block font-sans text-sm font-semibold normal-case not-italic leading-snug tracking-normal text-azul sm:text-base">
+                Geles energéticos y productos deportivos más elegidos
+              </span>
               Los que siempre vuelven.
             </h2>
           </div>
@@ -535,17 +561,29 @@ async function BestSellersSection() {
             </div>
           ))}
         </div>
-        {/* Enlace interno con el texto que posiciona: el home es la página
-            con más autoridad y la landing de geles, la que debe rankear. */}
-        <p className="reveal mt-10 text-base text-tinta/70">
-          ¿Vienes por los geles?{" "}
-          <Link
-            href={categoriaPath("geles")}
-            className="font-semibold text-azul underline-offset-4 hover:underline"
-          >
-            Ver todos los geles energéticos, con y sin cafeína →
+        <nav
+          aria-label="Explorar nutrición deportiva"
+          className="reveal mt-10 flex flex-wrap gap-x-6 gap-y-3 border-t border-tinta/10 pt-7 text-sm font-semibold text-azul"
+        >
+          <Link href={categoriaPath("geles")} className="underline-offset-4 hover:underline">
+            Geles energéticos →
           </Link>
-        </p>
+          <Link href={categoriaPath("bebidas")} className="underline-offset-4 hover:underline">
+            Bebidas deportivas →
+          </Link>
+          <Link href={categoriaPath("barras")} className="underline-offset-4 hover:underline">
+            Barras de proteína →
+          </Link>
+          <Link href="/productos/comparar/" className="underline-offset-4 hover:underline">
+            Energy Packs por distancia →
+          </Link>
+          <Link href="/arma-tu-kit/" className="underline-offset-4 hover:underline">
+            Armar mi kit →
+          </Link>
+          <Link href="/blog/" className="underline-offset-4 hover:underline">
+            Consejos deportivos →
+          </Link>
+        </nav>
       </div>
     </section>
   );
@@ -586,6 +624,9 @@ function ClubSection() {
             Actimax Club · La meta nos reúne
           </div>
           <h2 className="mt-6 max-w-4xl font-display text-6xl font-extrabold uppercase italic leading-[0.82] tracking-tight sm:text-8xl lg:text-[7.6rem]">
+            <span className="mb-5 block font-sans text-sm font-semibold normal-case not-italic leading-snug tracking-normal text-amarillo sm:text-base">
+              Comunidad de running y ciclismo en Colombia
+            </span>
             Únete
             <span className="block text-amarillo">al club.</span>
           </h2>
@@ -657,6 +698,9 @@ async function JournalSection() {
           <div>
             <p className="section-kicker">05 · Blog</p>
             <h2 className="mt-4 font-display text-5xl font-extrabold uppercase italic leading-[0.86] tracking-tight sm:text-7xl">
+              <span className="mb-4 block font-sans text-sm font-semibold normal-case not-italic leading-snug tracking-normal text-azul sm:text-base">
+                Consejos de nutrición y rendimiento deportivo
+              </span>
               Lo que aprendemos en ruta.
             </h2>
           </div>
