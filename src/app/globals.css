@@ -566,11 +566,29 @@ html {
   touch-action: pan-x pan-y pinch-zoom;
 }
 
-/* El acceso de ayuda no debe tapar acciones de compra en pantallas pequeñas. */
+/* Los accesos flotantes no deben tapar acciones de compra en pantallas
+   pequeñas: la barra fija de producto ocupa todo el ancho y las tarjetas de
+   catálogo llevan su propio botón. */
 @media (max-width: 767px) {
   body:has([data-catalog-page]) .whatsapp-button,
-  body:has([data-buy-bar][aria-hidden="false"]) .whatsapp-button {
+  body:has([data-catalog-page]) .asesor-fab,
+  body:has([data-buy-bar][aria-hidden="false"]) .whatsapp-button,
+  body:has([data-buy-bar][aria-hidden="false"]) .asesor-fab {
     display: none;
+  }
+}
+
+/* Entra después de la portada: primero se lee la página, luego se ofrece. */
+@media (prefers-reduced-motion: no-preference) {
+  .asesor-fab {
+    animation: asesor-fab-entra 420ms cubic-bezier(0.2, 0.7, 0.2, 1) 1.2s both;
+  }
+}
+
+@keyframes asesor-fab-entra {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
   }
 }
 
@@ -676,7 +694,8 @@ body:has([data-asesor-chat]:not([hidden])) .whatsapp-button {
 @media print {
   body > header,
   body > footer,
-  .whatsapp-button {
+  .whatsapp-button,
+  .asesor-fab {
     display: none !important;
   }
 

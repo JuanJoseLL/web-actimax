@@ -3,6 +3,7 @@ import { Archivo, Barlow_Condensed, Chivo_Mono } from "next/font/google";
 import { Suspense } from "react";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
+import { AsesorFab } from "@/components/AsesorFab";
 import { Atribucion } from "@/components/Atribucion";
 import { MetaPixel } from "@/components/MetaPixel";
 import { WebAnalytics } from "@/components/WebAnalytics";
@@ -127,6 +128,7 @@ export default function RootLayout({
           <HideOnDestinos>
             <Footer />
             <WhatsAppButton />
+            <AsesorFab />
           </HideOnDestinos>
           <CartDrawer productsPromise={productsPromise.then(cartUpsellProducts)} />
           <Suspense fallback={null}>
