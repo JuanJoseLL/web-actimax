@@ -333,7 +333,6 @@ export function AsesorActimax() {
                     </button>
                   ))}
                 </div>
-                <p className="mt-4 text-[11px] text-muted-foreground">Recomendamos solo sobre el catálogo Actimax, con la tabla nutricional de cada producto.</p>
               </div>
             ) : messages.map((message) => {
               const texto = message.parts.filter((part) => part.type === "text").map((part) => part.text).join("");
