@@ -192,7 +192,7 @@ function mapShopifyProduct(node: ShopifyProductNode): Product {
   };
 }
 
-async function fetchShopifyProducts(): Promise<Product[] | null> {
+async function fetchShopifyProducts(signal?: AbortSignal): Promise<Product[] | null> {
   if (STORE_DOMAIN === undefined || STOREFRONT_TOKEN === undefined) {
     return null;
   }
@@ -201,6 +201,7 @@ async function fetchShopifyProducts(): Promise<Product[] | null> {
       `https://${STORE_DOMAIN}/api/${API_VERSION}/graphql.json`,
       {
         method: "POST",
+        signal,
         headers: {
           "Content-Type": "application/json",
           "X-Shopify-Storefront-Access-Token": STOREFRONT_TOKEN,
@@ -384,6 +385,13 @@ async function getCatalogoCompleto(): Promise<Product[]> {
  */
 export async function getAllProducts(): Promise<Product[]> {
   return (await getCatalogoCompleto()).filter((p) => !p.soloEnKit);
+}
+
+/** El asesor consulta disponibilidad actual y nunca revive productos del respaldo.
+ * Fuera de un scope `use cache`, fetch lee Shopify en cada petición del asesor. */
+export async function getCatalogoAsesor(signal?: AbortSignal): Promise<Product[] | null> {
+  const products = await fetchShopifyProducts(signal);
+  return products?.filter((product) => !product.soloEnKit) ?? null;
 }
 
 /**

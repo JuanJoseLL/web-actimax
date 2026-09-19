@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { ActimaxPlanBuilder, type PlanPack } from "@/components/ActimaxPlanBuilder";
+import type { PlanPack } from "@/components/ActimaxPlanBuilder";
+import { MiPlanExperiencia } from "@/components/MiPlanExperiencia";
 import { SeoBreadcrumbs } from "@/components/SeoBreadcrumbs";
 import { getProducts } from "@/lib/catalog";
 import {
@@ -14,7 +15,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata: Metadata = pageMetadata({
   title: "Mi Plan Actimax — Nutrición para tu próximo reto",
   description:
-    "Crea un plan orientativo de nutrición e hidratación para running, ciclismo o triatlón y encuentra el Energy Pack Actimax más cercano a tu reto.",
+    "Conversa con el asesor Actimax para encontrar productos según tu entrenamiento, o calcula un plan orientativo para tu próxima carrera.",
   path: "/mi-plan/",
   ogTitle: "Mi Plan Actimax — Tu meta tiene un plan",
   ogDescription:
@@ -86,5 +87,5 @@ async function PlanContent({ searchParams }: { searchParams: SearchParams }) {
     };
   });
 
-  return <ActimaxPlanBuilder initialInput={initialInput} packs={packs} />;
+  return <MiPlanExperiencia initialInput={initialInput} packs={packs} usarCalculadora={params.deporte !== undefined || params.distancia !== undefined} />;
 }

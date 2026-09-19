@@ -176,6 +176,14 @@ datos de tarjeta por esta aplicación.
 
 ## Estructura
 
+### Asesor de productos
+
+`/mi-plan/` incluye un asesor conversacional con Vercel AI SDK y AI Gateway.
+Usa la referencia nutricional Actimax 2026, catálogo y variantes actuales de
+Shopify, y `typesafe-ai/jev` para evaluar las recomendaciones. La configuración,
+los modelos y las bases de los datos están en
+[`docs/asesor-actimax.md`](docs/asesor-actimax.md).
+
 ```
 src/
   app/                 páginas y ruta interna /productos/[handle]
