@@ -250,7 +250,7 @@ export function AsesorActimax() {
      turno se ancla arriba para que la selección quede a la vista sin buscarla. */
   useEffect(() => {
     const container = scrollRef.current;
-    if (!container) return;
+    if (!container || !messages.length) return;
     if (busy || !ultimoAsistente) {
       container.scrollTop = container.scrollHeight;
       return;
@@ -274,6 +274,13 @@ export function AsesorActimax() {
     element.style.height = `${Math.min(element.scrollHeight, 128)}px`;
   }, [input]);
 
+  function reiniciar() {
+    setMessages([]);
+    clearError();
+    setInput("");
+    inputRef.current?.focus();
+  }
+
   function enviar(text: string) {
     if (!text.trim() || busy || maxTurns) return;
     clearError();
@@ -284,34 +291,40 @@ export function AsesorActimax() {
   }
 
   return (
-    <section aria-labelledby="titulo-asesor" className="flex min-h-0 flex-1 flex-col bg-niebla px-4 pb-4 pt-5 sm:px-6 sm:pb-6 sm:pt-8">
+    <section aria-labelledby="titulo-asesor" className="flex min-h-0 flex-1 flex-col bg-white pt-3 md:bg-niebla md:px-6 md:pb-6 md:pt-8">
       <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col">
-        <div className="mb-4 shrink-0 sm:mb-6 md:grid md:grid-cols-[1fr_0.72fr] md:items-end md:gap-6">
-          <div>
-            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-azul">Mi Plan Actimax · Asesor de productos</p>
-            <h1 id="titulo-asesor" className="mt-2 font-display text-[2.1rem] font-extrabold uppercase italic leading-[0.92] text-tinta sm:text-5xl lg:text-6xl xl:text-7xl">
-              Tu próxima meta.<br /><span className="text-azul">Tu combustible.</span>
+        {/* En el teléfono esto es la barra de la vista —título y reinicio en
+            una fila— para que la pantalla se la quede la conversación. En
+            escritorio vuelve a ser la portada de la sección. */}
+        <div className="mb-3 flex shrink-0 items-center justify-between gap-3 border-b border-tinta/10 px-4 pb-3 md:mb-6 md:grid md:grid-cols-[1fr_0.72fr] md:items-end md:gap-6 md:border-0 md:px-0 md:pb-0">
+          <div className="min-w-0">
+            <p className="hidden font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-azul md:block">Mi Plan Actimax · Asesor de productos</p>
+            <h1 id="titulo-asesor" className="font-display text-xl font-extrabold uppercase italic leading-[0.95] text-tinta md:mt-2 md:text-5xl md:leading-[0.92] lg:text-6xl xl:text-7xl">
+              Tu próxima meta. <span className="text-azul md:block">Tu combustible.</span>
             </h1>
           </div>
           <p className="hidden max-w-md text-sm leading-relaxed text-tinta/70 md:block">
             Cuéntanos qué entrenas y qué quieres lograr. Encontraremos los productos Actimax que encajan contigo, antes, durante y después.
           </p>
+          <Button variant="ghost" size="icon" aria-label="Empezar de nuevo" className="size-9 shrink-0 md:hidden" disabled={busy || messages.length === 0} onClick={reiniciar}>
+            <RotateCcwIcon />
+          </Button>
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-sm border border-tinta/10 bg-white shadow-sm">
-          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-tinta/10 px-4 py-2.5 sm:px-5 sm:py-4">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-white md:rounded-sm md:border md:border-tinta/10 md:shadow-sm">
+          <div className="hidden shrink-0 items-center justify-between gap-3 border-b border-tinta/10 px-5 py-4 md:flex">
             <p className="flex items-center gap-2 text-sm font-semibold">
               <span aria-hidden className="size-2 rounded-full bg-azul" /> Asesor Actimax
             </p>
-            <Button variant="ghost" aria-label="Empezar de nuevo" className="h-9 px-2 sm:px-3" disabled={busy || messages.length === 0} onClick={() => { setMessages([]); clearError(); setInput(""); inputRef.current?.focus(); }}>
-              <RotateCcwIcon /> <span className="hidden sm:inline">Empezar de nuevo</span>
+            <Button variant="ghost" aria-label="Empezar de nuevo" className="h-9 px-3" disabled={busy || messages.length === 0} onClick={reiniciar}>
+              <RotateCcwIcon /> Empezar de nuevo
             </Button>
           </div>
 
-          <div ref={scrollRef} role="log" aria-label="Conversación con el asesor" aria-live="polite" className="relative min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain p-4 sm:p-6">
+          <div ref={scrollRef} role="log" aria-label="Conversación con el asesor" aria-live="polite" className="relative min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain px-4 py-4 md:p-6">
             {messages.length === 0 ? (
-              <div className="max-w-2xl py-2">
-                <p className="font-display text-2xl font-bold uppercase sm:text-3xl">Cada rutina tiene su ritmo.</p>
+              <div className="max-w-2xl">
+                <p className="font-display text-2xl font-bold uppercase md:text-3xl">Cada rutina tiene su ritmo.</p>
                 <p className="mt-2 text-sm text-muted-foreground">¿Cómo es la tuya? Puedes empezar por aquí:</p>
                 <div className="mt-4 grid gap-2">
                   {EJEMPLOS.map((text) => (
@@ -340,13 +353,13 @@ export function AsesorActimax() {
           </div>
 
           {error ? (
-            <div role="alert" className="mx-4 mb-3 shrink-0 rounded-sm bg-amber-50 p-3 text-sm text-tinta sm:mx-5">
+            <div role="alert" className="mx-4 mb-3 shrink-0 rounded-sm bg-amber-50 p-3 text-sm text-tinta md:mx-5">
               <p>{error.message}</p>
               <button type="button" className="mt-2 font-semibold text-azul underline" onClick={() => { clearError(); void regenerate(); }}>Reintentar</button>
             </div>
           ) : null}
 
-          <form className="shrink-0 border-t border-tinta/10 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-4" onSubmit={(event) => { event.preventDefault(); enviar(input); }}>
+          <form className="shrink-0 border-t border-tinta/10 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:p-4" onSubmit={(event) => { event.preventDefault(); enviar(input); }}>
             <label htmlFor="mensaje-asesor" className="sr-only">Cuéntanos sobre tu entrenamiento</label>
             <div className="flex items-end gap-2">
               <textarea
