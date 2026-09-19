@@ -29,6 +29,9 @@
   --chart-4: #0a1128;
   --chart-5: #526078;
   --radius: 0.35rem;
+  /* Cabecera fija: aviso de envío (h-6) + franja (h-0.5) + barra (h-16).
+     La usa el asesor de Mi Plan para ocupar justo la pantalla restante. */
+  --altura-cabecera: 5.625rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #0a1128;
   --sidebar-primary: #002f87;
@@ -568,6 +571,27 @@ html {
   body:has([data-catalog-page]) .whatsapp-button,
   body:has([data-buy-bar][aria-hidden="false"]) .whatsapp-button {
     display: none;
+  }
+}
+
+/* En el asesor el flotante caería justo sobre el botón de enviar, y el chat
+   ya es el canal de ayuda de esa pantalla. */
+body:has([data-asesor-chat]:not([hidden])) .whatsapp-button {
+  display: none;
+}
+
+/* La selección del asesor llega dentro de la conversación: entra una vez,
+   levantándose desde el turno que la produjo. */
+@media (prefers-reduced-motion: no-preference) {
+  .asesor-artefacto {
+    animation: artefacto-entra 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
+
+@keyframes artefacto-entra {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
 }
 

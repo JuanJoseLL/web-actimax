@@ -52,12 +52,12 @@ export default function MiPlanPage({ searchParams }: { searchParams: SearchParam
 
 function PlanLoading() {
   return (
-    <div className="grid min-h-[70svh] place-items-center bg-tinta px-4 text-center text-white">
+    <div className="grid h-[calc(100svh-var(--altura-cabecera))] place-items-center bg-tinta px-4 text-center text-white">
       <div>
         <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-amarillo">
           Mi Plan Actimax
         </p>
-        <p className="mt-3 font-display text-5xl font-extrabold uppercase italic">
+        <p className="mt-3 font-display text-4xl font-extrabold uppercase italic sm:text-5xl">
           Preparando la ruta…
         </p>
       </div>
