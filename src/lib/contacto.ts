@@ -19,6 +19,8 @@ export const SEDE = {
   postalCode: "055422",
   addressCountry: "CO",
   mapsUrl: "https://maps.app.goo.gl/bQSETyu5QLjXa4Hz6",
+  latitude: 6.1739427,
+  longitude: -75.5888404,
 };
 
 /** Horario de atención presencial de la sede Portal del Cerro. */
@@ -51,4 +53,3 @@ export const REDES_VISIBLES = [
   { nombre: "TikTok", href: "https://www.tiktok.com/@actimaxco" },
   { nombre: "YouTube", href: "https://www.youtube.com/user/actimaxcol" },
 ] as const;
-

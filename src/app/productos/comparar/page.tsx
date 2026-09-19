@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PackComparator, type ComparablePack } from "@/components/PackComparator";
+import { SeoBreadcrumbs } from "@/components/SeoBreadcrumbs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getAllProducts } from "@/lib/catalog";
 import { initialProductVariant } from "@/lib/product-variants";
@@ -16,6 +17,13 @@ export const metadata: Metadata = pageMetadata({
 export default function CompararPacksPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+      <SeoBreadcrumbs
+        items={[
+          { name: "Inicio", url: "/" },
+          { name: "Productos", url: "/productos/" },
+          { name: "Comparar Energy Packs", url: "/productos/comparar/" },
+        ]}
+      />
       <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-primary">Energy Packs</p>
       <h1 className="mt-2 font-display text-5xl font-extrabold uppercase italic leading-none sm:text-7xl">
         Compara tu estrategia

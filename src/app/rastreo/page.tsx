@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { RastreoGuia } from "@/components/RastreoGuia";
+import { SeoBreadcrumbs } from "@/components/SeoBreadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -47,6 +48,12 @@ export default function RastreoPage({
 }) {
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 md:py-16">
+      <SeoBreadcrumbs
+        items={[
+          { name: "Inicio", url: "/" },
+          { name: "Rastreo", url: "/rastreo/" },
+        ]}
+      />
       <nav aria-label="Ruta" className="mb-6 font-mono text-[11px] text-muted-foreground">
         <Link href="/" className="hover:text-primary hover:underline">
           Inicio

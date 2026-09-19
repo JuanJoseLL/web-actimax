@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ArrowDownIcon, PackageIcon, TruckIcon } from "lucide-react";
 import { ArmaTuKit } from "@/components/ArmaTuKit";
+import { SeoBreadcrumbs } from "@/components/SeoBreadcrumbs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,6 +27,12 @@ export const metadata: Metadata = pageMetadata({
 export default function ArmaTuKitPage() {
   return (
     <>
+      <SeoBreadcrumbs
+        items={[
+          { name: "Inicio", url: "/" },
+          { name: "Arma tu kit", url: "/arma-tu-kit/" },
+        ]}
+      />
       <Hero />
       <Suspense fallback={<ArmadorCargando />}>
         <Armador />

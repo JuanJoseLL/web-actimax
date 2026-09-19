@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ActimaxPlanBuilder, type PlanPack } from "@/components/ActimaxPlanBuilder";
+import { SeoBreadcrumbs } from "@/components/SeoBreadcrumbs";
 import { getProducts } from "@/lib/catalog";
 import {
   getDefaultPlanInput,
@@ -34,9 +35,17 @@ function parseDistance(value: string | string[] | undefined): number | undefined
 
 export default function MiPlanPage({ searchParams }: { searchParams: SearchParams }) {
   return (
-    <Suspense fallback={<PlanLoading />}>
-      <PlanContent searchParams={searchParams} />
-    </Suspense>
+    <>
+      <SeoBreadcrumbs
+        items={[
+          { name: "Inicio", url: "/" },
+          { name: "Mi Plan", url: "/mi-plan/" },
+        ]}
+      />
+      <Suspense fallback={<PlanLoading />}>
+        <PlanContent searchParams={searchParams} />
+      </Suspense>
+    </>
   );
 }
 

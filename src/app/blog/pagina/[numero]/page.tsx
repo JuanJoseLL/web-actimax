@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { BlogListing } from "@/components/blog/BlogListing";
 import { BlogPageSkeleton } from "@/components/blog/BlogPageSkeleton";
+import { SeoBreadcrumbs } from "@/components/SeoBreadcrumbs";
 import { pageMetadata } from "@/lib/seo";
 import { getAllBlogPosts, getBlogPageParams, getBlogPostsPage } from "@/lib/blog";
 
@@ -74,5 +75,16 @@ export default async function BlogPaginaPage({
 
 async function BlogPaginaContent({ page }: { page: number }) {
   const { posts, totalPages } = await getBlogPostsPage(page);
-  return <BlogListing posts={posts} pagination={{ page, totalPages }} />;
+  return (
+    <>
+      <SeoBreadcrumbs
+        items={[
+          { name: "Inicio", url: "/" },
+          { name: "Blog", url: "/blog/" },
+          { name: `Página ${page}`, url: `/blog/pagina/${page}/` },
+        ]}
+      />
+      <BlogListing posts={posts} pagination={{ page, totalPages }} />
+    </>
+  );
 }

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Separator } from "@/components/ui/separator";
+import { SeoBreadcrumbs } from "@/components/SeoBreadcrumbs";
 import { formatPostDate, type BlogPost } from "@/lib/blog";
 import { LegacyArticleEnhancements } from "@/components/blog/LegacyArticleEnhancements";
 import { BlogNewsletter } from "@/components/blog/BlogNewsletter";
@@ -41,7 +42,7 @@ export function BlogArticle({ post, related }: { post: BlogPost; related: BlogPo
     headline: post.title,
     description: post.seoDescription ?? post.excerpt,
     datePublished: post.date,
-    dateModified: post.date,
+    dateModified: post.updatedAt ?? post.date,
     author: { "@type": "Organization", name: post.author },
     publisher: { "@type": "Organization", name: "Actimax" },
     image: post.image?.url,
@@ -50,6 +51,13 @@ export function BlogArticle({ post, related }: { post: BlogPost; related: BlogPo
 
   return (
     <>
+      <SeoBreadcrumbs
+        items={[
+          { name: "Inicio", url: "/" },
+          { name: "Blog", url: "/blog/" },
+          { name: post.title, url: post.path },
+        ]}
+      />
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
         <div className="grid gap-12 xl:grid-cols-[minmax(0,1fr)_20rem] xl:gap-14">
           {/* min-w-0: sin esto la columna del grid se ensancha hasta el elemento

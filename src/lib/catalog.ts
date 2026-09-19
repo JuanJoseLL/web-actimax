@@ -34,6 +34,7 @@ const PRODUCTS_QUERY = /* GraphQL */ `
         id
         handle
         title
+        updatedAt
         descriptionHtml
         availableForSale
         tags
@@ -62,6 +63,8 @@ const PRODUCTS_QUERY = /* GraphQL */ `
           nodes {
             id
             title
+            sku
+            barcode
             availableForSale
             selectedOptions {
               name
@@ -87,6 +90,7 @@ interface ShopifyProductNode {
   id: string;
   handle: string;
   title: string;
+  updatedAt: string;
   descriptionHtml: string | null;
   availableForSale: boolean;
   tags: string[];
@@ -102,6 +106,8 @@ interface ShopifyProductNode {
     nodes: Array<{
       id: string;
       title: string;
+      sku: string | null;
+      barcode: string | null;
       availableForSale: boolean;
       selectedOptions: ProductOptionValue[];
       price: { amount: string };
@@ -134,6 +140,8 @@ function mapShopifyProduct(node: ShopifyProductNode): Product {
   const variants: ProductVariant[] = node.variants.nodes.map((variant) => ({
     id: variant.id,
     title: variant.title,
+    sku: variant.sku,
+    barcode: variant.barcode,
     options: variant.selectedOptions,
     ...prices(variant.price.amount, variant.compareAtPrice?.amount),
     inStock: variant.availableForSale,
@@ -159,6 +167,7 @@ function mapShopifyProduct(node: ShopifyProductNode): Product {
     variantId: variant?.id ?? null,
     handle: node.handle,
     title: node.title,
+    updatedAt: node.updatedAt,
     type,
     soloEnKit,
     momentos: tags.filter(isMomento),
@@ -265,6 +274,8 @@ function localProducts(): Product[] {
         ? p.variants.map((variant) => ({
             id: localVariantId(variant.id),
             title: variant.title ?? "Default Title",
+            sku: null,
+            barcode: null,
             options: variant.options ?? variant.selectedOptions ?? [],
             ...prices(
               variant.price,
@@ -278,6 +289,8 @@ function localProducts(): Product[] {
             {
               id: null,
               title: "Default Title",
+              sku: null,
+              barcode: null,
               options: [],
               price: p.price,
               regularPrice: p.regularPrice,
@@ -301,6 +314,7 @@ function localProducts(): Product[] {
       guiaUso: [],
       id: String(p.id),
       variantId: variant?.id ?? null,
+      updatedAt: null,
       type,
       /* El respaldo local es el catálogo que se extrajo de WooCommerce, donde
          las unidades sueltas no existían. Si Shopify se cae, el armador se

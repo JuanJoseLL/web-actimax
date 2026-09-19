@@ -29,6 +29,9 @@ export interface ProductVariant {
   onSale: boolean;
   inStock: boolean;
   image: string | null;
+  /** Identificadores comerciales administrados en Shopify. */
+  sku?: string | null;
+  barcode?: string | null;
 }
 
 export interface ProductReviewSummary {
@@ -85,6 +88,8 @@ export interface Product {
   options: ProductOption[];
   variants: ProductVariant[];
   reviewSummary: ProductReviewSummary | null;
+  /** Fecha real de la última modificación en Shopify. */
+  updatedAt?: string | null;
 }
 
 /**

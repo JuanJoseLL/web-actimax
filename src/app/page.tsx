@@ -25,13 +25,18 @@ import { formatPostDate, getAllBlogPosts } from "@/lib/blog";
 import { getAllProducts, getProducts } from "@/lib/catalog";
 import { formatCOP } from "@/lib/format";
 import { canonicalProductPath } from "@/lib/product-paths";
-import { homePageJsonLd, itemListJsonLd, jsonLd } from "@/lib/seo";
+import {
+  homePageJsonLd,
+  itemListJsonLd,
+  jsonLd,
+  metadataAlternates,
+} from "@/lib/seo";
 import { categoriaPath } from "@/data/categorias";
 import { BEST_SELLERS } from "@/data/destacados";
 
 /* Título, descripción y Open Graph vienen del layout raíz; el canonical
    defiende el home de duplicados por query (?utm_*, ?fbclid, …). */
-export const metadata: Metadata = { alternates: { canonical: "/" } };
+export const metadata: Metadata = { alternates: metadataAlternates("/") };
 
 export default function Home() {
   return (

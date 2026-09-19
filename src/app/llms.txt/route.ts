@@ -3,6 +3,15 @@ import { DEPORTES } from "@/data/deportes";
 import { FAQ_ITEMS } from "@/data/faq";
 import { getDestinosData } from "@/app/destinos/shopify-data";
 import { getAllProducts } from "@/lib/catalog";
+import {
+  EMAIL,
+  HORARIO_SEDE,
+  LEGAL_NAME,
+  SEDE,
+  TAX_ID,
+  TELEFONO_DISPLAY,
+} from "@/lib/contacto";
+import { POLITICA_CAMBIOS_URL, POLITICA_ENVIOS_URL } from "@/lib/comercio";
 import { BRAND_DESCRIPTION, SITE_URL, productUrl } from "@/lib/seo";
 import { TYPE_LABELS, type Product, type ProductType } from "@/lib/taxonomia";
 
@@ -37,7 +46,10 @@ export async function GET(): Promise<Response> {
     `> ${BRAND_DESCRIPTION}`,
     "",
     `Tienda oficial: ${SITE_URL}/ — sitio en español (es-CO), precios en pesos colombianos (COP), checkout seguro con Shopify y envíos a toda Colombia.`,
-    "Contacto: +57 300 329 9972 · Punto físico: Envigado, Antioquia, Colombia.",
+    `Entidad: Actimax es una marca de ${LEGAL_NAME} · NIT ${TAX_ID}.`,
+    `Contacto: ${TELEFONO_DISPLAY} · ${EMAIL}.`,
+    `Punto físico: ${SEDE.streetAddress}, ${SEDE.addressLocality}, ${SEDE.addressRegion} ${SEDE.postalCode}, Colombia. Atención de lunes a viernes, ${HORARIO_SEDE.opens}–${HORARIO_SEDE.closes}.`,
+    `Perfil oficial en Google Maps: ${SEDE.mapsUrl}`,
     "",
   ];
 
@@ -74,6 +86,8 @@ export async function GET(): Promise<Response> {
     `- [Comparador de Energy Packs](${SITE_URL}/productos/comparar/): kits de nutrición por distancia (10K a maratón, Gran Fondo, triatlón).`,
     `- [Arma tu kit](${SITE_URL}/arma-tu-kit/): geles, bebidas y barras por unidad para armar un kit a la medida de una carrera, desde una unidad y sin mínimo de compra.`,
     `- [Blog](${SITE_URL}/blog/): guías de nutrición deportiva, hidratación y estrategia de carrera.`,
+    `- [Envíos y entregas](${POLITICA_ENVIOS_URL}): condiciones y tiempos vigentes para Colombia.`,
+    `- [Cambios, garantía y retracto](${POLITICA_CAMBIOS_URL}): política vigente de la tienda.`,
     "",
   );
 

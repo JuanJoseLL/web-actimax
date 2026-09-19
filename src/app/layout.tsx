@@ -22,6 +22,7 @@ import {
   DEFAULT_OG_IMAGE,
   HOME_META_DESCRIPTION,
   HOME_TITLE,
+  RSS_FEED_URL,
   SITE_URL,
   jsonLd,
   organizationJsonLd,
@@ -88,6 +89,11 @@ export const metadata: Metadata = {
   verification: {
     google: "Kt-XITSujRq2joodF8lqkL8eSg4VbbyZM77ehWmAC1g",
   },
+  alternates: {
+    types: {
+      "application/rss+xml": RSS_FEED_URL,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -99,7 +105,7 @@ export default function RootLayout({
 
   return (
     <html
-      lang="es"
+      lang="es-CO"
       className={cn("h-full", "antialiased", archivo.variable, barlowCondensed.variable, chivoMono.variable, "font-sans")}
     >
       <body className="flex min-h-full flex-col" data-secuencia={SECUENCIA_TEXTO}>

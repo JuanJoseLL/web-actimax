@@ -15,6 +15,8 @@ export interface BlogPost {
   tags: string[];
   excerpt: string;
   date: string;
+  /** Fecha real de modificación en Shopify; ausente en el respaldo local. */
+  updatedAt?: string;
   minutes: number;
   author: string;
   image: BlogImage | null;

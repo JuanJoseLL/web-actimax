@@ -13,22 +13,36 @@ import {
   SOCIAL_PROFILES,
   TAX_ID,
   TELEFONO_DISPLAY,
-} from "@/lib/contacto";
+} from "./contacto";
+import {
+  ENVIO_NACIONAL,
+  POLITICA_CAMBIOS_URL,
+  POLITICA_ENVIOS_URL,
+} from "./comercio";
 import {
   DEPORTE_LABELS,
   MOMENTO_LABELS,
   typeLabel,
   type Product,
-} from "@/lib/taxonomia";
-import { canonicalProductPath } from "@/lib/product-paths";
-import { reviewsAverage, type ProductReview } from "@/lib/reviews";
+} from "./taxonomia";
+import { canonicalProductPath } from "./product-paths";
+import { reviewsAverage, type ProductReview } from "./reviews";
+import { SITE_URL } from "./seo-base";
 
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://actimax.com.co";
+export { SITE_URL } from "./seo-base";
 
 export const HOME_TITLE =
   "Actimax | Nutrición deportiva y geles energéticos en Colombia";
 export const HOME_META_DESCRIPTION =
   "Geles energéticos, bebidas deportivas, barras y Energy Packs para running y ciclismo. Nutrición deportiva hecha en Colombia con envíos nacionales.";
+export const RSS_FEED_URL = `${SITE_URL}/feed.xml`;
+
+export function metadataAlternates(canonical: string) {
+  return {
+    canonical,
+    types: { "application/rss+xml": RSS_FEED_URL },
+  };
+}
 
 /**
  * Imagen por defecto al compartir: WhatsApp y las redes leen og:image.
@@ -60,7 +74,7 @@ export function pageMetadata(input: {
   return {
     title: input.title,
     description: input.description,
-    alternates: { canonical: input.path },
+    alternates: metadataAlternates(input.path),
     openGraph: {
       type: "website",
       locale: "es_CO",
@@ -126,6 +140,19 @@ export function organizationJsonLd(): object {
       availableLanguage: "Spanish",
     },
     areaServed: { "@type": "Country", name: "Colombia" },
+    hasMerchantReturnPolicy: {
+      "@type": "MerchantReturnPolicy",
+      applicableCountry: ENVIO_NACIONAL.country,
+      merchantReturnLink: POLITICA_CAMBIOS_URL,
+    },
+    hasShippingService: {
+      "@type": "ShippingService",
+      name: "Envíos Actimax en Colombia",
+      url: POLITICA_ENVIOS_URL,
+      description: `Envíos en Colombia: $${ENVIO_NACIONAL.standardRate.toLocaleString("es-CO")} COP por debajo de $${ENVIO_NACIONAL.freeFrom.toLocaleString("es-CO")} COP y gratis desde ese valor, excepto San Andrés y Providencia, donde siempre cuesta $${ENVIO_NACIONAL.specialRegionRate.toLocaleString("es-CO")} COP. Despachos de lunes a sábado con ${ENVIO_NACIONAL.carriers.join(", ")}. Condiciones completas: ${POLITICA_ENVIOS_URL}`,
+      handlingTime: servicePeriodJsonLd(ENVIO_NACIONAL.handlingDays),
+      shippingConditions: shippingConditionsJsonLd(),
+    },
     hasPOS: { "@id": STORE_ID },
     sameAs: SOCIAL_PROFILES,
   };
@@ -156,6 +183,12 @@ export function storeJsonLd(): object {
       dayOfWeek: HORARIO_SEDE.days.map((day) => `https://schema.org/${day}`),
       opens: HORARIO_SEDE.opens,
       closes: HORARIO_SEDE.closes,
+    },
+    hasMap: SEDE.mapsUrl,
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: SEDE.latitude,
+      longitude: SEDE.longitude,
     },
     parentOrganization: { "@id": ORGANIZATION_ID },
     sameAs: [SEDE.mapsUrl],
@@ -195,6 +228,9 @@ export function homePageJsonLd(): object {
 }
 
 export function productJsonLd(product: Product, reviews: ProductReview[] = []): object {
+  const primaryVariant =
+    product.variants.find((variant) => variant.id === product.variantId) ??
+    product.variants[0];
   return {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -229,6 +265,8 @@ export function productJsonLd(product: Product, reviews: ProductReview[] = []): 
     url: productUrl(product.handle),
     category: typeLabel(product.type),
     brand: { "@type": "Brand", name: "Actimax" },
+    ...(primaryVariant?.sku ? { sku: primaryVariant.sku } : {}),
+    ...gtinJsonLd(primaryVariant?.barcode),
     keywords: [
       ...product.momentos.map((m) => `${MOMENTO_LABELS[m]} del esfuerzo`),
       ...product.deportes.map((d) => DEPORTE_LABELS[d] ?? d),
@@ -237,6 +275,8 @@ export function productJsonLd(product: Product, reviews: ProductReview[] = []): 
       "@type": "Offer",
       url: productUrl(product.handle),
       name: variant.title === "Default Title" ? product.title : variant.title,
+      ...(variant.sku ? { sku: variant.sku } : {}),
+      ...gtinJsonLd(variant.barcode),
       price: variant.price,
       priceCurrency: "COP",
       availability: variant.inStock
@@ -246,6 +286,40 @@ export function productJsonLd(product: Product, reviews: ProductReview[] = []): 
       seller: { "@id": ORGANIZATION_ID },
     })),
   };
+}
+
+function gtinJsonLd(barcode: string | null | undefined): Record<string, string> {
+  const digits = barcode?.replace(/\D/g, "") ?? "";
+  if (![8, 12, 13, 14].includes(digits.length)) return {};
+  return { [`gtin${digits.length}`]: digits };
+}
+
+function servicePeriodJsonLd(days: { min: number; max: number }): object {
+  return {
+    "@type": "ServicePeriod",
+    businessDays: ENVIO_NACIONAL.businessDays.map(
+      (day) => `https://schema.org/${day}`,
+    ),
+    duration: {
+      "@type": "QuantitativeValue",
+      minValue: days.min,
+      maxValue: days.max,
+      unitCode: "DAY",
+    },
+  };
+}
+
+function shippingConditionsJsonLd(): object[] {
+  return [
+    {
+      "@type": "ShippingConditions",
+      shippingDestination: {
+        "@type": "DefinedRegion",
+        addressCountry: ENVIO_NACIONAL.country,
+      },
+      transitTime: servicePeriodJsonLd(ENVIO_NACIONAL.transitDays),
+    },
+  ];
 }
 
 export function breadcrumbJsonLd(items: Array<{ name: string; url: string }>): object {

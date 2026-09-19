@@ -35,6 +35,7 @@ import {
   SITE_URL,
   breadcrumbJsonLd,
   jsonLd,
+  metadataAlternates,
   productJsonLd,
   productUrl,
 } from "@/lib/seo";
@@ -62,7 +63,7 @@ export async function generateMetadata({
   return {
     title: seo.title,
     description: seo.description,
-    alternates: { canonical: canonicalProductPath(product.handle) },
+    alternates: metadataAlternates(canonicalProductPath(product.handle)),
     openGraph: {
       title: seo.title,
       description: seo.description,

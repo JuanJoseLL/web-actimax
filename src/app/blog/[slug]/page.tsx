@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { BlogArticle } from "@/components/blog/BlogArticle";
 import { BlogListing } from "@/components/blog/BlogListing";
 import { BlogPageSkeleton } from "@/components/blog/BlogPageSkeleton";
+import { SeoBreadcrumbs } from "@/components/SeoBreadcrumbs";
 import {
   BLOG_CACHE_LIFE,
   getAllBlogPosts,
@@ -13,7 +14,11 @@ import {
   getBlogPost,
   isRootBlogPost,
 } from "@/lib/blog";
-import { DEFAULT_OG_IMAGE, pageMetadata } from "@/lib/seo";
+import {
+  DEFAULT_OG_IMAGE,
+  metadataAlternates,
+  pageMetadata,
+} from "@/lib/seo";
 
 /* El 404 real exige resolver la URL antes del primer <Suspense> (ver el
    notFound() de abajo), así que la ruta se declara bloqueante en vez de
@@ -72,12 +77,13 @@ async function blogEntryMetadata(slug: string): Promise<Metadata> {
     return {
       title: post.seoTitle ?? `${post.title} | Actimax`,
       description: post.seoDescription ?? post.excerpt,
-      alternates: { canonical: post.path },
+      alternates: metadataAlternates(post.path),
       openGraph: {
         type: "article",
         title: post.seoTitle ?? post.title,
         description: post.seoDescription ?? post.excerpt,
         publishedTime: post.date,
+        modifiedTime: post.updatedAt ?? post.date,
         images:
           post.image !== null
             ? [{ url: post.image.url, alt: post.image.altText ?? post.title }]
@@ -127,12 +133,21 @@ async function BlogPostContent({ slug }: { slug: string }) {
   if (category !== undefined) {
     const posts = (await getAllBlogPosts()).filter((candidate) => candidate.tags.includes(category.name));
     return (
-      <BlogListing
-        posts={posts}
-        eyebrow="Blog · Categoría"
-        title={category.name}
-        description={`Estrategias, guías y consejos de ${category.name.toLocaleLowerCase("es-CO")} para tu próxima meta.`}
-      />
+      <>
+        <SeoBreadcrumbs
+          items={[
+            { name: "Inicio", url: "/" },
+            { name: "Blog", url: "/blog/" },
+            { name: category.name, url: category.path },
+          ]}
+        />
+        <BlogListing
+          posts={posts}
+          eyebrow="Blog · Categoría"
+          title={category.name}
+          description={`Estrategias, guías y consejos de ${category.name.toLocaleLowerCase("es-CO")} para tu próxima meta.`}
+        />
+      </>
     );
   }
 

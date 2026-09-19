@@ -11,7 +11,7 @@ import {
   getRootBlogPostSlugs,
   isRootBlogPost,
 } from "@/lib/blog";
-import { DEFAULT_OG_IMAGE } from "@/lib/seo";
+import { DEFAULT_OG_IMAGE, metadataAlternates } from "@/lib/seo";
 
 /* El 404 real exige resolver la URL antes del primer <Suspense> (ver el
    notFound() de abajo), así que la ruta se declara bloqueante en vez de
@@ -53,12 +53,13 @@ async function rootBlogPostMetadata(slug: string): Promise<Metadata> {
   return {
     title: post.seoTitle ?? `${post.title} | Actimax`,
     description: post.seoDescription ?? post.excerpt,
-    alternates: { canonical: post.path },
+    alternates: metadataAlternates(post.path),
     openGraph: {
       type: "article",
       title: post.seoTitle ?? post.title,
       description: post.seoDescription ?? post.excerpt,
       publishedTime: post.date,
+      modifiedTime: post.updatedAt ?? post.date,
       images:
         post.image !== null
           ? [{ url: post.image.url, alt: post.image.altText ?? post.title }]

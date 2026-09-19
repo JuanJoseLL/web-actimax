@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import { FilterChip } from "@/components/FilterChip";
 import { ProductCard } from "@/components/ProductCard";
+import { SeoBreadcrumbs } from "@/components/SeoBreadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -245,9 +246,24 @@ async function CatalogContent({ searchParams }: { searchParams: SearchParams }) 
     activeLabels.length === 0
       ? "Catálogo Actimax de nutrición deportiva"
       : `Actimax · ${activeLabels.join(" · ")}`;
+  const canonicalPath = landing?.path ?? filterUrl(current, {});
 
   return (
     <>
+      <SeoBreadcrumbs
+        items={
+          hasFilters
+            ? [
+                { name: "Inicio", url: "/" },
+                { name: "Productos", url: "/productos/" },
+                { name: activeLabels.join(" · "), url: canonicalPath },
+              ]
+            : [
+                { name: "Inicio", url: "/" },
+                { name: "Productos", url: "/productos/" },
+              ]
+        }
+      />
       {filtered.length > 0 ? (
         <script
           type="application/ld+json"
