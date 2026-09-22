@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { cartSurface } from "@/lib/analytics";
 import { cartLineId } from "@/lib/cart";
 import { formatCOP } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 interface Props {
   product: CartLine;
@@ -20,6 +21,9 @@ interface Props {
   disabled?: boolean;
   /** Sobrescribe la página visible cuando el botón vive en una superficie global. */
   origin?: string;
+  /** Solo para "full": retoca el color donde el azul de `race` no contrasta
+      (la banda de promo del home va sobre fondo azul). */
+  className?: string;
 }
 
 export function AddToCartButton({
@@ -28,6 +32,7 @@ export function AddToCartButton({
   variant = "card",
   disabled = false,
   origin,
+  className,
 }: Props) {
   const { add, items, open } = useCart();
   const [added, setAdded] = useState(false);
@@ -79,7 +84,7 @@ export function AddToCartButton({
         disabled={disabled}
         variant="race"
         size="lg"
-        className="w-full py-4 text-lg sm:text-xl"
+        className={cn("w-full py-4 text-lg sm:text-xl", className)}
       >
         <ShoppingBagIcon data-icon="inline-start" />
         {disabled ? "Agotado" : "Agregar al carrito"}

@@ -18,6 +18,7 @@ import {
 import { FuelFinder } from "@/components/FuelFinder";
 import { GoogleReviewsBadge } from "@/components/GoogleReviewsBadge";
 import { NewsletterSection } from "@/components/NewsletterSection";
+import { PromoHome } from "@/components/PromoHome";
 import { ProductCard } from "@/components/ProductCard";
 import { Ticker } from "@/components/Ticker";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,11 @@ export default function Home() {
       />
       <Hero />
       <Ticker />
+      {/* Sin skeleton: si la promo venció no se dibuja nada y un hueco
+          reservado dejaría el home saltando al cargar. */}
+      <Suspense fallback={null}>
+        <PromoHome />
+      </Suspense>
       <Suspense fallback={<HomeSectionSkeleton className="bg-[#f4f2ec]" />}>
         <BestSellersSection />
       </Suspense>
