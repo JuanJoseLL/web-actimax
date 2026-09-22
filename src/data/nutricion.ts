@@ -1,6 +1,8 @@
 /** Fuente: Catálogo Actimax 2026 suministrado por la marca.
  * Las cifras son declaraciones del catálogo, no análisis independientes.
- * null significa «no declarado», nunca cero ni «libre de».
+ * null significa «no declarado», nunca cero ni «libre de». Excepción: la
+ * cafeína. La marca confirmó (21 sep 2026) que un producto sin sección de
+ * cafeína no la contiene, así que ahí la ausencia se registra como 0.
  */
 export interface Nutrientes {
   carbohidratosG: number;
@@ -91,16 +93,16 @@ export const FORMULAS: Record<string, FormulaNutricional> = {
   },
   bar: {
     nombre: "Protein Bar", gramos: 35, base: "1 barra de 35 g",
-    nutrientes: { carbohidratosG: 17, proteinaG: 12.8, sodioMg: 145, cafeinaMg: null },
+    nutrientes: { carbohidratosG: 17, proteinaG: 12.8, sodioMg: 145, cafeinaMg: 0 },
     preparacion: null, uso: "30–60 minutos antes; durante esfuerzos de más de 2 horas; o después de entrenar.",
     momentos: ["antes", "durante", "despues"], ingredientesDeclarados: ["soya", "miel", "chocolate"],
     atributos: { vegano: false, sinLacteos: null, sinGluten: null },
-    notas: ["Contiene miel: no describir como vegana. La cafeína y los iconos libres de alérgenos no están declarados.", "Sellos: exceso en sodio y exceso en azúcares."],
+    notas: ["Contiene miel: no describir como vegana. Los iconos libres de alérgenos no están declarados.", "Sellos: exceso en sodio y exceso en azúcares."],
     tabla: { calorias: "131 kcal", grasaTotal: "3 g", grasaSaturada: "1,5 g", grasaTrans: "0 mg", colesterol: "16 mg", polialcoholes: "8 g", fibra: "0,7 g", azucares: "5 g", azucaresAnadidos: "4,5 g", calcio: "88 mg" },
   },
   recoveryPro: {
     nombre: "Recovery Pro", gramos: 37, base: "1 porción de 37 g",
-    nutrientes: { carbohidratosG: 8.3, proteinaG: 24, sodioMg: 181, cafeinaMg: null },
+    nutrientes: { carbohidratosG: 8.3, proteinaG: 24, sodioMg: 181, cafeinaMg: 0 },
     preparacion: "37 g en 250 ml de agua.", uso: "Después de entrenamientos o competencias intensas; el catálogo propone los primeros 30 minutos.",
     momentos: ["despues"], ingredientesDeclarados: ["proteína de suero hidrolizada", "caseinato de calcio", "proteína aislada de soya", "BCAA", "L-carnitina", "glutamina"],
     atributos: { vegano: false, sinLacteos: false, sinGluten: null },
@@ -109,7 +111,7 @@ export const FORMULAS: Record<string, FormulaNutricional> = {
   },
   recovery: {
     nombre: "Recovery", gramos: 35, base: "1 porción de 35 g",
-    nutrientes: { carbohidratosG: 19, proteinaG: 12, sodioMg: 122, cafeinaMg: null },
+    nutrientes: { carbohidratosG: 19, proteinaG: 12, sodioMg: 122, cafeinaMg: 0 },
     preparacion: "35 g en 250 ml de agua; las medidas volumétricas del catálogo son inconsistentes.",
     uso: "Después de entrenamientos o competencias intensas.", momentos: ["despues"],
     ingredientesDeclarados: ["proteína de suero hidrolizada", "caseinato de calcio", "proteína aislada de soya", "BCAA"],
@@ -150,4 +152,54 @@ export const COMPOSICION_GELES: Record<string, { pequeno: Nutrientes; grande: Nu
   fresa: { pequeno: { carbohidratosG: 9.5, sodioMg: 39, cafeinaMg: 9.6, proteinaG: null }, grande: { carbohidratosG: 28, sodioMg: 117, cafeinaMg: 28.8, proteinaG: null } },
   manzana: { pequeno: { carbohidratosG: 10, sodioMg: 39, cafeinaMg: 9.6, proteinaG: null }, grande: { carbohidratosG: 30, sodioMg: 117, cafeinaMg: 28.8, proteinaG: null } },
   fresabanano: { pequeno: { carbohidratosG: 9.6, sodioMg: 39, cafeinaMg: 0, proteinaG: null }, grande: { carbohidratosG: 29, sodioMg: 117, cafeinaMg: 0, proteinaG: null } },
+};
+
+export interface EtapaProtocolo {
+  momento: "antes" | "durante" | "despues";
+  necesidad: string;
+  indicaciones: string[];
+}
+
+/**
+ * Guía de uso por etapas suministrada por la marca. Es evidencia citable de
+ * cadencias y momentos, al mismo nivel que la tabla nutricional: sin ella el
+ * asesor no tiene con qué distinguir un gel de una bebida y termina repitiendo
+ * siempre el mismo par de productos.
+ *
+ * No incluye las advertencias de salud del material original (lesiones,
+ * defensas, sobreentrenamiento): son afirmaciones clínicas que el asesor no
+ * puede sostener y que Jev rechazaría como promesas de resultado.
+ */
+export const PROTOCOLO_ENTRENAMIENTO = {
+  fuente: "Guía de suplementación Actimax",
+  alcance: "Aplica tanto a competencia como a entrenamiento: la reposición también sostiene las sesiones de entreno, no solo las carreras.",
+  umbralDuracionMin: 45,
+  etapas: [
+    {
+      momento: "antes",
+      necesidad: "Carga previa de glucógeno muscular",
+      indicaciones: [
+        "1 porción de Pre Race unos 30 minutos antes, para empezar la sesión con las reservas de energía cargadas.",
+        "También sirve como ración de espera entre pruebas.",
+      ],
+    },
+    {
+      momento: "durante",
+      necesidad: "Energía e hidratación, dos necesidades distintas que se cubren a la vez",
+      indicaciones: [
+        "A partir de 45 minutos de sesión hay que reponer durante el esfuerzo.",
+        "Energía: 1 gel cada 30 minutos en zona 4-5, o 1 gel cada 45 minutos en zona 2-3. En esfuerzos de más de 2 horas también sirve el sobre de 90 g a medio sobre por toma.",
+        "Hidratación: agua con electrolitos y carbohidratos, unos 500 ml por hora, a sorbos grandes cada 10 minutos.",
+        "Los geles no hidratan y la bebida no sustituye la cadencia de energía de los geles: cubrir solo una de las dos deja la otra sin resolver.",
+      ],
+    },
+    {
+      momento: "despues",
+      necesidad: "Recuperación con proteína y carbohidratos",
+      indicaciones: [
+        "Una bebida con proteína más carbohidratos dentro de los primeros 30 minutos después de terminar.",
+        "Es la etapa que cierra la sesión: cuenta igual en entrenamiento frecuente, no solo después de competir.",
+      ],
+    },
+  ] satisfies EtapaProtocolo[],
 };

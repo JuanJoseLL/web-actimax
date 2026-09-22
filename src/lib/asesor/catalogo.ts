@@ -1,4 +1,4 @@
-import { COMPOSICION_GELES, FORMULAS, PRESENTACIONES, type FormulaNutricional } from "../../data/nutricion";
+import { COMPOSICION_GELES, FORMULAS, PRESENTACIONES, PROTOCOLO_ENTRENAMIENTO, type FormulaNutricional } from "../../data/nutricion";
 import retirados from "../../data/retired-products.json";
 import { canonicalProductPath } from "../product-paths";
 import type { Product, ProductVariant } from "../taxonomia";
@@ -72,8 +72,16 @@ export function catalogoParaAsesor(products: readonly Product[]): ProductoAsesor
   });
 }
 
+/** Clave corta de una variante: el número final de su GID, que Shopify hace
+ * único en toda la tienda. Es lo que el modelo elige; el GID completo no cabe
+ * en el esquema de Gemini con todo el catálogo (ver esquemaParaCatalogo). */
+export function claveVariante(id: string): string {
+  return id.slice(id.lastIndexOf("/") + 1);
+}
+
 /** Contexto compacto para los modelos: una fórmula por familia, sin imágenes,
- * HTML, enlaces CDN ni copias de la misma ficha por cada sabor. */
+ * HTML, enlaces CDN ni copias de la misma ficha por cada sabor. Incluye el
+ * protocolo de la marca, que es la evidencia de cuándo va cada etapa. */
 export function evidenciaCatalogo(products: readonly ProductoAsesor[]) {
   const formulas: Record<string, Omit<FormulaNutricional, "nutrientes">> = {};
   const productos = products.map((product) => {
@@ -88,10 +96,10 @@ export function evidenciaCatalogo(products: readonly ProductoAsesor[]) {
       handle: product.handle, title: product.title, envase: product.envase,
       porcionesCompletas: product.porcionesCompletas, formula: formula.nombre,
       variantes: product.variantes.map((variant) => ({
-        id: variant.id, title: variant.title, price: variant.price,
+        variante: claveVariante(variant.id), title: variant.title, price: variant.price,
         nutrientes: variant.nutricion.nutrientes,
       })),
     };
   });
-  return { productos, formulas };
+  return { protocolo: PROTOCOLO_ENTRENAMIENTO, productos, formulas };
 }

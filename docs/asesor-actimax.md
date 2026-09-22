@@ -46,11 +46,22 @@ Revisar los cambios de esa API y ejecutar los tests al actualizar.
 3. `catalogoParaAsesor()` une identidades explícitas de producto y sabor con la
    referencia nutricional. Elimina unidades exclusivas del armador, retirados,
    variantes agotadas, precios inválidos y composiciones no reconocidas.
-4. El agente consulta un catálogo compacto: una fórmula por familia y valores
-   variables por sabor. Sin copiar HTML ni URLs de imágenes al contexto.
-5. Genera un objeto con perfil, mensaje y hasta tres selecciones de variantes.
-   El esquema limita cada producto a sus propios IDs de variante, para impedir
-   que la generación cruce un producto con el sabor de otro.
+4. El agente consulta un catálogo compacto: una fórmula por familia, valores
+   variables por sabor y el protocolo de uso. Sin copiar HTML ni URLs de
+   imágenes al contexto. Si la cafeína sigue `sin_confirmar` y eso retiene
+   variantes, la herramienta lo dice (`retenidasPorCafeina`) para que el asesor
+   pregunte en lugar de tomar el catálogo recortado por el completo.
+5. Genera un objeto con perfil, mensaje y selecciones de variantes (tope de
+   seguridad `MAX_RECOMENDACIONES = 6`, no un cupo de asesoría: la decisión de
+   cuántos productos proponer es del modelo, según lo que describa el cliente).
+   El modelo elige una clave corta de variante (el número final del GID, único
+   en la tienda), así que no puede cruzar un producto con el sabor de otro.
+   Gemini rechaza con un 400 genérico («Request contains an invalid argument»)
+   los esquemas que pasan de cierto tamaño: con GID completos cabían 25
+   variantes y el catálogo tiene 33, y la unión por producto que había antes
+   fallaba desde 11 productos. Un test mantiene el esquema bajo ese límite. La selección se
+   guía por el protocolo de uso (ver más abajo): energía e hidratación son
+   necesidades distintas del momento «durante» y pueden ir juntas.
    Pregunta deporte/duración si faltan; no transforma frecuencia semanal en
    consumo de suplementos. Entiende `cycling/cicling`, `1:30` y errores de
    escritura en contexto. Si el cliente no indica sabor o delega la elección,
@@ -94,9 +105,13 @@ pero está retirado en el registro del sitio y no se ofrece.
 
 ### Bases y discrepancias que se conservaron
 
-- **Desconocido ≠ cero:** cafeína de Protein Bar/Recovery, y cantidades no
-  significativas de nutrientes, permanecen `null`. No se usa «no es fuente
-  significativa» para fabricar una cifra exacta.
+- **Desconocido ≠ cero:** las cantidades no significativas de nutrientes
+  permanecen `null`. No se usa «no es fuente significativa» para fabricar una
+  cifra exacta.
+- **Cafeína:** única excepción. La marca confirmó el 21 sep 2026 que un producto
+  sin sección de cafeína no la contiene, así que Protein Bar, Recovery y
+  Recovery Pro figuran con 0 y se ofrecen a quien pide «sin cafeína». La regla
+  que excluye cafeína `null` se mantiene para productos nuevos sin confirmar.
 - **Atributos:** los iconos generales no estaban asignados por producto. No se
   declara que sean sin gluten, veganos o sin lácteos. La miel de Protein Bar
   descarta vegano; suero/caseinato descartan vegano y sin lácteos en Recovery.
@@ -124,11 +139,32 @@ pero está retirado en el registro del sitio y no se ofrece.
   «Cookies and Cream» y «Fresa-Banano (sin cafeína)». Un sabor desconocido o
   surtido no recibe una composición por similitud.
 
+### Protocolo de uso
+
+`PROTOCOLO_ENTRENAMIENTO` guarda la guía por etapas de la marca y viaja con el
+catálogo en cada consulta, así que Jev la acepta como evidencia igual que la
+tabla nutricional: umbral de 45 minutos de sesión, Pre Race unos 30 minutos
+antes, 1 gel cada 30 min en zona 4-5 o cada 45 min en zona 2-3, ≈500 ml por
+hora de bebida preparada a sorbos cada 10 min, y proteína con carbohidratos en
+los primeros 30 minutos después.
+
+Sin ese dato el asesor no tenía con qué distinguir un gel de una bebida —el
+prompt solo traía barandas contra invenciones— y en producción repetía siempre
+el mismo par (Pre Race en tarro + Bebida Élite en tarro), sin geles ni
+recuperación. El caso `cobertura` de `verificar-asesor.mjs` cubre esa regresión.
+
+No se incluyen las advertencias de salud del material original (lesiones,
+defensas, sobreentrenamiento, lactato): son afirmaciones clínicas que el asesor
+no puede sostener, y el prompt sigue prohibiendo convertir el protocolo en
+promesas de resultado. Un test comprueba que esos términos no entren.
+
 ## Límites y operación
 
 - Hasta 24 mensajes, 24.000 caracteres de conversación y 48 KB de request.
 - Una consulta de herramienta y una generación estructurada por intento, con
-  una reparación como máximo.
+  una reparación como máximo. Si Gemini termina sin JSON parseable, se gasta
+  ese intento en vez de mostrar un error.
+- Hasta 6 productos por recomendación, el mismo tope en `/api/asesor/carrito/`.
 - Timeout total de 55 s; función Vercel de 60 s.
 - Límite complementario de 20 requests/10 min por IP e instancia (incluye
   comprobaciones de carrito). No es un contador distribuido.
@@ -166,7 +202,8 @@ node scripts/verificar-asesor.mjs ciclismo
 ```
 
 Comprueba que recomienda con «1:30 cicling», respeta un cambio posterior a
-«sin cafeína» y pregunta solo cuando faltan datos. La causa del bucle era que
+«sin cafeína», pregunta solo cuando faltan datos y que una sesión larga e
+intensa recibe gel y recuperación, no solo un producto de antes y una bebida. La causa del bucle era que
 todo rechazo de validación devolvía la misma pregunta genérica, con reglas
 demasiado restrictivas sobre el sabor y sin límites de variantes en el esquema.
 

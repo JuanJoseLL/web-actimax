@@ -1,5 +1,5 @@
 /** Regresión con modelos reales. Requiere pnpm dev y consume cuota de Gateway.
- * node scripts/verificar-asesor.mjs [ciclismo|ciclismo-inicial|sin-cafeina|incompleto]
+ * node scripts/verificar-asesor.mjs [ciclismo|ciclismo-inicial|sin-cafeina|cobertura|incompleto]
  * ASISTENTE_URL permite apuntar a un preview en lugar de localhost.
  */
 import assert from "node:assert/strict";
@@ -18,6 +18,14 @@ const casos = {
     turnos: [...historial, ["assistant", "Puedo proponerte una bebida para el ciclismo."], ["user", "Cambio de idea: quiero evitar por completo la cafeína. Cualquier sabor está bien."]],
     debeRecomendar: true,
     sinCafeina: true,
+  },
+  // El feedback de producción: con cualquier rutina proponía siempre el mismo
+  // par (Pre Race + Bebida Élite) y jamás un gel ni la recuperación.
+  cobertura: {
+    turnos: [["user", "Corro 2 horas cinco días por semana a ritmo fuerte, no me importa la cafeína y cualquier sabor está bien. Quiero llegar bien al final y recuperarme para el día siguiente."]],
+    debeRecomendar: true,
+    momentos: ["durante", "despues"],
+    familias: [/gel/i],
   },
   incompleto: { turnos: [historial[0]], debeRecomendar: false },
 };
@@ -46,8 +54,14 @@ for (const [nombre, caso] of Object.entries(casos)) {
   if (caso.debeRecomendar) {
     assert(!/qué actividad vas a hacer|cuánto durará|cuánto dura cada sesión/i.test(texto), `${nombre}: vuelve a pedir datos conocidos`);
   }
+  for (const momento of caso.momentos ?? []) {
+    assert(recomendaciones.some((item) => item.momento === momento), `${nombre}: no cubre el momento ${momento}`);
+  }
+  for (const familia of caso.familias ?? []) {
+    assert(recomendaciones.some((item) => familia.test(item.variante.nutricion.nombre)), `${nombre}: no propone ${familia}`);
+  }
   if (caso.sinCafeina) {
     assert(recomendaciones.every((item) => item.variante.nutricion.nutrientes.cafeinaMg === 0), "Ignoró la nueva restricción de cafeína");
   }
-  console.log(JSON.stringify({ caso: nombre, resultado: "OK", texto, productos: recomendaciones.map((item) => `${item.producto.title} / ${item.variante.title}`) }, null, 2));
+  console.log(JSON.stringify({ caso: nombre, resultado: "OK", texto, productos: recomendaciones.map((item) => `${item.momento}: ${item.producto.title} / ${item.variante.title}`) }, null, 2));
 }

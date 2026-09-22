@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { catalogoParaAsesor, evidenciaCatalogo } from "./catalogo";
-import { leerConversacion, respuestaSchema, type RespuestaAsesor } from "./contrato";
+import { MAX_RECOMENDACIONES, leerConversacion, respuestaSchema, type RespuestaAsesor } from "./contrato";
 import { validarRecomendacion, varianteCompatible } from "./recomendacion";
 import type { Product } from "../taxonomia";
 
@@ -45,9 +45,10 @@ describe("referencia nutricional unida a Shopify", () => {
     const [item] = catalogoParaAsesor([producto(handle, sabor)]);
     expect(item.variantes[0].nutricion.nutrientes).toMatchObject({ carbohidratosG: carbs, cafeinaMg: caffeine });
   });
-  it("conserva valores no declarados como desconocidos y no atribuye iconos de marca", () => {
+  it("registra sin cafeína lo que no la declara (confirmado por la marca) y no atribuye iconos", () => {
     const [item] = catalogoParaAsesor([producto("protein-bar-caja-x18", "Default Title")]);
-    expect(item.variantes[0].nutricion.nutrientes.cafeinaMg).toBeNull();
+    expect(item.variantes[0].nutricion.nutrientes.cafeinaMg).toBe(0);
+    expect(item.variantes[0].nutricion.nutrientes.proteinaG).toBe(12.8);
     expect(item.variantes[0].nutricion.atributos).toEqual({ vegano: false, sinLacteos: null, sinGluten: null });
   });
   it("compacta fórmulas sin perder diferencias nutricionales por sabor", () => {
@@ -60,7 +61,46 @@ describe("referencia nutricional unida a Shopify", () => {
   });
 });
 
+describe("protocolo de uso como evidencia", () => {
+  it("acompaña al catálogo con las tres etapas y el umbral de duración", () => {
+    const evidence = evidenciaCatalogo(catalogoParaAsesor([producto()]));
+    expect(evidence.protocolo.umbralDuracionMin).toBe(45);
+    expect(evidence.protocolo.etapas.map((etapa) => etapa.momento)).toEqual(["antes", "durante", "despues"]);
+  });
+  it("no convierte la guía de la marca en advertencias clínicas", () => {
+    const texto = JSON.stringify(evidenciaCatalogo([]).protocolo).toLowerCase();
+    for (const claim of ["lesion", "defensas", "sobreentrenamiento", "lactato"]) expect(texto).not.toContain(claim);
+  });
+});
+
 describe("validación de recomendaciones", () => {
+  it("permite cubrir las tres etapas con energía e hidratación a la vez", () => {
+    const productos = catalogoParaAsesor([
+      producto("pre-race-en-tarro-400gr", "Fresa"),
+      producto("energy-gel-caja-x24", "Durazno"),
+      producto("bebida-deportiva-elite-tarro-500gr", "Limón"),
+      producto("recovery-pro-tarro-400gr", "Fresa"),
+    ].map((item, index) => ({ ...item, id: `gid://shopify/Product/${index + 1}` })));
+    const selection = respuesta("pre-race-en-tarro-400gr");
+    selection.recomendaciones[0].momento = "antes";
+    selection.recomendaciones.push(
+      { handle: "energy-gel-caja-x24", variantId: "gid://shopify/ProductVariant/1", motivo: "Un gel cada 45 min en zona 2-3.", momento: "durante", porcionesNecesarias: null },
+      { handle: "bebida-deportiva-elite-tarro-500gr", variantId: "gid://shopify/ProductVariant/1", motivo: "500 ml por hora de hidratación con carbohidratos.", momento: "durante", porcionesNecesarias: null },
+      { handle: "recovery-pro-tarro-400gr", variantId: "gid://shopify/ProductVariant/1", motivo: "Proteína y carbohidratos al terminar.", momento: "despues", porcionesNecesarias: null },
+    );
+    expect(respuestaSchema.safeParse(selection).success).toBe(true);
+    const result = validarRecomendacion(selection, productos);
+    expect(result.recomendaciones.map((item) => item.momento)).toEqual(["antes", "durante", "durante", "despues"]);
+    expect(result.total).toBe(400000);
+  });
+  it("mantiene un tope de seguridad por encima de las tres etapas", () => {
+    const selection = respuesta();
+    const extra = (index: number) => ({ ...selection.recomendaciones[0], handle: `producto-${index}` });
+    selection.recomendaciones = Array.from({ length: MAX_RECOMENDACIONES }, (_, index) => extra(index));
+    expect(respuestaSchema.safeParse(selection).success).toBe(true);
+    selection.recomendaciones.push(extra(MAX_RECOMENDACIONES));
+    expect(respuestaSchema.safeParse(selection).success).toBe(false);
+  });
   it("calcula cajas enteras usando precios del catálogo, no del modelo", () => {
     const selection = respuesta();
     selection.recomendaciones[0].porcionesNecesarias = 25;
@@ -109,9 +149,11 @@ describe("validación de recomendaciones", () => {
   it("no ofrece cafeína positiva sin consentimiento ni cafeína desconocida si se excluye", () => {
     const [elite] = catalogoParaAsesor([producto("bebida-deportiva-elite-con-cafeina-tarro-de-500gr", "Limón")]);
     const [recovery] = catalogoParaAsesor([producto("recovery-pro-caja-x12", "Fresa")]);
+    const desconocida = { ...recovery.variantes[0], nutricion: { ...recovery.variantes[0].nutricion, nutrientes: { ...recovery.variantes[0].nutricion.nutrientes, cafeinaMg: null } } };
     const perfil = respuesta().perfil;
     expect(varianteCompatible(elite.variantes[0], { ...perfil, cafeina: "sin_confirmar" })).toBe(false);
-    expect(varianteCompatible(recovery.variantes[0], perfil)).toBe(false);
+    expect(varianteCompatible(recovery.variantes[0], perfil)).toBe(true);
+    expect(varianteCompatible(desconocida, perfil)).toBe(false);
     expect(varianteCompatible(elite.variantes[0], { ...perfil, cafeina: "permitida" })).toBe(true);
   });
   it("no convierte ausencia de datos de gluten en una declaración sin gluten", () => {

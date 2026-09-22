@@ -11,6 +11,10 @@ export const perfilSchema = z.object({
   presupuestoCOP: z.number().positive().max(10_000_000).nullable(),
 });
 
+/** Tope de seguridad de la respuesta, no un cupo de asesoría: cubrir las tres
+ * etapas con energía e hidratación a la vez cabe de sobra por debajo. */
+export const MAX_RECOMENDACIONES = 6;
+
 export const respuestaSchema = z.object({
   mensaje: z.string().min(1).max(2000),
   perfil: perfilSchema,
@@ -21,7 +25,7 @@ export const respuestaSchema = z.object({
     momento: z.enum(["antes", "durante", "despues"]),
     /** No confundir porciones de consumo con cajas compradas. */
     porcionesNecesarias: z.number().positive().max(200).nullable(),
-  })).max(3),
+  })).max(MAX_RECOMENDACIONES),
 });
 
 export type PerfilAsesor = z.infer<typeof perfilSchema>;

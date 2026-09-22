@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { getCatalogoAsesor } from "@/lib/catalog";
 import { catalogoParaAsesor } from "@/lib/asesor/catalogo";
+import { MAX_RECOMENDACIONES } from "@/lib/asesor/contrato";
 import { leerJsonLimitado, limitarAsesor } from "@/lib/asesor/http";
 
 const seleccionSchema = z.object({
@@ -9,8 +10,9 @@ const seleccionSchema = z.object({
   precioEsperado: z.number().positive(),
 });
 /* La selección entera viaja en una sola petición: agregarla producto por
-   producto gastaría tres turnos del límite por IP que comparte con el chat. */
-const peticionSchema = z.object({ items: z.array(seleccionSchema).min(1).max(3) });
+   producto gastaría un turno por producto del límite por IP que comparte con
+   el chat. El tope es el mismo que el de la recomendación. */
+const peticionSchema = z.object({ items: z.array(seleccionSchema).min(1).max(MAX_RECOMENDACIONES) });
 
 /** Revalida el sabor y el precio en el momento del clic. Solo devuelve datos
  * para el carrito existente; no crea pedidos ni modifica Shopify. */
