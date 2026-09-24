@@ -182,8 +182,6 @@ function SeleccionAsesor({ resultado, vigente }: { resultado: ResultadoAsesor; v
                   <p className="mt-1">{item.variante.nutricion.uso}</p>
                   {item.variante.nutricion.preparacion ? <p className="mt-2">{item.variante.nutricion.preparacion}</p> : null}
                   <p className="mt-2">{item.producto.porcionesCompletas} porciones completas por envase.</p>
-                  {item.variante.nutricion.notas.map((nota) => <p key={nota} className="mt-2 text-muted-foreground">{nota}</p>)}
-                  <p className="mt-2 text-muted-foreground">Fuente: catálogo Actimax 2026.</p>
                 </details>
                 <div className="mt-3 flex items-end justify-between gap-3">
                   <div>
