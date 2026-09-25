@@ -567,13 +567,21 @@ html {
 }
 
 /* Los accesos flotantes no deben tapar acciones de compra en pantallas
-   pequeñas: la barra fija de producto ocupa todo el ancho y las tarjetas de
-   catálogo llevan su propio botón. */
+   pequeñas. Sobre la barra fija de la ficha suben lo que ella mide (1 px de
+   borde, 10 px arriba, la foto de 44 px y el relleno inferior, que ya absorbe
+   la zona segura) más 12 px de aire; la barra de Arma tu kit cambia de alto
+   al expandirse, así que ahí se esconden. `translate` va aparte del
+   `transform` de la entrada y del `scale` del hover, y lo anima el mismo
+   transition-transform. */
 @media (max-width: 767px) {
-  body:has([data-catalog-page]) .whatsapp-button,
-  body:has([data-catalog-page]) .asesor-fab,
-  body:has([data-buy-bar][aria-hidden="false"]) .whatsapp-button,
-  body:has([data-buy-bar][aria-hidden="false"]) .asesor-fab {
+  body:has([data-buy-bar="producto"][aria-hidden="false"]) .whatsapp-button,
+  body:has([data-buy-bar="producto"][aria-hidden="false"]) .asesor-fab {
+    translate: 0 calc(-47px - max(12px, env(safe-area-inset-bottom, 0px)) + env(safe-area-inset-bottom, 0px));
+    transition-duration: 300ms;
+  }
+
+  body:has([data-buy-bar]:not([data-buy-bar="producto"])[aria-hidden="false"]) .whatsapp-button,
+  body:has([data-buy-bar]:not([data-buy-bar="producto"])[aria-hidden="false"]) .asesor-fab {
     display: none;
   }
 }

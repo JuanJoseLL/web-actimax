@@ -124,7 +124,7 @@ export function BuyBox({ product, inStock, stickyBar = false }: BuyBoxProps) {
            recupera ese momento de decisión. Se mantiene montada para animar
            la entrada, e `inert` evita tabular sobre botones ocultos. */
         <div
-          data-buy-bar
+          data-buy-bar="producto"
           aria-hidden={!showBar}
           inert={!showBar}
           className={`fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/92 backdrop-blur-xl transition-transform duration-300 lg:hidden ${
