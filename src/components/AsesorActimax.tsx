@@ -181,7 +181,6 @@ function SeleccionAsesor({ resultado, vigente }: { resultado: ResultadoAsesor; v
                   </summary>
                   <p className="mt-1">{item.variante.nutricion.uso}</p>
                   {item.variante.nutricion.preparacion ? <p className="mt-2">{item.variante.nutricion.preparacion}</p> : null}
-                  <p className="mt-2">{item.producto.porcionesCompletas} porciones completas por envase.</p>
                 </details>
                 <div className="mt-3 flex items-end justify-between gap-3">
                   <div>
@@ -243,6 +242,7 @@ export function AsesorActimax() {
   const busy = status === "submitted" || status === "streaming";
   const ultimoAsistente = messages.findLast((message) => message.role === "assistant")?.id;
   const maxTurns = messages.length >= 24;
+  const conversando = messages.length > 0;
 
   /* Mientras llega la respuesta se sigue el final del texto; al terminar, el
      turno se ancla arriba para que la selección quede a la vista sin buscarla. */
@@ -289,28 +289,29 @@ export function AsesorActimax() {
   }
 
   return (
-    <section aria-labelledby="titulo-asesor" className="flex min-h-0 flex-1 flex-col bg-white pt-3 md:bg-niebla md:px-6 md:pb-6 md:pt-8">
+    <section aria-labelledby="titulo-asesor" className={`flex min-h-0 flex-1 flex-col bg-white pt-3 md:bg-niebla md:px-6 md:pb-6 ${conversando ? "md:pt-4" : "md:pt-8"}`}>
       <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col">
         {/* En el teléfono esto es la barra de la vista —título y reinicio en
             una fila— para que la pantalla se la quede la conversación. En
-            escritorio vuelve a ser la portada de la sección. */}
-        <div className="mb-3 flex shrink-0 items-center justify-between gap-3 border-b border-tinta/10 px-4 pb-3 md:mb-6 md:grid md:grid-cols-[1fr_0.72fr] md:items-end md:gap-6 md:border-0 md:px-0 md:pb-0">
+            escritorio vuelve a ser la portada de la sección, hasta que empieza la
+            conversación: ahí se recoge a una fila para dejarle el alto al chat. */}
+        <div className={`mb-3 flex shrink-0 items-center justify-between gap-3 border-b border-tinta/10 px-4 pb-3 md:border-0 md:px-0 md:pb-0 ${conversando ? "md:mb-3" : "md:mb-6 md:grid md:grid-cols-[1fr_0.72fr] md:items-end md:gap-6"}`}>
           <div className="min-w-0">
-            <p className="hidden font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-azul md:block">Mi Plan Actimax · Asesor de productos</p>
-            <h1 id="titulo-asesor" className="font-display text-xl font-extrabold uppercase italic leading-[0.95] text-tinta md:mt-2 md:text-5xl md:leading-[0.92] lg:text-6xl xl:text-7xl">
-              Tu próxima meta. <span className="text-azul md:block">Tu combustible.</span>
+            <p className={`hidden font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-azul ${conversando ? "" : "md:block"}`}>Mi Plan Actimax · Asesor de productos</p>
+            <h1 id="titulo-asesor" className={`font-display text-xl font-extrabold uppercase italic leading-[0.95] text-tinta ${conversando ? "md:text-3xl" : "md:mt-2 md:text-5xl md:leading-[0.92] lg:text-6xl xl:text-7xl"}`}>
+              Tu próxima meta. <span className={`text-azul ${conversando ? "" : "md:block"}`}>Tu combustible.</span>
             </h1>
           </div>
-          <p className="hidden max-w-md text-sm leading-relaxed text-tinta/70 md:block">
+          <p className={`hidden max-w-md text-sm leading-relaxed text-tinta/70 ${conversando ? "" : "md:block"}`}>
             Cuéntanos qué entrenas y qué quieres lograr. Encontraremos los productos Actimax que encajan contigo, antes, durante y después.
           </p>
-          <Button variant="ghost" size="icon" aria-label="Empezar de nuevo" className="size-9 shrink-0 md:hidden" disabled={busy || messages.length === 0} onClick={reiniciar}>
-            <RotateCcwIcon />
+          <Button variant="ghost" size="icon" aria-label="Empezar de nuevo" className={`size-9 shrink-0 ${conversando ? "md:w-auto md:gap-2 md:px-3" : "md:hidden"}`} disabled={busy || !conversando} onClick={reiniciar}>
+            <RotateCcwIcon /> <span className="hidden md:inline">Empezar de nuevo</span>
           </Button>
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-white md:rounded-sm md:border md:border-tinta/10 md:shadow-sm">
-          <div className="hidden shrink-0 items-center justify-between gap-3 border-b border-tinta/10 px-5 py-4 md:flex">
+          <div className={`hidden shrink-0 items-center justify-between gap-3 border-b border-tinta/10 px-5 py-4 ${conversando ? "" : "md:flex"}`}>
             <p className="flex items-center gap-2 text-sm font-semibold">
               <span aria-hidden className="size-2 rounded-full bg-azul" /> Asesor Actimax
             </p>
