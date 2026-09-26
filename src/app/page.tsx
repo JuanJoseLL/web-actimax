@@ -10,20 +10,25 @@ import {
   ChevronRightIcon,
   FootprintsIcon,
   LockIcon,
+  MinusIcon,
   PackageIcon,
+  PlusIcon,
   SparklesIcon,
   TruckIcon,
   UsersRoundIcon,
 } from "lucide-react";
 import { FuelFinder } from "@/components/FuelFinder";
 import { GoogleReviewsBadge } from "@/components/GoogleReviewsBadge";
+import { HeroSlider } from "@/components/HeroSlider";
 import { NewsletterSection } from "@/components/NewsletterSection";
 import { PromoHome } from "@/components/PromoHome";
 import { ProductCard } from "@/components/ProductCard";
 import { Ticker } from "@/components/Ticker";
 import { Button } from "@/components/ui/button";
 import { formatPostDate, getAllBlogPosts } from "@/lib/blog";
-import { getAllProducts, getProducts } from "@/lib/catalog";
+import { ETIQUETA_UNIDAD, tituloUnidad } from "@/lib/arma-kit";
+import { getAllProducts, getProducts, getUnidadesDeKit } from "@/lib/catalog";
+import { ENVIO_GRATIS_UMBRAL } from "@/lib/envio";
 import { formatCOP } from "@/lib/format";
 import { canonicalProductPath } from "@/lib/product-paths";
 import {
@@ -89,10 +94,23 @@ function HomeSectionSkeleton({ className }: { className: string }) {
   );
 }
 
+/* Alto de pantalla menos el header y la franja de pestañas del carrusel. */
+const HERO_ALTO = "lg:min-h-[calc(100svh-99px-3rem)]";
+
 function Hero() {
   return (
-    <section className="hero-evolved overflow-hidden text-white">
-      <div className="grid lg:min-h-[calc(100svh-99px)] lg:grid-cols-[1.05fr_0.95fr]">
+    <HeroSlider
+      slides={[
+        { id: "combustible", etiqueta: "Nutrición deportiva", contenido: <SlideMarca /> },
+        { id: "arma-tu-kit", etiqueta: "Nuevo · Arma tu kit", contenido: <SlideArmaTuKit /> },
+      ]}
+    />
+  );
+}
+
+function SlideMarca() {
+  return (
+      <div className={`grid h-full lg:grid-cols-[1.05fr_0.95fr] ${HERO_ALTO}`}>
         <div className="relative z-10 flex flex-col justify-center px-4 py-12 sm:px-8 md:py-20 lg:pb-8 lg:pr-14 lg:pl-[max(3.5rem,calc((100vw-1440px)/2+5rem))] xl:pr-20 xl:pl-[max(5rem,calc((100vw-1440px)/2+5rem))]">
           <div className="fade-up flex items-center gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.22em] text-amarillo">
             <span className="h-px w-8 bg-amarillo" />
@@ -213,7 +231,144 @@ function Hero() {
           </div>
         </div>
       </div>
-    </section>
+  );
+}
+
+const PASOS_KIT = [
+  ["01", "Elige tus productos"],
+  ["02", "Combina los sabores"],
+  ["03", "Pon las cantidades"],
+] as const;
+
+function SlideArmaTuKit() {
+  /* En el móvil esta diapositiva se estira al alto de la primera, que lleva
+     foto: el sobrante lo absorbe el texto y el kit queda pegado abajo. */
+  return (
+    <div className={`grid h-full grid-rows-[1fr_auto] lg:grid-cols-[1.05fr_0.95fr] lg:grid-rows-none ${HERO_ALTO}`}>
+      <div className="relative z-10 flex flex-col justify-center px-4 py-12 sm:px-8 md:py-20 lg:pb-8 lg:pr-14 lg:pl-[max(3.5rem,calc((100vw-1440px)/2+5rem))] xl:pr-20 xl:pl-[max(5rem,calc((100vw-1440px)/2+5rem))]">
+        <div className="flex items-center gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.22em] text-amarillo">
+          <span className="rounded-sm bg-amarillo px-2 py-1 text-[10px] font-bold text-tinta">
+            Nuevo
+          </span>
+          Arma tu kit
+        </div>
+
+        {/* h2 y no h1: el h1 del home es el de la primera diapositiva. */}
+        <h2 className="mt-6 max-w-4xl font-display text-[15vw] font-extrabold uppercase italic leading-[0.8] tracking-[-0.045em] sm:text-[6rem] lg:text-[7rem] xl:text-[8rem]">
+          Tu kit,
+          <span className="block text-amarillo">a tu medida.</span>
+        </h2>
+
+        <p className="mt-7 max-w-xl text-base font-medium leading-relaxed text-white/80 sm:text-lg">
+          Ahora armas tu propio kit: eliges los geles, bebidas y barras que más te
+          gustan y cuántos de cada uno. Desde una sola unidad, sin mínimo de compra.
+        </p>
+
+        <ol className="mt-8 grid max-w-2xl grid-cols-3 border-y border-white/15 py-4">
+          {PASOS_KIT.map(([numero, paso], index) => (
+            <li
+              key={numero}
+              className={`px-3 first:pl-0 ${index > 0 ? "border-l border-white/15" : ""}`}
+            >
+              <p className="font-display text-3xl font-extrabold italic text-amarillo sm:text-4xl">
+                {numero}
+              </p>
+              <p className="mt-0.5 font-mono text-[10px] uppercase leading-tight tracking-[0.08em] text-white/70 sm:tracking-[0.12em]">
+                {paso}
+              </p>
+            </li>
+          ))}
+        </ol>
+
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <Button asChild variant="raceSun" size="lg" className="h-auto px-8 py-4 text-lg">
+            <Link href="/arma-tu-kit/">
+              Armar mi kit
+              <ArrowRightIcon data-icon="inline-end" />
+            </Link>
+          </Button>
+          <p className="flex items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70 sm:ml-3">
+            <TruckIcon aria-hidden className="size-4 text-amarillo" />
+            Envío gratis desde {formatCOP(ENVIO_GRATIS_UMBRAL)}
+          </p>
+        </div>
+      </div>
+
+      <div className="relative flex items-center justify-center overflow-hidden border-t border-white/10 bg-[radial-gradient(70%_60%_at_60%_40%,rgb(20_91_225/0.5),transparent_75%)] px-4 py-10 sm:px-8 lg:border-l lg:border-t-0 lg:py-12">
+        <Suspense fallback={<div className="aspect-[4/3] w-full max-w-lg" />}>
+          <KitDeEjemplo />
+        </Suspense>
+      </div>
+    </div>
+  );
+}
+
+/* Cantidades de muestra para enseñar que cada producto lleva la suya. */
+const CANTIDADES_EJEMPLO = { geles: 6, bebidas: 3, barras: 2 } as const;
+
+/**
+ * Un kit de muestra con las unidades reales de Shopify: una por tipo, con la
+ * foto que ve el armador. Es decorativo; el clic lleva al armador de verdad.
+ */
+async function KitDeEjemplo() {
+  const unidades = await getUnidadesDeKit();
+  const muestra = (["geles", "bebidas", "barras"] as const).flatMap((tipo) => {
+    const producto = unidades.find((p) => p.type === tipo && p.images[0] !== undefined);
+    return producto === undefined
+      ? []
+      : [{ tipo, producto, cantidad: CANTIDADES_EJEMPLO[tipo] }];
+  });
+  if (muestra.length === 0) return null;
+  const total = muestra.reduce((suma, item) => suma + item.cantidad, 0);
+
+  return (
+    <Link
+      href="/arma-tu-kit/"
+      aria-label="Ir al armador de kits"
+      className="group w-full max-w-lg xl:max-w-xl"
+    >
+      <p className="mb-3 flex items-center justify-between font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/70">
+        <span>Así se ve un kit</span>
+        <span className="text-amarillo">{total} unidades</span>
+      </p>
+      <ul className="grid grid-cols-3 gap-2.5 sm:gap-3">
+        {muestra.map(({ tipo, producto, cantidad }, index) => (
+          <li
+            key={producto.handle}
+            className="flex flex-col overflow-hidden rounded-sm bg-white text-tinta shadow-[0_18px_40px_-18px_rgb(0_0_0/0.6)] transition-transform duration-500 group-hover:-translate-y-1"
+            style={{ transitionDelay: `${index * 60}ms` }}
+          >
+            <div className="relative aspect-square bg-[#f4f2ec]">
+              <Image
+                src={producto.images[0]!}
+                alt=""
+                fill
+                sizes="(min-width: 1024px) 160px, 30vw"
+                className="object-contain p-2"
+              />
+            </div>
+            <div className="flex flex-1 flex-col gap-2 p-2.5 sm:p-3">
+              <p className="font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-azul">
+                {ETIQUETA_UNIDAD[tipo]}
+              </p>
+              <p className="line-clamp-2 text-xs font-semibold leading-tight sm:text-sm">
+                {tituloUnidad(producto.title)}
+              </p>
+              <div
+                aria-hidden
+                className="mt-auto flex items-center justify-between rounded-full border border-tinta/15 px-1.5 py-1"
+              >
+                <MinusIcon className="size-3.5 text-tinta/45" />
+                <span className="font-display text-lg font-extrabold italic leading-none">
+                  {cantidad}
+                </span>
+                <PlusIcon className="size-3.5 text-azul" />
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </Link>
   );
 }
 

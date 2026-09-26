@@ -192,6 +192,22 @@ html {
   transform: scale(1.015);
 }
 
+/* Barra de avance de la pestaña activa del carrusel del hero (HeroSlider). */
+.hero-progreso {
+  animation-name: hero-progreso;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+@keyframes hero-progreso {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 .section-kicker {
   display: flex;
   align-items: center;
