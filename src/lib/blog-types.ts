@@ -15,7 +15,8 @@ export interface BlogPost {
   tags: string[];
   excerpt: string;
   date: string;
-  /** Fecha real de modificación en Shopify; ausente en el respaldo local. */
+  /** Fecha de modificación. El `Article` del Storefront API no la expone:
+      pedir `updatedAt` rompe toda la consulta y deja el blog entero en 404. */
   updatedAt?: string;
   minutes: number;
   author: string;

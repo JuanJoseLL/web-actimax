@@ -26,7 +26,6 @@ interface ShopifyArticleNode {
   content?: string;
   contentHtml?: string;
   publishedAt: string;
-  updatedAt: string;
   tags: string[];
   authorV2: { name: string } | null;
   image: BlogImage | null;
@@ -58,7 +57,6 @@ const ARTICLE_FIELDS = /* GraphQL */ `
   title
   excerpt
   publishedAt
-  updatedAt
   tags
   authorV2 { name }
   image { url altText width height }
@@ -169,7 +167,6 @@ function mapArticle(node: ShopifyArticleNode): BlogPost {
     tags,
     excerpt,
     date: node.publishedAt,
-    updatedAt: node.updatedAt,
     minutes: readingMinutes(plainText),
     author: node.authorV2?.name ?? "Actimax",
     image: node.image,
