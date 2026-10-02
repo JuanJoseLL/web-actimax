@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { parametrosUtm, resumenAtribucion, saneaAtribucion } from "@/lib/atribucion";
+import { NOTA_MAX } from "@/lib/cart";
 import { findShortedLines, type CheckoutLine } from "@/lib/checkout-lines";
 
 const STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
@@ -111,6 +112,13 @@ export async function POST(request: Request) {
   const origen = resumenAtribucion(atribucion);
   if (origen !== null) attributes.push({ key: "Origen", value: origen });
 
+  /* La nota opcional del cliente va en `note` del carrito, que Shopify copia
+     tal cual a las notas del pedido: el checkout en Basic no tiene dónde
+     escribirla. Se recorta para que nadie mande un libro por esta puerta. */
+  const notaCruda =
+    typeof body === "object" && body !== null ? (body as { nota?: unknown }).nota : undefined;
+  const nota = typeof notaCruda === "string" ? notaCruda.trim().slice(0, NOTA_MAX) : "";
+
   try {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -130,7 +138,13 @@ export async function POST(request: Request) {
          conservan su atributo "Cédula". */
       body: JSON.stringify({
         query: CART_CREATE_MUTATION,
-        variables: { input: attributes.length > 0 ? { lines, attributes } : { lines } },
+        variables: {
+          input: {
+            lines,
+            ...(attributes.length > 0 ? { attributes } : {}),
+            ...(nota !== "" ? { note: nota } : {}),
+          },
+        },
       }),
       cache: "no-store",
       signal: AbortSignal.timeout(8000),

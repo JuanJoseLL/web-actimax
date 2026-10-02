@@ -3,7 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense, use, useState } from "react";
-import { FlagIcon, LoaderCircleIcon, TriangleAlertIcon, Trash2Icon } from "lucide-react";
+import {
+  ChevronDownIcon,
+  FlagIcon,
+  LoaderCircleIcon,
+  NotebookPenIcon,
+  TriangleAlertIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { QuantitySelector } from "@/components/QuantitySelector";
 import { VariantOptions } from "@/components/VariantOptions";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
@@ -15,6 +22,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Sheet,
   SheetContent,
@@ -25,7 +33,7 @@ import {
 } from "@/components/ui/sheet";
 import { ENVIO_GRATIS_UMBRAL } from "@/lib/envio";
 import { sugerenciaEnvioGratis, type UpsellProduct } from "@/lib/envio-gratis";
-import { cartLineId } from "@/lib/cart";
+import { cartLineId, NOTA_MAX } from "@/lib/cart";
 import { initialProductVariant } from "@/lib/product-variants";
 import { formatCOP } from "@/lib/format";
 import { canonicalProductPath } from "@/lib/product-paths";
@@ -179,6 +187,53 @@ function CartShippingSuggestion({
   );
 }
 
+/**
+ * Nota opcional para el pedido. El checkout de Shopify en Basic no tiene
+ * dónde escribirla, así que se pide acá y viaja como `note` del carrito.
+ * Plegada por defecto: casi nadie la usa y no debe estorbar el camino al pago.
+ */
+function CartNota() {
+  const { nota, setNota } = useCart();
+  const [abierta, setAbierta] = useState(nota !== "");
+  const visible = abierta || nota !== "";
+
+  return (
+    <div className="px-4 py-4 sm:px-5">
+      <button
+        type="button"
+        aria-expanded={visible}
+        aria-controls="carrito-nota"
+        onClick={() => setAbierta(!visible)}
+        className="flex w-full items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+      >
+        <NotebookPenIcon aria-hidden className="size-4" />
+        ¿Quieres dejar una nota para tu pedido?
+        <ChevronDownIcon
+          aria-hidden
+          className={`ml-auto size-4 transition-transform ${visible ? "rotate-180" : ""}`}
+        />
+      </button>
+      {visible ? (
+        <div className="mt-2">
+          <Textarea
+            id="carrito-nota"
+            aria-label="Nota para tu pedido"
+            value={nota}
+            onChange={(event) => setNota(event.target.value)}
+            maxLength={NOTA_MAX}
+            rows={3}
+            placeholder="Ej.: indicaciones para la entrega o datos para la factura."
+            className="resize-none text-sm"
+          />
+          <p className="mt-1 text-right font-mono text-[11px] tabular-nums text-muted-foreground">
+            {nota.length}/{NOTA_MAX}
+          </p>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function CartDrawer({ productsPromise }: { productsPromise: Promise<UpsellProduct[]> }) {
   const {
     items,
@@ -317,6 +372,7 @@ export function CartDrawer({ productsPromise }: { productsPromise: Promise<Upsel
                   </li>
                 ))}
               </ul>
+              <CartNota />
             </div>
 
             <SheetFooter className="border-t border-border bg-background px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5">

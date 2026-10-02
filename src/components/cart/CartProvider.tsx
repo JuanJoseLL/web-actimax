@@ -12,7 +12,7 @@ import {
 } from "react";
 import { track } from "@/lib/track";
 import { toast } from "sonner";
-import { cartLineId } from "@/lib/cart";
+import { cartLineId, NOTA_MAX } from "@/lib/cart";
 import { isShortedLine, shortedCartMessage } from "@/lib/checkout-lines";
 import { atribucionGuardada } from "@/lib/atribucion";
 import { idVisitante } from "@/lib/visitante";
@@ -39,6 +39,9 @@ interface CartContextValue {
   /** Pago en curso: el carrito ya se pidió a Shopify y falta el redirect. */
   isCheckingOut: boolean;
   checkoutError: string | null;
+  /** Nota opcional para el pedido; viaja como `note` del carrito de Shopify. */
+  nota: string;
+  setNota: (nota: string) => void;
   add: (line: CartLine, qty?: number) => void;
   setQty: (lineId: string, qty: number) => void;
   remove: (lineId: string) => void;
@@ -57,8 +60,10 @@ const CartContext = createContext<CartContextValue | null>(null);
 const STORAGE_KEY = "actimax-cart-v3";
 const PENDING_CHECKOUT_KEY = "actimax-checkout-pendiente";
 const PENDING_BUYNOW_KEY = "actimax-comprar-ahora-pendiente";
+const NOTA_KEY = "actimax-nota-pedido";
 const CHANGE_EVENT = "actimax-cart-change";
 let fallbackCart = "[]";
+let fallbackNota = "";
 
 function subscribeToCart(onStoreChange: () => void) {
   window.addEventListener("storage", onStoreChange);
@@ -79,6 +84,18 @@ function getCartSnapshot() {
 
 function getServerCartSnapshot() {
   return "[]";
+}
+
+function getNotaSnapshot() {
+  try {
+    return window.sessionStorage.getItem(NOTA_KEY) ?? "";
+  } catch {
+    return fallbackNota;
+  }
+}
+
+function getServerNotaSnapshot() {
+  return "";
 }
 
 function isCartItem(value: unknown): value is CartItem {
@@ -112,6 +129,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  /* En sessionStorage y no en el carrito persistente: la nota es de esta
+     compra, y si se va con la pestaña no se cuela en un pedido de otro día. */
+  const nota = useSyncExternalStore(subscribeToCart, getNotaSnapshot, getServerNotaSnapshot);
+  const setNota = useCallback((value: string) => {
+    const next = value.slice(0, NOTA_MAX);
+    try {
+      if (next === "") window.sessionStorage.removeItem(NOTA_KEY);
+      else window.sessionStorage.setItem(NOTA_KEY, next);
+    } catch {
+      fallbackNota = next;
+    }
+    window.dispatchEvent(new Event(CHANGE_EVENT));
+  }, []);
 
   const updateItems = useCallback((recipe: (items: CartItem[]) => CartItem[]) => {
     try {
@@ -155,7 +185,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     updateItems((prev) => prev.filter((i) => cartLineId(i) !== lineId));
   }, [updateItems]);
 
-  const clear = useCallback(() => updateItems(() => []), [updateItems]);
+  const clear = useCallback(() => {
+    updateItems(() => []);
+    setNota("");
+  }, [updateItems, setNota]);
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => setIsOpen(false), []);
 
@@ -292,6 +325,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           })),
           visitante: idVisitante(),
           atribucion: atribucionGuardada(),
+          nota,
         }),
       });
       const result: unknown = await response.json();
@@ -346,7 +380,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       );
       setIsCheckingOut(false);
     }
-  }, [isCheckingOut, items]);
+  }, [isCheckingOut, items, nota]);
 
   /* Compra directa desde la PDP: un checkout con esa única línea. El carrito
      guardado no participa ni se limpia al completar el pago; el pendiente va
@@ -433,6 +467,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       isOpen,
       isCheckingOut,
       checkoutError,
+      nota,
+      setNota,
       add,
       setQty,
       remove,
@@ -450,6 +486,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     isOpen,
     isCheckingOut,
     checkoutError,
+    nota,
+    setNota,
     add,
     setQty,
     remove,
