@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRightIcon, MenuIcon, SearchIcon, ShoppingCartIcon, UserRoundIcon } from "lucide-react";
+import { MenuIcon, SearchIcon, ShoppingCartIcon, UserRoundIcon } from "lucide-react";
 import { useState } from "react";
 import { useIsMac } from "@/lib/useIsMac";
 import { ENVIO_GRATIS_UMBRAL } from "@/lib/envio";
@@ -22,10 +22,12 @@ import {
 } from "@/components/ui/sheet";
 import { categoriaPath } from "@/data/categorias";
 
-const NAV = [
+/* `destacado` pinta el enlace en amarillo: es la entrada al armador de kits,
+   que antes tenía además un botón propio que repetía el mismo destino. */
+const NAV: { label: string; href: string; destacado?: boolean }[] = [
   { label: "Comprar", href: "/productos/" },
   { label: "Geles", href: categoriaPath("geles") },
-  { label: "Arma tu kit", href: "/arma-tu-kit/" },
+  { label: "Arma tu kit", href: "/arma-tu-kit/", destacado: true },
   { label: "El método", href: "/#metodo" },
   { label: "Blog", href: "/blog/" },
   { label: "Club", href: "/#club" },
@@ -71,19 +73,29 @@ export function Header() {
         </Link>
 
         <nav className="hidden flex-1 items-center justify-center gap-6 md:flex" aria-label="Principal">
-          {NAV.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="group relative font-display text-base font-bold uppercase tracking-wide text-foreground transition-colors hover:text-primary lg:text-lg"
-            >
-              {item.label}
-              <span
-                aria-hidden
-                className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 bg-accent transition-transform duration-200 group-hover:scale-x-100"
-              />
-            </Link>
-          ))}
+          {NAV.map((item) =>
+            item.destacado ? (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="-mx-2.5 rounded-sm bg-accent px-2.5 py-1 font-display text-base font-bold uppercase tracking-wide text-accent-foreground shadow-sm transition hover:-translate-y-0.5 hover:bg-accent/90 hover:shadow-md lg:text-lg"
+              >
+                {item.label}
+              </Link>
+            ) : (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="group relative font-display text-base font-bold uppercase tracking-wide text-foreground transition-colors hover:text-primary lg:text-lg"
+              >
+                {item.label}
+                <span
+                  aria-hidden
+                  className="absolute -bottom-1 left-0 h-0.5 w-full origin-left scale-x-0 bg-accent transition-transform duration-200 group-hover:scale-x-100"
+                />
+              </Link>
+            ),
+          )}
         </nav>
 
         <div className="ml-auto flex items-center gap-0 sm:gap-2 md:ml-0">
@@ -101,22 +113,12 @@ export function Header() {
             type="button"
             variant="outline"
             onClick={openCommandPalette}
-            className="hidden h-9 gap-2 rounded-full border-border pl-3 pr-1.5 font-normal text-muted-foreground hover:text-foreground xl:flex"
+            className="hidden h-9 w-56 justify-start gap-2 rounded-full border-border pl-3 pr-1.5 font-normal text-muted-foreground hover:text-foreground xl:flex 2xl:w-72"
             aria-label="Buscar en la tienda"
           >
             <SearchIcon className="size-4" />
             <span className="text-sm">Buscar</span>
-            <Kbd className="ml-2 font-mono">{isMac ? "⌘K" : "Ctrl K"}</Kbd>
-          </Button>
-          <Button
-            asChild
-            variant="raceSun"
-            className="hidden h-9 px-4 lg:inline-flex"
-          >
-            <Link href="/arma-tu-kit/">
-              Empieza tu kit
-              <ArrowRightIcon data-icon="inline-end" />
-            </Link>
+            <Kbd className="ml-auto font-mono">{isMac ? "⌘K" : "Ctrl K"}</Kbd>
           </Button>
           <Button asChild variant="ghost" size="icon" aria-label="Mi cuenta">
             {/* <a> plano: /mi-cuenta/ redirige fuera del sitio (cuentas de
@@ -172,7 +174,9 @@ export function Header() {
                           <span aria-hidden className="font-mono text-[11px] text-accent">
                             {String(index + 1).padStart(2, "0")}
                           </span>
-                          <span className="font-display text-3xl font-bold uppercase italic tracking-wide">
+                          <span
+                            className={`font-display text-3xl font-bold uppercase italic tracking-wide ${item.destacado ? "text-accent" : ""}`}
+                          >
                             {item.label}
                           </span>
                         </Link>

@@ -111,7 +111,19 @@ function Hero() {
 function SlideMarca() {
   return (
       <div className={`grid h-full lg:grid-cols-[1.05fr_0.95fr] ${HERO_ALTO}`}>
-        <div className="relative z-10 flex flex-col justify-center px-4 py-12 sm:px-8 md:py-20 lg:pb-8 lg:pr-14 lg:pl-[max(3.5rem,calc((100vw-1440px)/2+5rem))] xl:pr-20 xl:pl-[max(5rem,calc((100vw-1440px)/2+5rem))]">
+        <div className="relative z-10 flex flex-col justify-center px-4 pt-6 pb-12 sm:px-8 md:py-20 lg:pb-8 lg:pr-14 lg:pl-[max(3.5rem,calc((100vw-1440px)/2+5rem))] xl:pr-20 xl:pl-[max(5rem,calc((100vw-1440px)/2+5rem))]">
+          {/* En el móvil la diapositiva del armador queda a un deslizamiento y
+              sus pestañas muy abajo: esta franja lo deja a la vista de entrada. */}
+          <Link
+            href="/arma-tu-kit/"
+            className="fade-up mb-7 flex min-h-11 items-center gap-3 self-start rounded-full border border-amarillo/50 bg-white/10 py-1.5 pl-1.5 pr-4 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur-sm transition hover:border-amarillo lg:hidden"
+          >
+            <span className="rounded-full bg-amarillo px-2 py-1 text-[10px] font-bold text-tinta">
+              Nuevo
+            </span>
+            Arma tu kit
+            <ArrowRightIcon aria-hidden className="size-4 text-amarillo" />
+          </Link>
           <div className="fade-up flex items-center gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.22em] text-amarillo">
             <span className="h-px w-8 bg-amarillo" />
             El combustible de tu próxima historia
@@ -242,10 +254,11 @@ const PASOS_KIT = [
 
 function SlideArmaTuKit() {
   /* En el móvil esta diapositiva se estira al alto de la primera, que lleva
-     foto: el sobrante lo absorbe el texto y el kit queda pegado abajo. */
+     foto: el texto arranca arriba y el sobrante lo absorbe el kit, centrado,
+     para que no quede un hueco vacío antes del titular. */
   return (
-    <div className={`grid h-full grid-rows-[1fr_auto] lg:grid-cols-[1.05fr_0.95fr] lg:grid-rows-none ${HERO_ALTO}`}>
-      <div className="relative z-10 flex flex-col justify-center px-4 py-12 sm:px-8 md:py-20 lg:pb-8 lg:pr-14 lg:pl-[max(3.5rem,calc((100vw-1440px)/2+5rem))] xl:pr-20 xl:pl-[max(5rem,calc((100vw-1440px)/2+5rem))]">
+    <div className={`grid h-full grid-rows-[auto_1fr] lg:grid-cols-[1.05fr_0.95fr] lg:grid-rows-none ${HERO_ALTO}`}>
+      <div className="relative z-10 flex flex-col justify-start px-4 pt-8 pb-10 sm:px-8 md:py-20 lg:justify-center lg:pb-8 lg:pr-14 lg:pl-[max(3.5rem,calc((100vw-1440px)/2+5rem))] xl:pr-20 xl:pl-[max(5rem,calc((100vw-1440px)/2+5rem))]">
         <div className="flex items-center gap-3 font-mono text-[11px] font-semibold uppercase tracking-[0.22em] text-amarillo">
           <span className="rounded-sm bg-amarillo px-2 py-1 text-[10px] font-bold text-tinta">
             Nuevo
