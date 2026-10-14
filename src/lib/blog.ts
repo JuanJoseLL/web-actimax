@@ -206,7 +206,7 @@ async function storefrontQuery<T>(query: string, variables?: Record<string, stri
   }
 }
 
-export async function getAllBlogPosts(): Promise<BlogPost[]> {
+export async function getAllBlogPosts(forSearch = false): Promise<BlogPost[]> {
   "use cache";
   cacheTag("blog");
   cacheLife(BLOG_CACHE_LIFE);
@@ -225,7 +225,7 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
      un seguro contra un cursor que se repita, no un límite pensado. */
   for (let page = 0; page < 10; page += 1) {
     const data = await storefrontQuery<ArticlesPage>(
-      ARTICLES_QUERY,
+      forSearch ? ARTICLES_QUERY.replace(`content(truncateAt: ${READING_SAMPLE_CHARS})`, "content") : ARTICLES_QUERY,
       after === undefined ? undefined : { after },
     );
     /* Si falla una página posterior nos quedamos con lo que ya se leyó: medio
@@ -242,7 +242,10 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
     cacheLife({ stale: 10, revalidate: 10, expire: 60 });
     return fallbackPosts;
   }
-  return nodes.map(mapArticle);
+  return nodes.map((node) => {
+    const post = mapArticle(node);
+    return forSearch ? { ...post, searchText: node.content ?? "" } : post;
+  });
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost | undefined> {

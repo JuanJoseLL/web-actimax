@@ -24,6 +24,8 @@ export interface BlogPost {
   seoTitle: string | null;
   seoDescription: string | null;
   bodyHtml: string;
+  /** Texto completo, disponible únicamente al preparar la búsqueda. */
+  searchText?: string;
 }
 
 export function isFeaturedBlogTag(tag: string): boolean {

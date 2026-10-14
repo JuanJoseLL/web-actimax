@@ -105,7 +105,7 @@ export function Header() {
             size="icon"
             onClick={openCommandPalette}
             className="xl:hidden"
-            aria-label="Buscar en la tienda"
+            aria-label="Buscar productos o artículos"
           >
             <SearchIcon />
           </Button>
@@ -114,7 +114,7 @@ export function Header() {
             variant="outline"
             onClick={openCommandPalette}
             className="hidden h-9 w-56 justify-start gap-2 rounded-full border-border pl-3 pr-1.5 font-normal text-muted-foreground hover:text-foreground xl:flex 2xl:w-72"
-            aria-label="Buscar en la tienda"
+            aria-label="Buscar productos o artículos"
           >
             <SearchIcon className="size-4" />
             <span className="text-sm">Buscar</span>

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BlogPagination } from "@/components/blog/BlogPagination";
+import { BlogSearchButton } from "@/components/blog/BlogSearchButton";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatPostDate, type BlogPost } from "@/lib/blog";
 
@@ -31,6 +32,7 @@ export function BlogListing({
         {title}
       </h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-tinta/70">{description}</p>
+      <BlogSearchButton />
 
       {first !== undefined ? (
         <Card className="hero-course mt-12 overflow-hidden py-0 text-white transition-transform hover:-translate-y-0.5">

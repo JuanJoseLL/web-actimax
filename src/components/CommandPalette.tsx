@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { isBlogPath } from "@/lib/blog-search";
+import { BlogSearchResults } from "@/components/blog/BlogSearchResults";
 import {
   ArrowRightLeftIcon,
   CookieIcon,
@@ -119,6 +121,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
   const [query, setQuery] = useState("");
   const [pending, setPending] = useState<PendingQty | null>(null);
   const router = useRouter();
+  const isBlog = isBlogPath(usePathname());
   const {
     add,
     items,
@@ -170,7 +173,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
      registra sola cuando la escritura se detiene. */
   useEffect(() => {
     const term = query.trim();
-    if (!isOpen || term.length < 3) return;
+    if (!isOpen || isBlog || term.length < 3) return;
     const timer = setTimeout(() => {
       const found = products.some(
         (product) => scoreMatch(product.handle, term, productKeywords(product)) > 0,
@@ -178,7 +181,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
       if (!found) trackSearch("sin-resultados");
     }, 1200);
     return () => clearTimeout(timer);
-  }, [isOpen, productKeywords, products, query, trackSearch]);
+  }, [isOpen, isBlog, productKeywords, products, query, trackSearch]);
 
   /** La cantidad vive pegada a un producto: moverse por la lista no la arrastra. */
   const qtyFor = useCallback(
@@ -335,8 +338,8 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
     <CommandDialog
       open={isOpen}
       onOpenChange={setOpen}
-      title="Torre de control"
-      description="Busca productos o navega la tienda"
+      title={isBlog ? "Buscar en el blog" : "Torre de control"}
+      description={isBlog ? "Encuentra artículos y guías de nutrición deportiva" : "Busca productos o navega la tienda"}
       className="top-2 flex max-h-[calc(100dvh-1rem)] w-[calc(100%-1rem)] max-w-xl translate-y-0 flex-col sm:top-1/2 sm:w-full sm:max-w-xl sm:-translate-y-1/2"
       showCloseButton
     >
@@ -349,14 +352,19 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
       <Command
         className="h-auto! min-h-0 flex-1"
         filter={scoreMatch}
-        onKeyDown={onCommandKeyDown}
+        shouldFilter={!isBlog}
+        onKeyDown={isBlog ? undefined : onCommandKeyDown}
       >
         <CommandInput
           value={query}
           onValueChange={setQuery}
-          placeholder="Busca geles, kits, 21K…"
+          placeholder={isBlog ? "Busca un artículo…" : "Busca geles, kits, 21K…"}
         />
         <CommandList className="min-h-0 max-h-none! flex-1">
+          {isBlog ? <BlogSearchResults query={query} onSelect={(path) => {
+            trackSearch(path);
+            run(() => router.push(path));
+          }} /> : <>
           <CommandEmpty>
             <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
               Sin resultados en la ruta
@@ -512,6 +520,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
               </CommandItem>
             ) : null}
           </CommandGroup>
+          </>}
         </CommandList>
       </Command>
 
@@ -535,7 +544,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
       {/* El carrito vive fuera de la lista: ni el filtro ni el scroll lo pueden
           esconder. Antes solo existía como un item al fondo de la lista y para
           verlo había que bajar por todo el catálogo. */}
-      {count > 0 ? (
+      {!isBlog && count > 0 ? (
         <div className="flex shrink-0 items-center gap-2 border-t border-border bg-muted/40 px-3 py-2">
           <button
             type="button"
@@ -573,7 +582,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
       <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border px-3 py-2">
         <span className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
           <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-amarillo" />
-          Torre de control
+          {isBlog ? "Blog · Consejos del equipo" : "Torre de control"}
         </span>
         <span className="hidden items-center gap-3 font-mono text-[10px] text-muted-foreground sm:flex">
           <span className="hidden items-center gap-1 md:flex">
@@ -583,7 +592,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
           <span className="flex items-center gap-1">
             <Kbd>↵</Kbd> ir
           </span>
-          <span className="flex items-center gap-1">
+          {!isBlog ? <><span className="flex items-center gap-1">
             <Kbd>{mod}</Kbd>
             <Kbd>↑</Kbd> cantidad
           </span>
@@ -591,6 +600,7 @@ export function CommandPalette({ products }: { products: PaletteProduct[] }) {
             <Kbd>{mod}</Kbd>
             <Kbd>↵</Kbd> al carrito
           </span>
+          </> : null}
         </span>
       </div>
     </CommandDialog>
