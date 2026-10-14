@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { categoriaPath } from "@/data/categorias";
 import { canonicalProductPath } from "@/lib/product-paths";
+import { calculateGelCount } from "@/lib/blog-calculators";
 
 const PACK_LINKS: Record<string, { href: string; label: string }> = {
   "10k": { href: canonicalProductPath("energy-pack-de-10k"), label: "Ver Energy Pack 10K" },
@@ -57,6 +58,8 @@ export function LegacyArticleEnhancements() {
     const hideResults = () => {
       results.style.display = "none";
     };
+    hideResults();
+    timing.setAttribute("aria-live", "polite");
     const calculate = () => {
       const minutes = Number.parseInt(duration.value, 10);
       if (distance.value === "" || !Number.isFinite(minutes) || minutes <= 0) {
@@ -66,7 +69,7 @@ export function LegacyArticleEnhancements() {
         return;
       }
 
-      const gelCount = minutes < 40 ? 0 : minutes < 60 ? 1 : 1 + Math.floor((minutes - 45) / 40);
+      const gelCount = calculateGelCount(minutes);
       timing.textContent =
         gelCount === 0
           ? "Para esta duración normalmente no necesitas geles si comienzas bien alimentado."

@@ -6,6 +6,8 @@ import { SeoBreadcrumbs } from "@/components/SeoBreadcrumbs";
 import { formatPostDate, type BlogPost } from "@/lib/blog";
 import { LegacyArticleEnhancements } from "@/components/blog/LegacyArticleEnhancements";
 import { BlogNewsletter } from "@/components/blog/BlogNewsletter";
+import { BlogCalculatorBody } from "@/components/blog/BlogCalculatorBody";
+import { blogCalculatorKind } from "@/lib/blog-calculators";
 import {
   ProductosDelArticulo,
   ProductosDelArticuloSkeleton,
@@ -36,6 +38,7 @@ function wrapTablesForScroll(html: string): string {
  */
 export function BlogArticle({ post, related }: { post: BlogPost; related: BlogPost[] }) {
   const bodyHtml = wrapTablesForScroll(post.bodyHtml);
+  const calculator = blogCalculatorKind(post.slug);
   const structuredData = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -95,10 +98,10 @@ export function BlogArticle({ post, related }: { post: BlogPost; related: BlogPo
             ) : null}
 
             <Separator className="mt-10" />
-            <div
+            {calculator ? <BlogCalculatorBody key={post.slug} html={bodyHtml} kind={calculator} /> : <div
               className="prose-actimax prose-blog pt-8 text-[15px] text-foreground/85"
               dangerouslySetInnerHTML={{ __html: bodyHtml }}
-            />
+            />}
             {/* key: al navegar de un artículo a otro el componente ocupa la misma
                 posición del árbol, así que React lo reusaría y su efecto no volvería
                 a correr sobre el HTML nuevo. */}

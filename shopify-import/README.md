@@ -74,6 +74,24 @@ Antes de apuntar `actimax.com.co` al nuevo storefront:
 5. Enviar `https://actimax.com.co/sitemap.xml` a Google Search Console.
 6. Revisar errores 404, indexacion y Core Web Vitals durante las semanas siguientes.
 
+## Calculadoras heredadas
+
+La importacion elimina los scripts de WordPress y no migra los plugins. Los
+88 articulos auditados incluyen tres marcadores vacios `#fitcalc_actimax`:
+
+- `calculadora-de-calorias`: calorias diarias, actividad y objetivo.
+- `calcular-imc-indice-de-masa-corporal`: IMC para adultos.
+- `talla-de-bicicleta-adecuada`: talla de cuadro por entrepierna y tipo de bicicleta.
+
+`BlogCalculatorBody.tsx` monta las calculadoras React en esos marcadores en el
+storefront Next.js. Conserva el marcador al editar los articulos en Shopify.
+Las formulas estan en `src/lib/blog-calculators.ts`, con pruebas de regresion.
+La calculadora de `geles-energeticos-guia` conserva sus controles HTML y se
+activa mediante `LegacyArticleEnhancements.tsx`.
+
+Estos cambios necesitan desplegar el frontend; no requieren reinstalar un
+plugin ni modificar el tema nativo de Shopify.
+
 ## Fotos de producto
 
 `product-photos-manifest.json` declara, por handle, que fotos nuevas van (en
