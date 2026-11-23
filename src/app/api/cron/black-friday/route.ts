@@ -13,8 +13,10 @@ import { adminGraphQL, hayCredencialesAdmin } from "@/lib/shopify-admin";
 /**
  * Pone y quita los precios de Black Friday (ver src/lib/black-friday.ts).
  *
- * La llama el cron de Vercel (vercel.json) a la hora de inicio y a la de
- * cierre; Vercel manda `Authorization: Bearer $CRON_SECRET`. Qué hacer lo
+ * La llama el cron de Vercel (vercel.json) cada hora en punto entre el 23 y
+ * el 30 de noviembre (UTC) —Vercel guarda un solo horario por ruta, así que
+ * no se pueden declarar "inicio" y "cierre" por separado—; manda
+ * `Authorization: Bearer $CRON_SECRET`. Qué hacer lo
  * decide el reloj, no quien llama: durante la promo deja los precios
  * rebajados, en los tres días siguientes al cierre los devuelve, y fuera de
  * eso no hace nada. Así un disparo repetido, atrasado o del año que viene es
@@ -59,7 +61,9 @@ export async function GET(request: Request) {
     snapshot as ProductoSnapshot[],
     modo,
   );
-  revalidateTag("catalog", "max");
+  /* El cron corre cada hora: solo se invalida cuando de verdad cambió algo,
+     porque `catalog` reescribe casi todas las rutas del sitio. */
+  if (resultado.cambiadas > 0) revalidateTag("catalog", "max");
 
   console.log("[black-friday]", JSON.stringify({ fase, ...resultado }));
   /* 500 si algo quedó sin mover: Vercel lo marca como cron fallido y se ve
