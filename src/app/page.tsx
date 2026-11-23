@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { FuelFinder } from "@/components/FuelFinder";
 import { GoogleReviewsBadge } from "@/components/GoogleReviewsBadge";
+import { BlackFridaySlide, blackFridayActivo } from "@/components/BlackFriday";
 import { HeroSlider } from "@/components/HeroSlider";
 import { NewsletterSection } from "@/components/NewsletterSection";
 import { PromoHome } from "@/components/PromoHome";
@@ -97,11 +98,20 @@ function HomeSectionSkeleton({ className }: { className: string }) {
 /* Alto de pantalla menos el header y la franja de pestañas del carrusel. */
 const HERO_ALTO = "lg:min-h-[calc(100svh-99px-3rem)]";
 
-function Hero() {
+async function Hero() {
+  /* Durante Black Friday la promo abre el hero en lugar de la diapositiva de
+     marca (ver BlackFridaySlide): una sola valla, no dos. */
+  const blackFriday = await blackFridayActivo();
   return (
     <HeroSlider
       slides={[
-        { id: "combustible", etiqueta: "Nutrición deportiva", contenido: <SlideMarca /> },
+        blackFriday
+          ? {
+              id: "black-friday",
+              etiqueta: "Black Friday",
+              contenido: <BlackFridaySlide alto={HERO_ALTO} />,
+            }
+          : { id: "combustible", etiqueta: "Nutrición deportiva", contenido: <SlideMarca /> },
         { id: "arma-tu-kit", etiqueta: "Nuevo · Arma tu kit", contenido: <SlideArmaTuKit /> },
       ]}
     />

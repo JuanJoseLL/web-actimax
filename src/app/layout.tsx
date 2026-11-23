@@ -11,6 +11,7 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { CommandPalette, type PaletteProduct } from "@/components/CommandPalette";
 import { Footer } from "@/components/Footer";
+import { BlackFridayCinta } from "@/components/BlackFriday";
 import { Header } from "@/components/Header";
 import { HideOnDestinos } from "@/components/HideOnDestinos";
 import { SECUENCIA_TEXTO } from "@/components/SecuenciaNumerica";
@@ -123,6 +124,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: jsonLd(webSiteJsonLd()) }}
         />
         <CartProvider>
+          <Suspense fallback={null}>
+            <BlackFridayCinta />
+          </Suspense>
           <Header />
           <main className="flex-1">{children}</main>
           <HideOnDestinos>
