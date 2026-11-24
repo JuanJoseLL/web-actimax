@@ -1,6 +1,8 @@
 /**
- * Black Friday 2026: 20% menos en todo el catálogo, del lunes 23 de noviembre
- * a las 6 p. m. hasta la medianoche del domingo 29 (hora de Colombia).
+ * Black Friday 2026: 20% menos en los productos en caja y en tarro, del lunes
+ * 23 de noviembre a las 6 p. m. hasta la medianoche del domingo 29 (hora de
+ * Colombia). NO entran los kits (etiqueta `kits`) ni las unidades sueltas de
+ * "Arma tu kit" (etiqueta `unidad`): así lo pidió Operaciones.
  *
  * El descuento se hace en el PRECIO de Shopify, no con un descuento
  * automático: la web, el carrito, el checkout y los feeds de Google y Meta

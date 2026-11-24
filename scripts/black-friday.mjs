@@ -9,8 +9,8 @@
  *   pnpm blackfriday:aplicar    pone los precios de la promo YA (el cron lo
  *   pnpm blackfriday:revertir   hace solo; esto es el respaldo manual).
  *
- * Entran todos los productos ACTIVOS, incluidas las unidades sueltas de
- * "Arma tu kit". Los borradores no se tocan.
+ * Entran los productos ACTIVOS que no son kits (etiqueta `kits`) ni unidades
+ * sueltas de "Arma tu kit" (etiqueta `unidad`). Los borradores no se tocan.
  *
  * Ojo: `plan` se corre ANTES de que empiece la promo. Si se corre con la
  * promo puesta, tomaría los precios rebajados como "los de antes"; por eso
@@ -74,6 +74,7 @@ async function productosActivos() {
           id
           handle
           title
+          tags
           variants(first: 100) {
             nodes {
               id
@@ -89,7 +90,12 @@ async function productosActivos() {
   if (data.products.pageInfo.hasNextPage) {
     throw new Error("Hay más de 250 productos activos: este script no pagina.");
   }
-  return data.products.nodes.map((producto) => ({ ...producto, variants: producto.variants.nodes }));
+  return data.products.nodes
+    .filter(
+      (producto) =>
+        !producto.tags.some((tag) => ["kits", "unidad"].includes(tag.toLowerCase().trim())),
+    )
+    .map((producto) => ({ ...producto, variants: producto.variants.nodes }));
 }
 
 function leerSnapshot() {

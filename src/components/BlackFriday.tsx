@@ -46,7 +46,7 @@ export async function BlackFridayCinta() {
         Black Friday
       </span>
       <span>
-        Toda la tienda con {PORCENTAJE}% de descuento
+        {PORCENTAJE}% de descuento en geles, bebidas y barras
         <span className="hidden text-white/60 md:inline"> hasta el domingo 29</span>
       </span>
       <span className="hidden shrink-0 text-amarillo underline decoration-2 underline-offset-4 group-hover:no-underline sm:inline">
@@ -64,7 +64,7 @@ export async function BlackFridayCinta() {
 const EJEMPLOS = [
   { handle: "bebida-deportiva-elite-tarro-500gr", nombre: "Bebida Élite, tarro de 500 g" },
   { handle: "gel-energetico-actimax-caja-x8", nombre: "Gel Energético, caja de 8" },
-  { handle: "energy-pack-maraton-42k", nombre: "Energy Pack Maratón 42K" },
+  { handle: "recovery-pro-tarro-400gr", nombre: "Recovery Pro, tarro de 400 g" },
 ];
 
 function ejemplosDePrecio() {
@@ -132,19 +132,16 @@ export function BlackFridaySlide({ alto }: { alto: string }) {
           {/* El porcentaje lo dice el dorsal, que es decorativo: acá va solo
               para lectores de pantalla y buscadores. */}
           <span className="sr-only">Black Friday Actimax: {PORCENTAJE}% de descuento </span>
-          En toda la tienda, hasta el domingo
+          En geles, bebidas y barras
         </h1>
         <p className="mt-5 max-w-lg text-base font-medium leading-relaxed text-white/72 sm:text-lg">
-          El precio que ves ya tiene el descuento, sin códigos. Termina el domingo 29 de
-          noviembre a la medianoche.
+          El precio que ves ya tiene el descuento, sin códigos. Va hasta el domingo 29 de
+          noviembre a la medianoche. No aplica a los kits ni a las unidades sueltas.
         </p>
 
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
           <Button asChild variant="raceSun" size="lg" className="h-auto px-8 py-4 text-lg">
             <Link href="/productos/">Ver productos</Link>
-          </Button>
-          <Button asChild variant="raceOutline" size="lg" className="h-auto px-8 py-4 text-lg">
-            <Link href="/arma-tu-kit/">Armar mi kit</Link>
           </Button>
         </div>
 
